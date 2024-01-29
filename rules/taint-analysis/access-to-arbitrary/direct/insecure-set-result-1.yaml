@@ -1,0 +1,34 @@
+rules:
+  - id: insecure-set-result-1
+    mode: taint
+    options:
+      taint_unify_mvars: true
+    pattern-sources:
+      - patterns:
+        - pattern: |
+            $INTENT = getIntent();
+        - pattern-inside: |
+            public class $CLASSNAME extends $COMPONENT {...}
+        - pattern: getIntent()
+    pattern-sanitizers:
+      - patterns:
+        - pattern-either:
+          - pattern:
+              $INTENT.removeFlags(1);
+          - pattern:
+              $INTENT.removeFlags(2);
+          - pattern:
+              $INTENT.removeFlags(3);
+        - pattern-inside: |
+            public class $CLASSNAME extends $COMPONENT {...}
+    pattern-sinks:
+      - patterns:
+        - pattern: |
+            setResult(..., $INTENT);
+        - pattern-inside: |
+            public class $CLASSNAME extends $COMPONENT {...}
+        - focus-metavariable: $INTENT   
+    message: $CLASSNAME
+    languages:
+      - java
+    severity: WARNING

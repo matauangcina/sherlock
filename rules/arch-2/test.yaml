@@ -1,0 +1,15 @@
+rules:
+  - id: access-to-arbitrary-2
+    severity: WARNING
+    languages:
+      - java
+    message: The main activity does not implement a mechanism for enforcing updates.
+    mode: join
+    join:
+      refs:
+        - rule: /home/finechina/Project/rules/taint-analysis/access-to-arbitrary/insecure-set-result-2.yaml
+          as: insecure-set-result
+        - rule: /home/finechina/Project/rules/manifest-analysis/exported-activity.yaml
+          as: exported-activity
+      on:
+      - 'exported-activity.$ACTIVITY > insecure-set-result.$CLASSNAME'

@@ -1,0 +1,8 @@
+rules:
+  - id: set-component
+    message: Format setComponent
+    pattern: $INTENT.setComponent($COMPONENT);
+    fix: $INTENT = $INTENT.setComponent($COMPONENT);
+    languages:
+      - java
+    severity: WARNING

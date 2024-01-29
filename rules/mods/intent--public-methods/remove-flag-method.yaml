@@ -1,0 +1,8 @@
+rules:
+  - id: remove-flag
+    message: Format removeFlags
+    pattern: $INTENT.removeFlags($FLAG);
+    fix: $INTENT = $INTENT.removeFlags($FLAG);
+    languages:
+      - java
+    severity: WARNING

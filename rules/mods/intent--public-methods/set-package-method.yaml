@@ -1,0 +1,8 @@
+rules:
+  - id: set-package
+    message: Format setPackage
+    pattern: $INTENT.setPackage("$PACKAGE");
+    fix: $INTENT = $INTENT.setPackage("$PACKAGE");
+    languages:
+      - java
+    severity: WARNING

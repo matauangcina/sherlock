@@ -1,0 +1,25 @@
+rules:
+  - id: activity-without-update
+    languages:
+      - java
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern-either:
+          - pattern: |
+              getIntent()
+          - pattern: |
+              $RESULT.getData()
+        - pattern-inside: |
+            public class $CLASSNAME extends $COMPONENT {...}
+        - pattern-inside: |
+            setResult(...)
+    pattern-sinks:
+      - patterns:
+        - pattern: |
+            setResult(..., $INTENT);
+        - pattern-inside: |
+            public class $CLASSNAME extends $COMPONENT {...}
+        - focus-metavariable: $INTENT
+    message: $CLASSNAME
+    severity: INFO

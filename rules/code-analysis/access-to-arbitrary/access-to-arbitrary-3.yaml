@@ -1,0 +1,19 @@
+rules:
+  - id: access-to-arbitrary-3
+    severity: ERROR
+    languages:
+      - java
+    mode: join
+    join:
+      refs:
+        - rule: /home/finechina/Project/sherlock/rules/taint-analysis/access-to-arbitrary/intercept/insecure-set-result-3.yaml
+          as: insecure-set-result
+        - rule: /home/finechina/Project/sherlock/rules/taint-analysis/implicit-intent/implicit-intent.yaml
+          as: implicit-intent
+        - rule: /home/finechina/Project/sherlock/rules/manifest-analysis/exported-activity.yaml
+          as: exported-activity
+      on:
+      - 'implicit-intent.$CLASSNAME == insecure-set-result.$CLASSNAME'
+      - 'exported-activity.$ACTIVITY > insecure-set-result.$CLASSNAME'
+    message: |
+      Insecure communication (3) which may lead to arbitrary access to protected content providers detected.

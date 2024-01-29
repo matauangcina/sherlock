@@ -1,0 +1,16 @@
+rules:
+  - id: access-to-arbitrary-2
+    severity: ERROR
+    languages:
+      - java
+    mode: join
+    join:
+      refs:
+        - rule: /home/finechina/Project/sherlock/rules/taint-analysis/access-to-arbitrary/direct/insecure-set-result-2.yaml
+          as: insecure-set-result
+        - rule: /home/finechina/Project/sherlock/rules/manifest-analysis/exported-activity.yaml
+          as: exported-activity
+      on:
+      - 'exported-activity.$ACTIVITY > insecure-set-result.$CLASSNAME'
+    message: |
+      Insecure communication (2) which may lead to arbitrary access to protected content providers detected.
