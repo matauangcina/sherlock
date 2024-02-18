@@ -1,5 +1,5 @@
 rules:
-  - id: exported-activity
+  - id: exported-activity-manifest
     patterns:
       - pattern-not: |
           <activity ... android:exported="false" ... />

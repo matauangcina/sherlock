@@ -1,23 +1,20 @@
 import os
 import re
 import random
-import shutil
 import string
 import subprocess
 import utils
 
-from globals import (
-    TARGET_PATH,
-    JADX_BIN
-)
-from logger import init_logger
+from config import manifest_post_process
+from globals import TARGET_PATH, JADX_BIN
+from logger import get_logger
 from rich.console import Console
 from scan import run_engine
 from time import sleep
 
-log = init_logger(__name__)
-
 console = Console(log_path=False)
+
+log = get_logger(__name__)
 
 def run_decompiler(path, status):
     status.update(status="[bold green] Setting up workspace", spinner="dots")
@@ -25,15 +22,15 @@ def run_decompiler(path, status):
     name = path.split("/")[-1].split(".")[0]
     target_path = TARGET_PATH + "/" + name
     console.log("Creating workspace")
-    sleep(2)
+    sleep(1)
     if utils.is_path_exists(target_path):
         target_path += "-" + "".join(random.choice(string.ascii_lowercase) for _ in range(3))
     os.makedirs(target_path)
     console.log(f"Target workspace: {target_path}")
     sleep(1)
-    status.update(status="[bold yellow] Initiating decompiler", spinner="clock")
+    status.update(status="[bold yellow] Running decompiler", spinner="clock")
     sleep(1)
-    console.log("Target decompilation starting")
+    console.log("Decompiler initiated...")
     subprocess.run(["bash", JADX_BIN, "--deobf", path, "-d", target_path, "--quiet"])
     console.log("Target decompiled!")
     sleep(1)
@@ -41,13 +38,13 @@ def run_decompiler(path, status):
 def decompile(args):
     print("")
     is_exist_list = list()
-    with console.status("[bold magenta] Starting process", spinner="dots") as status:
-        sleep(2)
+    with console.status("[bold orange3] Initiating decompiling process", spinner="dots") as status:
+        sleep(1)
         for apk in args:
             status.update(status="[bold blue] Locating apk", spinner="earth")
             sleep(1)
             console.log("Getting apk file")
-            sleep(2)
+            sleep(1)
             if utils.is_path_exists(apk):
                 if re.match(r".+\.apk$", apk) and utils.is_file(apk):
                     console.log(f"Target found: {apk}")
@@ -81,16 +78,9 @@ def decompile(args):
             post_decompile(status)
             console.print("[bold white on green] Decompilation completed [/]\n")
 
-def copy_manifest():
-    manifest_files = utils.get_manifest()
-    codebase = utils.get_codebase_path()
-    for i, manifest in enumerate(manifest_files):
-        if utils.is_path_exists(manifest):
-            shutil.copy(manifest, codebase[i])
-
 def post_decompile(status):
     status.update("[bold red] Getting things ready", spinner="bouncingBall", spinner_style="yellow")
     console.log("Post decompilation process initiating")
     codebase = utils.get_codebase_path()
-    copy_manifest()
+    manifest_post_process()
     _ = run_engine(codebase, "mod", True)

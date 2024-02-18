@@ -21,7 +21,7 @@ class SherlockLogHandler(RichHandler):
         color = level_color.get(record.levelno)
         return f"{color}{icon}[/]"
     
-def init_logger(module):
+def get_logger(module):
     logger = logging.getLogger(module)
     logger.setLevel(logging.DEBUG)
     custom_rich_handler = SherlockLogHandler(show_time=False, show_level=True, show_path=False)

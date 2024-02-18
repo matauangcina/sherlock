@@ -8,8 +8,9 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.security.GeneralSecurityException;
+/* JADX INFO: Access modifiers changed from: package-private */
 /* loaded from: classes.dex */
-abstract class NonceBasedStreamingAead implements StreamingAead {
+public abstract class NonceBasedStreamingAead implements StreamingAead {
     public abstract int getCiphertextOffset();
 
     public abstract int getCiphertextOverhead();

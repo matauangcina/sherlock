@@ -1,0 +1,316 @@
+{
+  "targets": {
+    "base": {
+      "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test",
+      "manifest": {
+        "findings": {
+          "exported": {
+            "message": "com.test.test.MainActivity",
+            "severity": "INFO",
+            "exported-activity": {
+              "locations": [
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 33,
+                    "end": 59
+                  },
+                  "line": {
+                    "start": 33,
+                    "end": 59
+                  },
+                  "snippet": "        <activity android:name=\"com.test.test.MainActivity\" android:exported=\"true\">"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 33,
+                    "end": 59
+                  },
+                  "line": {
+                    "start": 33,
+                    "end": 59
+                  },
+                  "snippet": "        <activity android:name=\"com.test.test.TestActivity\" android:exported=\"true\"/>"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 33,
+                    "end": 61
+                  },
+                  "line": {
+                    "start": 33,
+                    "end": 61
+                  },
+                  "snippet": "        <activity android:name=\"com.test.test.RandomActivity\" android:exported=\"true\">"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 33,
+                    "end": 68
+                  },
+                  "line": {
+                    "start": 33,
+                    "end": 68
+                  },
+                  "snippet": "        <activity android:name=\"com.test.test.AnotherRandomActivity\" android:exported=\"true\">"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 33,
+                    "end": 61
+                  },
+                  "line": {
+                    "start": 33,
+                    "end": 61
+                  },
+                  "snippet": "        <activity android:name=\"com.test.test.BlablaActivity\" android:exported=\"true\"/>"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 33,
+                    "end": 60
+                  },
+                  "line": {
+                    "start": 33,
+                    "end": 60
+                  },
+                  "snippet": "        <activity android:name=\"com.test.test.UlalaActivity\" android:exported=\"true\">"
+                }
+              ]
+            }
+          }
+        },
+        "errors": []
+      }
+    },
+    "InsecureShop": {
+      "path": "/home/finechina/Project/sherlock/target/InsecureShop/sources/com/insecureshop",
+      "manifest": {
+        "findings": {
+          "exported": {
+            "message": "com.insecureshop.ChooserActivity",
+            "severity": "INFO",
+            "exported-activity": {
+              "locations": [
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 33,
+                    "end": 65
+                  },
+                  "line": {
+                    "start": 33,
+                    "end": 65
+                  },
+                  "snippet": "        <activity android:name=\"com.insecureshop.ChooserActivity\" android:excludeFromRecents=\"true\">"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 33,
+                    "end": 65
+                  },
+                  "line": {
+                    "start": 33,
+                    "end": 65
+                  },
+                  "snippet": "        <activity android:name=\"com.insecureshop.AboutUsActivity\" android:exported=\"true\"/>"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 33,
+                    "end": 69
+                  },
+                  "line": {
+                    "start": 33,
+                    "end": 69
+                  },
+                  "snippet": "        <activity android:name=\"com.insecureshop.ProductListActivity\">"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 33,
+                    "end": 65
+                  },
+                  "line": {
+                    "start": 33,
+                    "end": 65
+                  },
+                  "snippet": "        <activity android:name=\"com.insecureshop.WebViewActivity\">"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 33,
+                    "end": 66
+                  },
+                  "line": {
+                    "start": 33,
+                    "end": 66
+                  },
+                  "snippet": "        <activity android:name=\"com.insecureshop.WebView2Activity\">"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 33,
+                    "end": 64
+                  },
+                  "line": {
+                    "start": 33,
+                    "end": 64
+                  },
+                  "snippet": "        <activity android:name=\"com.insecureshop.ResultActivity\" android:exported=\"true\"/>"
+                }
+              ]
+            }
+          }
+        },
+        "errors": []
+      }
+    },
+    "test": {
+      "path": "/home/finechina/Project/sherlock/target/injuredandroid/sources/b3nac/injuredandroid",
+      "manifest": {
+        "findings": {
+          "exported": {
+            "message": "b3nac.injuredandroid.FlagEighteenActivity",
+            "severity": "INFO",
+            "exported-activity": {
+              "locations": [
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 130,
+                    "end": 171
+                  },
+                  "line": {
+                    "start": 130,
+                    "end": 171
+                  },
+                  "snippet": "        <activity android:theme=\"@style/AppTheme.NoActionBar\" android:label=\"@string/title_activity_flag_eighteen\" android:name=\"b3nac.injuredandroid.FlagEighteenActivity\" android:exported=\"true\"/>"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 129,
+                    "end": 167
+                  },
+                  "line": {
+                    "start": 129,
+                    "end": 167
+                  },
+                  "snippet": "        <activity android:theme=\"@style/AppTheme.NoActionBar\" android:label=\"@string/title_activity_c_s_p_bypass\" android:name=\"b3nac.injuredandroid.CSPBypassActivity\">"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 120,
+                    "end": 152
+                  },
+                  "line": {
+                    "start": 120,
+                    "end": 152
+                  },
+                  "snippet": "        <activity android:theme=\"@style/AppTheme.NoActionBar\" android:label=\"@string/title_activity_rce\" android:name=\"b3nac.injuredandroid.RCEActivity\">"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 142,
+                    "end": 186
+                  },
+                  "line": {
+                    "start": 142,
+                    "end": 186
+                  },
+                  "snippet": "        <activity android:theme=\"@style/AppTheme.NoActionBar\" android:label=\"@string/title_activity_exported_protected_intent\" android:name=\"b3nac.injuredandroid.ExportedProtectedIntent\" android:exported=\"true\"/>"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 33,
+                    "end": 60
+                  },
+                  "line": {
+                    "start": 33,
+                    "end": 60
+                  },
+                  "snippet": "        <activity android:name=\"b3nac.injuredandroid.QXV0aA\" android:exported=\"true\"/>"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 82,
+                    "end": 119
+                  },
+                  "line": {
+                    "start": 82,
+                    "end": 119
+                  },
+                  "snippet": "        <activity android:label=\"@string/title_activity_deep_link\" android:name=\"b3nac.injuredandroid.DeepLinkActivity\">"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 33,
+                    "end": 66
+                  },
+                  "line": {
+                    "start": 33,
+                    "end": 66
+                  },
+                  "snippet": "        <activity android:name=\"b3nac.injuredandroid.MainActivity\">"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 33,
+                    "end": 66
+                  },
+                  "line": {
+                    "start": 33,
+                    "end": 66
+                  },
+                  "snippet": "        <activity android:name=\"b3nac.injuredandroid.b25lActivity\" android:exported=\"true\"/>"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 140,
+                    "end": 182
+                  },
+                  "line": {
+                    "start": 140,
+                    "end": 182
+                  },
+                  "snippet": "        <activity android:theme=\"@style/AppTheme.NoActionBar\" android:label=\"@string/title_activity_test_broadcast_reciever\" android:name=\"b3nac.injuredandroid.TestBroadcastReceiver\" android:exported=\"true\"/>"
+                },
+                {
+                  "component": "AndroidManifest.xml",
+                  "position": {
+                    "start": 93,
+                    "end": 150
+                  },
+                  "line": {
+                    "start": 93,
+                    "end": 150
+                  },
+                  "snippet": "        <activity android:theme=\"@android:style/Theme.Translucent.NoTitleBar\" android:name=\"com.google.firebase.auth.internal.FederatedSignInActivity\" android:permission=\"com.google.firebase.auth.api.gms.permission.LAUNCH_FEDERATED_SIGN_IN\" android:exported=\"true\" android:excludeFromRecents=\"true\" android:launchMode=\"singleTask\"/>"
+                }
+              ]
+            }
+          }
+        },
+        "errors": []
+      }
+    }
+  }
+}

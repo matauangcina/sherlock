@@ -1,0 +1,999 @@
+{
+    "errors": [],
+    "paths": {
+      "scanned": []
+    },
+    "results": [
+      {
+        "check_id": "rules.code-analysis.access-to-arbitrary-3",
+        "end": {
+          "col": 39,
+          "line": 24,
+          "offset": 1136
+        },
+        "extra": {
+          "dataflow_trace": {
+            "intermediate_vars": [
+              {
+                "content": "data",
+                "location": {
+                  "end": {
+                    "col": 78,
+                    "line": 21,
+                    "offset": 968
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/AnotherRandomActivity.java",
+                  "start": {
+                    "col": 74,
+                    "line": 21,
+                    "offset": 964
+                  }
+                }
+              }
+            ],
+            "taint_sink": [
+              "CliLoc",
+              [
+                {
+                  "end": {
+                    "col": 39,
+                    "line": 24,
+                    "offset": 1136
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/AnotherRandomActivity.java",
+                  "start": {
+                    "col": 35,
+                    "line": 24,
+                    "offset": 1132
+                  }
+                },
+                "data"
+              ]
+            ],
+            "taint_source": [
+              "CliLoc",
+              [
+                {
+                  "end": {
+                    "col": 78,
+                    "line": 21,
+                    "offset": 968
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/AnotherRandomActivity.java",
+                  "start": {
+                    "col": 74,
+                    "line": 21,
+                    "offset": 964
+                  }
+                },
+                "data"
+              ]
+            ]
+          },
+          "engine_kind": "OSS",
+          "fingerprint": "d46778b51a23ea0de57266bd3e7844105d898436951b26121ee35ac29ec21745b71bd7f8c9d4eb01db656226ba2462183f4f7822c8d55852642c34c1fc70f78d_0",
+          "is_ignored": "False",
+          "lines": "            setResult(resultCode, data);",
+          "message": "Insecure communication which may lead to arbitrary access to protected content providers detected.\n",
+          "metadata": {},
+          "metavars": {
+            "$CLASSNAME": {
+              "abstract_content": "AnotherRandomActivity",
+              "end": {
+                "col": 35,
+                "line": 7,
+                "offset": 196
+              },
+              "start": {
+                "col": 14,
+                "line": 7,
+                "offset": 175
+              }
+            },
+            "$CODE": {
+              "abstract_content": "resultCode",
+              "end": {
+                "col": 33,
+                "line": 24,
+                "offset": 1130
+              },
+              "start": {
+                "col": 23,
+                "line": 24,
+                "offset": 1120
+              }
+            },
+            "$COMPONENT": {
+              "abstract_content": "AppCompatActivity AppCompatActivity AppCompatActivity AppCompatActivity",
+              "end": {
+                "col": 61,
+                "line": 7,
+                "offset": 222
+              },
+              "start": {
+                "col": 44,
+                "line": 7,
+                "offset": 205
+              }
+            },
+            "$INTENT": {
+              "abstract_content": "data",
+              "end": {
+                "col": 39,
+                "line": 24,
+                "offset": 1136
+              },
+              "start": {
+                "col": 35,
+                "line": 24,
+                "offset": 1132
+              }
+            }
+          },
+          "severity": "ERROR"
+        },
+        "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/AnotherRandomActivity.java",
+        "start": {
+          "col": 35,
+          "line": 24,
+          "offset": 1132
+        }
+      },
+      {
+        "check_id": "rules.code-analysis.access-to-arbitrary-1",
+        "end": {
+          "col": 28,
+          "line": 18,
+          "offset": 787
+        },
+        "extra": {
+          "dataflow_trace": {
+            "intermediate_vars": [
+              {
+                "content": "data1",
+                "location": {
+                  "end": {
+                    "col": 21,
+                    "line": 16,
+                    "offset": 694
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/BlablaActivity.java",
+                  "start": {
+                    "col": 16,
+                    "line": 16,
+                    "offset": 689
+                  }
+                }
+              }
+            ],
+            "taint_sink": [
+              "CliLoc",
+              [
+                {
+                  "end": {
+                    "col": 28,
+                    "line": 18,
+                    "offset": 787
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/BlablaActivity.java",
+                  "start": {
+                    "col": 23,
+                    "line": 18,
+                    "offset": 782
+                  }
+                },
+                "data1"
+              ]
+            ],
+            "taint_source": [
+              "CliLoc",
+              [
+                {
+                  "end": {
+                    "col": 35,
+                    "line": 16,
+                    "offset": 708
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/BlablaActivity.java",
+                  "start": {
+                    "col": 24,
+                    "line": 16,
+                    "offset": 697
+                  }
+                },
+                "getIntent()"
+              ]
+            ]
+          },
+          "engine_kind": "OSS",
+          "fingerprint": "e123b2ae75c0ae07fb320ebe3bc01dc59560bb619d04941680b7eaf42b68a3e6733c9f3ece535a9fda744cef74470a171132119ea8f668924c8f4466aa8afb8f_0",
+          "is_ignored": "False",
+          "lines": "        setResult(-1, data1);",
+          "message": "Insecure communication which may lead to arbitrary access to protected content providers detected.\n",
+          "metadata": {},
+          "metavars": {
+            "$CLASSNAME": {
+              "abstract_content": "BlablaActivity",
+              "end": {
+                "col": 28,
+                "line": 7,
+                "offset": 189
+              },
+              "start": {
+                "col": 14,
+                "line": 7,
+                "offset": 175
+              }
+            },
+            "$CODE": {
+              "abstract_content": "-1",
+              "end": {
+                "col": 21,
+                "line": 18,
+                "offset": 780
+              },
+              "start": {
+                "col": 19,
+                "line": 18,
+                "offset": 778
+              }
+            },
+            "$COMPONENT": {
+              "abstract_content": "AppCompatActivity AppCompatActivity AppCompatActivity AppCompatActivity",
+              "end": {
+                "col": 54,
+                "line": 7,
+                "offset": 215
+              },
+              "start": {
+                "col": 37,
+                "line": 7,
+                "offset": 198
+              }
+            },
+            "$INTENT": {
+              "abstract_content": "data1",
+              "end": {
+                "col": 28,
+                "line": 18,
+                "offset": 787
+              },
+              "start": {
+                "col": 23,
+                "line": 18,
+                "offset": 782
+              }
+            }
+          },
+          "severity": "ERROR"
+        },
+        "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/BlablaActivity.java",
+        "start": {
+          "col": 23,
+          "line": 18,
+          "offset": 782
+        }
+      },
+      {
+        "check_id": "rules.code-analysis.access-to-arbitrary-3",
+        "end": {
+          "col": 39,
+          "line": 33,
+          "offset": 1490
+        },
+        "extra": {
+          "dataflow_trace": {
+            "intermediate_vars": [
+              {
+                "content": "data",
+                "location": {
+                  "end": {
+                    "col": 78,
+                    "line": 30,
+                    "offset": 1322
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/BlablaActivity.java",
+                  "start": {
+                    "col": 74,
+                    "line": 30,
+                    "offset": 1318
+                  }
+                }
+              }
+            ],
+            "taint_sink": [
+              "CliLoc",
+              [
+                {
+                  "end": {
+                    "col": 39,
+                    "line": 33,
+                    "offset": 1490
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/BlablaActivity.java",
+                  "start": {
+                    "col": 35,
+                    "line": 33,
+                    "offset": 1486
+                  }
+                },
+                "data"
+              ]
+            ],
+            "taint_source": [
+              "CliLoc",
+              [
+                {
+                  "end": {
+                    "col": 78,
+                    "line": 30,
+                    "offset": 1322
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/BlablaActivity.java",
+                  "start": {
+                    "col": 74,
+                    "line": 30,
+                    "offset": 1318
+                  }
+                },
+                "data"
+              ]
+            ]
+          },
+          "engine_kind": "OSS",
+          "fingerprint": "36d69b2fba464a6f9a81228cba498339c2624368efa1796f1f89ce0c6221c4ed405caea65126859491a838e9aca919db30f06d2d080d554f5f49cfd2bbc5e660_0",
+          "is_ignored": "False",
+          "lines": "            setResult(resultCode, data);",
+          "message": "Insecure communication which may lead to arbitrary access to protected content providers detected.\n",
+          "metadata": {},
+          "metavars": {
+            "$CLASSNAME": {
+              "abstract_content": "BlablaActivity",
+              "end": {
+                "col": 28,
+                "line": 7,
+                "offset": 189
+              },
+              "start": {
+                "col": 14,
+                "line": 7,
+                "offset": 175
+              }
+            },
+            "$CODE": {
+              "abstract_content": "resultCode",
+              "end": {
+                "col": 33,
+                "line": 33,
+                "offset": 1484
+              },
+              "start": {
+                "col": 23,
+                "line": 33,
+                "offset": 1474
+              }
+            },
+            "$COMPONENT": {
+              "abstract_content": "AppCompatActivity AppCompatActivity AppCompatActivity AppCompatActivity",
+              "end": {
+                "col": 54,
+                "line": 7,
+                "offset": 215
+              },
+              "start": {
+                "col": 37,
+                "line": 7,
+                "offset": 198
+              }
+            },
+            "$INTENT": {
+              "abstract_content": "data",
+              "end": {
+                "col": 39,
+                "line": 33,
+                "offset": 1490
+              },
+              "start": {
+                "col": 35,
+                "line": 33,
+                "offset": 1486
+              }
+            }
+          },
+          "severity": "ERROR"
+        },
+        "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/BlablaActivity.java",
+        "start": {
+          "col": 35,
+          "line": 33,
+          "offset": 1486
+        }
+      },
+      {
+        "check_id": "rules.code-analysis.access-to-arbitrary-2",
+        "end": {
+          "col": 34,
+          "line": 22,
+          "offset": 1045
+        },
+        "extra": {
+          "dataflow_trace": {
+            "intermediate_vars": [],
+            "taint_sink": [
+              "CliLoc",
+              [
+                {
+                  "end": {
+                    "col": 34,
+                    "line": 22,
+                    "offset": 1045
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/MainActivity.java",
+                  "start": {
+                    "col": 23,
+                    "line": 22,
+                    "offset": 1034
+                  }
+                },
+                "getIntent()"
+              ]
+            ],
+            "taint_source": [
+              "CliLoc",
+              [
+                {
+                  "end": {
+                    "col": 34,
+                    "line": 22,
+                    "offset": 1045
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/MainActivity.java",
+                  "start": {
+                    "col": 23,
+                    "line": 22,
+                    "offset": 1034
+                  }
+                },
+                "getIntent()"
+              ]
+            ]
+          },
+          "engine_kind": "OSS",
+          "fingerprint": "af76f757cdb33a8a5e482a3ad342d29727b74d3b36fcb04b4a0586ae7c2b3da0a8b14270ba6691799a9cda9766745924cf199fc306200896e57727be238fc6be_0",
+          "is_ignored": "False",
+          "lines": "        setResult(-1, getIntent());",
+          "message": "Insecure communication which may lead to arbitrary access to protected content providers detected.\n",
+          "metadata": {},
+          "metavars": {
+            "$CLASSNAME": {
+              "abstract_content": "MainActivity",
+              "end": {
+                "col": 26,
+                "line": 9,
+                "offset": 278
+              },
+              "start": {
+                "col": 14,
+                "line": 9,
+                "offset": 266
+              }
+            },
+            "$CODE": {
+              "abstract_content": "-1",
+              "end": {
+                "col": 21,
+                "line": 22,
+                "offset": 1032
+              },
+              "start": {
+                "col": 19,
+                "line": 22,
+                "offset": 1030
+              }
+            },
+            "$COMPONENT": {
+              "abstract_content": "AppCompatActivity",
+              "end": {
+                "col": 52,
+                "line": 9,
+                "offset": 304
+              },
+              "start": {
+                "col": 35,
+                "line": 9,
+                "offset": 287
+              }
+            },
+            "$INTENT": {
+              "abstract_content": "getIntent()",
+              "end": {
+                "col": 34,
+                "line": 22,
+                "offset": 1045
+              },
+              "start": {
+                "col": 23,
+                "line": 22,
+                "offset": 1034
+              }
+            }
+          },
+          "severity": "ERROR"
+        },
+        "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/MainActivity.java",
+        "start": {
+          "col": 23,
+          "line": 22,
+          "offset": 1034
+        }
+      },
+      {
+        "check_id": "rules.code-analysis.access-to-arbitrary-4",
+        "end": {
+          "col": 51,
+          "line": 33,
+          "offset": 1739
+        },
+        "extra": {
+          "dataflow_trace": {
+            "intermediate_vars": [
+              {
+                "content": "data",
+                "location": {
+                  "end": {
+                    "col": 24,
+                    "line": 32,
+                    "offset": 1668
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/RandomActivity.java",
+                  "start": {
+                    "col": 20,
+                    "line": 32,
+                    "offset": 1664
+                  }
+                }
+              }
+            ],
+            "taint_sink": [
+              "CliLoc",
+              [
+                {
+                  "end": {
+                    "col": 51,
+                    "line": 33,
+                    "offset": 1739
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/RandomActivity.java",
+                  "start": {
+                    "col": 47,
+                    "line": 33,
+                    "offset": 1735
+                  }
+                },
+                "data"
+              ]
+            ],
+            "taint_source": [
+              "CliLoc",
+              [
+                {
+                  "end": {
+                    "col": 43,
+                    "line": 32,
+                    "offset": 1687
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/RandomActivity.java",
+                  "start": {
+                    "col": 27,
+                    "line": 32,
+                    "offset": 1671
+                  }
+                },
+                "result.getData()"
+              ]
+            ]
+          },
+          "engine_kind": "OSS",
+          "fingerprint": "8ae1727dd89aee2c4495fd2a9e4aa0a87f68c740ffe622d938143a093ebbe14704002057f831744e862d3998e4062897c8eb918d5a735bd62aaf0b5f7a79ce3b_0",
+          "is_ignored": "False",
+          "lines": "            setResult(result.getResultCode(), data);",
+          "message": "Insecure communication which may lead to arbitrary access to protected content providers detected.\n",
+          "metadata": {},
+          "metavars": {
+            "$CLASSNAME": {
+              "abstract_content": "RandomActivity",
+              "end": {
+                "col": 28,
+                "line": 11,
+                "offset": 415
+              },
+              "start": {
+                "col": 14,
+                "line": 11,
+                "offset": 401
+              }
+            },
+            "$CODE": {
+              "abstract_content": "result.getResultCode()",
+              "end": {
+                "col": 45,
+                "line": 33,
+                "offset": 1733
+              },
+              "start": {
+                "col": 23,
+                "line": 33,
+                "offset": 1711
+              }
+            },
+            "$COMPONENT": {
+              "abstract_content": "AppCompatActivity AppCompatActivity AppCompatActivity AppCompatActivity",
+              "end": {
+                "col": 54,
+                "line": 11,
+                "offset": 441
+              },
+              "start": {
+                "col": 37,
+                "line": 11,
+                "offset": 424
+              }
+            },
+            "$INTENT": {
+              "abstract_content": "data",
+              "end": {
+                "col": 51,
+                "line": 33,
+                "offset": 1739
+              },
+              "propagated_value": {
+                "svalue_abstract_content": "result.getData()",
+                "svalue_end": {
+                  "col": 43,
+                  "line": 32,
+                  "offset": 1687
+                },
+                "svalue_start": {
+                  "col": 27,
+                  "line": 32,
+                  "offset": 1671
+                }
+              },
+              "start": {
+                "col": 47,
+                "line": 33,
+                "offset": 1735
+              }
+            },
+            "$METHOD": {
+              "abstract_content": "m240lambda$new$0$comtesttestRandomActivity",
+              "end": {
+                "col": 75,
+                "line": 30,
+                "offset": 1575
+              },
+              "start": {
+                "col": 33,
+                "line": 30,
+                "offset": 1533
+              }
+            },
+            "$RESULT": {
+              "abstract_content": "result",
+              "end": {
+                "col": 97,
+                "line": 30,
+                "offset": 1597
+              },
+              "start": {
+                "col": 91,
+                "line": 30,
+                "offset": 1591
+              }
+            }
+          },
+          "severity": "ERROR"
+        },
+        "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/RandomActivity.java",
+        "start": {
+          "col": 47,
+          "line": 33,
+          "offset": 1735
+        }
+      },
+      {
+        "check_id": "rules.code-analysis.access-to-arbitrary-1",
+        "end": {
+          "col": 26,
+          "line": 12,
+          "offset": 525
+        },
+        "extra": {
+          "dataflow_trace": {
+            "intermediate_vars": [
+              {
+                "content": "bad",
+                "location": {
+                  "end": {
+                    "col": 19,
+                    "line": 11,
+                    "offset": 484
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/TestActivity.java",
+                  "start": {
+                    "col": 16,
+                    "line": 11,
+                    "offset": 481
+                  }
+                }
+              }
+            ],
+            "taint_sink": [
+              "CliLoc",
+              [
+                {
+                  "end": {
+                    "col": 26,
+                    "line": 12,
+                    "offset": 525
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/TestActivity.java",
+                  "start": {
+                    "col": 23,
+                    "line": 12,
+                    "offset": 522
+                  }
+                },
+                "bad"
+              ]
+            ],
+            "taint_source": [
+              "CliLoc",
+              [
+                {
+                  "end": {
+                    "col": 33,
+                    "line": 11,
+                    "offset": 498
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/TestActivity.java",
+                  "start": {
+                    "col": 22,
+                    "line": 11,
+                    "offset": 487
+                  }
+                },
+                "getIntent()"
+              ]
+            ]
+          },
+          "engine_kind": "OSS",
+          "fingerprint": "0cc4ba87a48e68b92949cdb56f96c4d9667f0517b920b235efbc637f3af4f71c5e944762c9c0410e41638cbb917f4954a6eef85ee02696d3cea2ade47a6c488f_0",
+          "is_ignored": "False",
+          "lines": "        setResult(-1, bad);",
+          "message": "Insecure communication which may lead to arbitrary access to protected content providers detected.\n",
+          "metadata": {},
+          "metavars": {
+            "$CLASSNAME": {
+              "abstract_content": "TestActivity",
+              "end": {
+                "col": 26,
+                "line": 7,
+                "offset": 187
+              },
+              "start": {
+                "col": 14,
+                "line": 7,
+                "offset": 175
+              }
+            },
+            "$CODE": {
+              "abstract_content": "-1",
+              "end": {
+                "col": 21,
+                "line": 12,
+                "offset": 520
+              },
+              "start": {
+                "col": 19,
+                "line": 12,
+                "offset": 518
+              }
+            },
+            "$COMPONENT": {
+              "abstract_content": "AppCompatActivity AppCompatActivity AppCompatActivity AppCompatActivity",
+              "end": {
+                "col": 52,
+                "line": 7,
+                "offset": 213
+              },
+              "start": {
+                "col": 35,
+                "line": 7,
+                "offset": 196
+              }
+            },
+            "$INTENT": {
+              "abstract_content": "bad",
+              "end": {
+                "col": 26,
+                "line": 12,
+                "offset": 525
+              },
+              "propagated_value": {
+                "svalue_abstract_content": "getIntent()",
+                "svalue_end": {
+                  "col": 33,
+                  "line": 11,
+                  "offset": 498
+                },
+                "svalue_start": {
+                  "col": 22,
+                  "line": 11,
+                  "offset": 487
+                }
+              },
+              "start": {
+                "col": 23,
+                "line": 12,
+                "offset": 522
+              }
+            }
+          },
+          "severity": "ERROR"
+        },
+        "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/TestActivity.java",
+        "start": {
+          "col": 23,
+          "line": 12,
+          "offset": 522
+        }
+      },
+      {
+        "check_id": "rules.code-analysis.access-to-arbitrary-5",
+        "end": {
+          "col": 43,
+          "line": 51,
+          "offset": 2643
+        },
+        "extra": {
+          "dataflow_trace": {
+            "intermediate_vars": [],
+            "taint_sink": [
+              "CliLoc",
+              [
+                {
+                  "end": {
+                    "col": 43,
+                    "line": 51,
+                    "offset": 2643
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/UlalaActivity.java",
+                  "start": {
+                    "col": 27,
+                    "line": 51,
+                    "offset": 2627
+                  }
+                },
+                "result.getData()"
+              ]
+            ],
+            "taint_source": [
+              "CliLoc",
+              [
+                {
+                  "end": {
+                    "col": 43,
+                    "line": 51,
+                    "offset": 2643
+                  },
+                  "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/UlalaActivity.java",
+                  "start": {
+                    "col": 27,
+                    "line": 51,
+                    "offset": 2627
+                  }
+                },
+                "result.getData()"
+              ]
+            ]
+          },
+          "engine_kind": "OSS",
+          "fingerprint": "c53760d779b50ebbef32671aeae50bfa8fa639e8b3d6eff10355cd0bdf15b6dd705e60759c62a151e5f6326f4bc6fbd6660dbc3ff202f04486c783c4c16a68fa_0",
+          "is_ignored": "False",
+          "lines": "            setResult(-1, result.getData());",
+          "message": "Insecure communication which may lead to arbitrary access to protected content providers detected.",
+          "metadata": {},
+          "metavars": {
+            "$CLASSNAME": {
+              "abstract_content": "UlalaActivity",
+              "end": {
+                "col": 27,
+                "line": 13,
+                "offset": 463
+              },
+              "start": {
+                "col": 14,
+                "line": 13,
+                "offset": 450
+              }
+            },
+            "$CODE": {
+              "abstract_content": "-1",
+              "end": {
+                "col": 25,
+                "line": 51,
+                "offset": 2625
+              },
+              "start": {
+                "col": 23,
+                "line": 51,
+                "offset": 2623
+              }
+            },
+            "$COMPONENT": {
+              "abstract_content": "AppCompatActivity",
+              "end": {
+                "col": 53,
+                "line": 13,
+                "offset": 489
+              },
+              "start": {
+                "col": 36,
+                "line": 13,
+                "offset": 472
+              }
+            },
+            "$INTENT": {
+              "abstract_content": "result.getData()",
+              "end": {
+                "col": 43,
+                "line": 51,
+                "offset": 2643
+              },
+              "start": {
+                "col": 27,
+                "line": 51,
+                "offset": 2627
+              }
+            },
+            "$METHOD": {
+              "abstract_content": "m241lambda$new$0$comtesttestUlalaActivity",
+              "end": {
+                "col": 74,
+                "line": 48,
+                "offset": 2468
+              },
+              "start": {
+                "col": 33,
+                "line": 48,
+                "offset": 2427
+              }
+            },
+            "$RESULT": {
+              "abstract_content": "result",
+              "end": {
+                "col": 33,
+                "line": 51,
+                "offset": 2633
+              },
+              "start": {
+                "col": 27,
+                "line": 51,
+                "offset": 2627
+              }
+            }
+          },
+          "severity": "ERROR"
+        },
+        "path": "/home/finechina/Project/sherlock/target/base/sources/com/test/test/UlalaActivity.java",
+        "start": {
+          "col": 27,
+          "line": 51,
+          "offset": 2627
+        }
+      }
+    ],
+    "skipped_rules": [],
+    "version": "1.56.0"
+}

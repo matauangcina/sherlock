@@ -14,9 +14,8 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
-/* JADX INFO: Access modifiers changed from: package-private */
 /* loaded from: classes.dex */
-public class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify, PublicKeyVerify> {
+class PublicKeyVerifyWrapper implements PrimitiveWrapper<PublicKeyVerify, PublicKeyVerify> {
     private static final Logger logger = Logger.getLogger(PublicKeyVerifyWrapper.class.getName());
     private static final byte[] FORMAT_VERSION = {0};
     private static final PublicKeyVerifyWrapper WRAPPER = new PublicKeyVerifyWrapper();

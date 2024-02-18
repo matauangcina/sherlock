@@ -3,14 +3,14 @@ import utils
 
 from defusedxml.minidom import parse
 from globals import TARGET_PATH, INVALID_COMMAND
-from logger import init_logger
+from logger import get_logger
 from progress import progress_bar
 from rich import box
 from rich.live import Live
 from rich.table import Table
 from time import sleep
 
-log = init_logger(__name__)
+log = get_logger(__name__)
 
 def run_adb(device_id, cmd, shell=False):
     command = [utils.get_adb_bin(), "-s", device_id]
@@ -65,19 +65,19 @@ def display_device_info():
         log.error("No connected devices detected.")
         return
     print("")
-    table = Table(title="Connected Device Info", box=box.ROUNDED)
-    table.add_column("No.", style="white", justify="center")
-    table.add_column("Device ID", style="cyan", justify="center")
-    table.add_column("Model", style="yellow", justify="center")
-    table.add_column("Brand", style="magenta", justify="center")
-    table.add_column("Manufacturer", style="red", justify="center")
-    table.add_column("Hardware", style="green", justify="center")
-    table.add_column("Build Version", style="blue", justify="center")
-    table.add_column("SDK Version", style="yellow", justify="center")
-    table.add_column("Architecture", style="white", justify="center")
+    table = Table(title="Connected Device Info", caption="Use a device by device id or index.", box=box.ROUNDED)
+    table.add_column("#", style="bright_white", justify="center")
+    table.add_column("Device ID", style="bright_cyan", justify="center")
+    table.add_column("Model", style="bright_yellow", justify="center")
+    table.add_column("Brand", style="bright_magenta", justify="center")
+    table.add_column("Manufacturer", style="bright_red", justify="center")
+    table.add_column("Hardware", style="bright_green", justify="center")
+    table.add_column("Build Version", style="bright_blue", justify="center")
+    table.add_column("SDK Version", style="bright_yellow", justify="center")
+    table.add_column("Architecture", style="bright_white", justify="center")
     with Live(table, refresh_per_second = 4):
         for i, summary in enumerate(summaries):
-            sleep(0.5)
+            sleep(0.1)
             table.add_row(
                 str(i+1),
                 summary["device_id"],
@@ -144,16 +144,16 @@ def display_target_info(targets):
         return
     print("")
     table = Table(title="Target Info", box=box.ROUNDED)
-    table.add_column("No.", style="white", justify="center")
-    table.add_column("Target ID", style="orange3", justify="center")
-    table.add_column("App Name", style="cyan", justify="center")
-    table.add_column("Package", style="yellow", justify="center")
-    table.add_column("App Version", style="magenta", justify="center")
-    table.add_column("Min. SDK", style="red", justify="center")
-    table.add_column("Target SDK", style="green", justify="center")
+    table.add_column("#", style="bright_white", justify="center")
+    table.add_column("Target ID", style="bright_orange3", justify="center")
+    table.add_column("App Name", style="bright_cyan", justify="center")
+    table.add_column("Package", style="bright_yellow", justify="center")
+    table.add_column("App Version", style="bright_magenta", justify="center")
+    table.add_column("Min. SDK", style="bright_red", justify="center")
+    table.add_column("Target SDK", style="bright_green", justify="center")
     with Live(table, refresh_per_second = 4):
         for i, summary in enumerate(summaries):
-            sleep(0.5)
+            sleep(0.1)
             table.add_row(
                 str(i+1),
                 summary["target_id"],
@@ -166,20 +166,21 @@ def display_target_info(targets):
     print("\n")
 
 def get_info(args):
+    print("")
     if len(args) > 1 and len(args) <= 3:
         if len(args) == 2:
             if args[0] == "device" and args[1] == "info":
-                progress_bar()
+                progress_bar(0.005)
                 display_device_info()
             elif args[0] == "target" and args[1] == "info":
-                progress_bar()
+                progress_bar(0.005)
                 targets = utils.get_target_paths()
                 display_target_info(targets)
             else:
                 log.error(INVALID_COMMAND)
         else:
             if args[0] == "target" and args[2] == "info":
-                progress_bar()
+                progress_bar(0.005)
                 targets = args[1].split(",")
                 available_targets = list()
                 for target in targets:

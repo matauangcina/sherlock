@@ -6,7 +6,7 @@ from time import sleep
 def progress_bar(time=0.02, advance=1):
     with Progress(
         "{task.description}", 
-        SpinnerColumn(spinner_name="weather"), 
+        SpinnerColumn(spinner_name="circleHalves"), 
         BarColumn(), 
         TaskProgressColumn(),
         TimeRemainingColumn()

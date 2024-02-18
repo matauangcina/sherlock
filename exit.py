@@ -1,16 +1,13 @@
-import shutil
-import utils
-
 from globals import (
     TARGET_PATH,
     INVALID_COMMAND
 )
-from logger import init_logger
+from logger import get_logger
 from remove import remove_workspace
 from rich.console import Console
 from time import sleep
 
-log = init_logger(__name__)
+log = get_logger(__name__)
 
 console = Console(log_path=False)
 

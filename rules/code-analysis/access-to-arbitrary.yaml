@@ -1,0 +1,85 @@
+rules:
+- id: access-to-arbitrary-1
+  severity: ERROR
+  languages:
+  - java
+  mode: join
+  join:
+    refs:
+    - rule: '/home/finechina/Project/sherlock/rules/taint-analysis/insecure-set-result/insecure-set-result-1.yaml'
+      as: insecure-set-result
+    - rule: '/home/finechina/Project/sherlock/rules/manifest-analysis/exported-activity.yaml'
+      as: exported-activity
+    on:
+    - exported-activity.$ACTIVITY > insecure-set-result.$CLASSNAME
+  message: |
+    Insecure communication which may lead to arbitrary access to protected content providers detected.
+- id: access-to-arbitrary-2
+  severity: ERROR
+  languages:
+  - java
+  mode: join
+  join:
+    refs:
+    - rule: '/home/finechina/Project/sherlock/rules/taint-analysis/insecure-set-result/insecure-set-result-2.yaml'
+      as: insecure-set-result
+    - rule: '/home/finechina/Project/sherlock/rules/manifest-analysis/exported-activity.yaml'
+      as: exported-activity
+    on:
+    - exported-activity.$ACTIVITY > insecure-set-result.$CLASSNAME
+  message: |
+    Insecure communication which may lead to arbitrary access to protected content providers detected.
+- id: access-to-arbitrary-3
+  severity: ERROR
+  languages:
+  - java
+  mode: join
+  join:
+    refs:
+    - rule: '/home/finechina/Project/sherlock/rules/taint-analysis/insecure-set-result/insecure-set-result-3.yaml'
+      as: insecure-set-result
+    - rule: '/home/finechina/Project/sherlock/rules/taint-analysis/implicit-intent/implicit-intent.yaml'
+      as: implicit-intent
+    - rule: '/home/finechina/Project/sherlock/rules/manifest-analysis/exported-activity.yaml'
+      as: exported-activity
+    on:
+    - implicit-intent.$CLASSNAME == insecure-set-result.$CLASSNAME
+    - exported-activity.$ACTIVITY > insecure-set-result.$CLASSNAME
+  message: |
+    Insecure communication which may lead to arbitrary access to protected content providers detected.
+- id: access-to-arbitrary-4
+  severity: ERROR
+  languages:
+  - java
+  mode: join
+  join:
+    refs:
+    - rule: '/home/finechina/Project/sherlock/rules/taint-analysis/insecure-set-result/insecure-set-result-4.yaml'
+      as: insecure-set-result
+    - rule: '/home/finechina/Project/sherlock/rules/taint-analysis/implicit-intent/implicit-intent.yaml'
+      as: implicit-intent
+    - rule: '/home/finechina/Project/sherlock/rules/manifest-analysis/exported-activity.yaml'
+      as: exported-activity
+    on:
+    - implicit-intent.$CLASSNAME == insecure-set-result.$CLASSNAME
+    - exported-activity.$ACTIVITY > insecure-set-result.$CLASSNAME
+  message: |
+    Insecure communication which may lead to arbitrary access to protected content providers detected.
+- id: access-to-arbitrary-5
+  severity: ERROR
+  languages:
+  - java
+  mode: join
+  join:
+    refs:
+    - rule: '/home/finechina/Project/sherlock/rules/taint-analysis/insecure-set-result/insecure-set-result-5.yaml'
+      as: insecure-set-result
+    - rule: '/home/finechina/Project/sherlock/rules/taint-analysis/implicit-intent/implicit-intent.yaml'
+      as: implicit-intent
+    - rule: '/home/finechina/Project/sherlock/rules/manifest-analysis/exported-activity.yaml'
+      as: exported-activity
+    on:
+    - implicit-intent.$CLASSNAME == insecure-set-result.$CLASSNAME
+    - exported-activity.$ACTIVITY > insecure-set-result.$CLASSNAME
+  message: |-
+    Insecure communication which may lead to arbitrary access to protected content providers detected.

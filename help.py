@@ -1,26 +1,19 @@
 from datetime import datetime
 from rich import box
 from rich.align import Align
-from rich.console import Group
+from rich.console import Console, Group
 from rich.layout import Layout
-from rich.live import Live
+from rich.padding import Padding
 from rich.panel import Panel
-from rich.progress import (
-    BarColumn, 
-    Progress, 
-    SpinnerColumn, 
-    TaskProgressColumn, 
-    TimeRemainingColumn
-)
 from rich.table import Table
-from time import sleep
 
-def make_layout() -> Layout:
+console = Console(height=30)
+
+def make_layout():
     layout = Layout(name="root")
     layout.split(
         Layout(name="header", size=3),
-        Layout(name="help", size=42),
-        Layout(name="footer")
+        Layout(name="help")
     )
     layout["help"].split_row(
         Layout(name="row_1", ratio=1),
@@ -47,7 +40,7 @@ def make_layout() -> Layout:
     return layout
 
 class Header:
-    def __rich__(self) -> Panel:
+    def __rich__(self):
         grid = Table.grid(expand=True)
         grid.add_column(justify="center", ratio=1)
         grid.add_column(justify="right")
@@ -57,15 +50,16 @@ class Header:
         )
         return Panel(grid, box=box.DOUBLE_EDGE, style="bright_white")
     
-def help_message(title, desc, cmd) -> Panel:
+def help_message(title, desc, cmd):
     message = Table.grid(padding=1)
-    message.add_column(style="bright_white", justify="right")
-    message.add_column(style="white")
+    message.add_column(style="bright_white", justify="right", ratio=10)
+    message.add_column(style="bright_white", justify="center", ratio=1)
+    message.add_column(style="white", ratio=10)
     message.add_row(
-        "Description:", desc
+        "Description", ":", desc
     )
     message.add_row(
-        "Usage:", cmd
+        "Usage", ":", cmd
     )
     message_panel = Panel(
         Align.center(
@@ -74,30 +68,12 @@ def help_message(title, desc, cmd) -> Panel:
         ),
         box=box.ROUNDED,
         title=f"[bold white]{title}",
-        border_style="white"
+        border_style="white",
+        padding=(0,4)
     )
     return message_panel
 
 def help():
-    job_progress = Progress(
-        "{task.description}",
-        SpinnerColumn(spinner_name="runner"),
-        BarColumn(),
-        TaskProgressColumn(),
-        TimeRemainingColumn()
-    )
-    job_progress.add_task("[bold yellow]Your time remaining", total=100)
-    job_progress.add_task("[bold red]Bonus hehe", total=100)
-    progress_table = Table.grid(expand=True)
-    progress_table.add_row(
-        Panel(
-            job_progress, 
-            title="[bold]You don't have much time[/]", 
-            border_style="red",
-            box=box.DOUBLE_EDGE,
-            padding=(1, 2)
-        )
-    )
     layout = make_layout()
     layout["header"].update(Header())
     layout["version"].update(help_message("Version", "Get version", "version"))
@@ -108,10 +84,6 @@ def help():
     layout["decompile"].update(help_message("Decompile", "Decompile target to workspace", "decompile <apk> <apk>.."))
     layout["exit"].update(help_message("Exit", "Exit terminal", "exit \[clean]"))
     layout["TBA"].update(help_message("TBA", "TBA", "TBA"))
-    layout["footer"].update(progress_table)
+    console.print(Padding(layout, (1, 2)))
 
-    with Live(layout, refresh_per_second=10, screen=True):
-        for job in job_progress.tasks:
-            while not job.finished:
-                job_progress.advance(job.id)
-                sleep(0.05)
+# help()

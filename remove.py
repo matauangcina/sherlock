@@ -5,11 +5,11 @@ from globals import (
     TARGET_PATH,
     INVALID_COMMAND
 )
-from logger import init_logger
+from logger import get_logger
 from rich.console import Console
 from time import sleep
 
-log = init_logger(__name__)
+log = get_logger(__name__)
 
 console = Console(log_path=False)
 
@@ -20,16 +20,16 @@ def remove_workspace(target):
         status.update("[bold blue] Locating workspace", spinner="earth")
         sleep(1)
         console.log("Getting workspace")
-        sleep(2)
+        sleep(1)
         if utils.is_path_exists(target):
             is_exist = True
             console.log("Workspace found")
             sleep(1)
-            status.update("[bold red] Cleaning up workspace", spinner="bouncingBall", spinner_style="yellow")
+            status.update(status="[bold red] Cleaning up workspace", spinner="bouncingBall", spinner_style="yellow")
             shutil.rmtree(target)
             sleep(1)
             console.log("Removing workspace")
-            sleep(2)
+            sleep(1)
         else:
             console.log(f"Workspace not found: {target}")
             sleep(0.5)
@@ -48,7 +48,7 @@ def remove_target(targets):
             status.update(status="[bold blue] Locating workspace", spinner="earth")
             sleep(1)
             console.log("Getting target workspace")
-            sleep(2)
+            sleep(1)
             if utils.is_path_exists(target):
                 is_exist_list.append(True)
                 console.log(f"Workspace found: {target}")
@@ -57,7 +57,7 @@ def remove_target(targets):
                 shutil.rmtree(target)
                 sleep(1)
                 console.log("Removing target workspace")
-                sleep(2)
+                sleep(1)
             else:
                 is_exist_list.append(False)
                 console.log(f"Workspace not found: {target}")

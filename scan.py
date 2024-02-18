@@ -2,9 +2,9 @@ import utils
 
 from engine import call_engine
 from globals import RULES_PATH
-from logger import init_logger
+from logger import get_logger
 
-log = init_logger(__name__)
+log = get_logger(__name__)
 
 def get_rules_path_by_action(action):
     match action:
@@ -21,6 +21,7 @@ def run_engine(target, action, fix=False):
     rules = get_rules_path_by_action(action)
     if rules != None and utils.is_path_exists(rules):
         findings = call_engine(target, rules, fix)
+        # print(findings)
         return get_summary(findings)
     else:
         log.error(f"Rules not found: {rules}")
@@ -43,14 +44,14 @@ def get_summary(findings):
             else:
                 rule_id += check_id[i] + "-"
         location = {
-            "component": finding["path"].split("/")[-1],
-            "position": {
+            "component": finding["path"],
+            "column": {
                 "start": finding["start"]["col"],
                 "end": finding["end"]["col"]
             },
             "line": {
-                "start": finding["start"]["col"],
-                "end": finding["end"]["col"]
+                "start": finding["start"]["line"],
+                "end": finding["end"]["line"]
             },
             "snippet": finding["extra"]["lines"]
         }
@@ -58,8 +59,8 @@ def get_summary(findings):
             dataflow = True
             trace = finding["extra"]["dataflow_trace"]
             taint_source = {
-                "component": trace["taint_source"][-1][0]["path"].split("/")[-1],
-                "position": {
+                "component": trace["taint_source"][-1][0]["path"],
+                "column": {
                     "start": trace["taint_source"][-1][0]["start"]["col"],
                     "end": trace["taint_source"][-1][0]["end"]["col"]
                 },
@@ -74,24 +75,30 @@ def get_summary(findings):
             })
         message = finding["extra"]["message"]
         severity = finding["extra"]["severity"]
+        rule = {
+            "rule_id": category,
+            "location": location
+        }
+        # metavars = finding["extra"]["metavars"]
+        # metadata = {
+        #     "class": metavars["$CLASSNAME"]["abstract_content"],
+        #     "result_code": metavars["$CODE"]["abstract_content"]
+        # }
+        if dataflow:
+            rule.update({
+                "source": taint_source
+            })
         if rule_id not in findings_summary:
             findings_summary[rule_id] = {
                 "message": message,
-                "severity": severity
+                "severity": severity,
+                "rules": [rule]
             }
-        if category not in findings_summary[rule_id]:
-            findings_summary[rule_id][category] = {
-                "locations": [location]
-            }
-            if dataflow:
-                findings_summary[rule_id][category].update({
-                    "sources": [taint_source]
-                })
         else:
-            findings_summary[rule_id][category]["locations"].append(location)
-            if dataflow:
-                findings_summary[rule_id][category]["sources"].append(taint_source)
+            findings_summary[rule_id]["rules"].append(rule)
     errors = findings["errors"]
     if errors:
         summary["errors"] = errors
     return summary
+
+# print(run_engine(["/home/finechina/Project/sherlock/target/base/sources/com/test/test"], "code"))

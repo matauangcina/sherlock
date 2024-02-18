@@ -5,9 +5,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
-/* JADX INFO: Access modifiers changed from: package-private */
 /* loaded from: classes.dex */
-public class StreamingAeadDecryptingChannel implements ReadableByteChannel {
+class StreamingAeadDecryptingChannel implements ReadableByteChannel {
     private static final int PLAINTEXT_SEGMENT_EXTRA_SIZE = 16;
     private final byte[] associatedData;
     private ReadableByteChannel ciphertextChannel;
