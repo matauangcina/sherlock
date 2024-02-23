@@ -1,10 +1,10 @@
 {
     "access-to-arbitrary-direct": {
-        "name": "Potential Access to Arbitrary Content Providers",
-        "path": "android/app/access-to-arbitrary/1",
+        "name": "android/app/access-to-arbitrary/1",
+        "category": "android",
         "type": "app",
         "status": "partial",
-        "description": "Access to arbitrary content providers.",
+        "description": "Potential Access to Arbitrary Content Providers",
         "rule_id": ["access-of-arbitrary-1", "access-of-arbitrary-2"],
         "author": [],
         "options": {
@@ -27,11 +27,11 @@
         }
     },
     "access-to-arbitrary-implicit": {
-        "name": "Potential Access to Arbitrary Content Providers via Implicit Intent Interception",
-        "path": "android/app/access-to-arbitrary/2",
+        "name": "android/app/access-to-arbitrary/2",
+        "category": "android",
         "type": "app",
         "status": "partial",
-        "description": "Access to arbitrary content providers via implicit intent interception.",
+        "description": "Potential Access to Arbitrary Content Providers via Implicit Intent Interception",
         "rule_id": ["access-of-arbitrary-3", "access-of-arbitrary-4", "access-of-arbitrary-5"],
         "author": [],
         "options": {
@@ -58,11 +58,11 @@
         }
     },
     "access-to-arbitrary-deeplink-direct": {
-        "name": "Potential Access to Arbitrary Content Providers via Deeplink",
-        "path": "android/app/access-to-arbitrary/3",
+        "name": "android/app/access-to-arbitrary/3",
+        "category": "android",
         "type": "app",
         "status": "partial",
-        "description": "Access to arbitrary content providers via deeplink.",
+        "description": "Potential Access to Arbitrary Content Providers via Deeplink",
         "rule_id": ["access-of-arbitrary-1", "access-of-arbitrary-2"],
         "author": [],
         "options": {
@@ -93,11 +93,11 @@
         }
     },
     "access-to-arbitrary-deeplink-implicit": {
-        "name": "Potential Access to Arbitrary Content Providers Deeplink and Implicit Intent Interception",
-        "path": "android/app/access-to-arbitrary/4",
+        "name": "android/app/access-to-arbitrary/4",
+        "category": "android",
         "type": "app",
         "status": "partial",
-        "description": "Access to arbitrary content providers via deeplink and implicit intent interception.",
+        "description": "Potential Access to Arbitrary Content Providers Deeplink and Implicit Intent Interception",
         "rule_id": ["access-of-arbitrary-3", "access-of-arbitrary-4", "access-of-arbitrary-5"],
         "author": [],
         "options": {
