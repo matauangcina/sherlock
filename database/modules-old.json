@@ -1,0 +1,134 @@
+{
+    "access-to-arbitrary-direct": {
+        "name": "android/app/access-to-arbitrary/1",
+        "category": "android",
+        "type": "app",
+        "status": "partial",
+        "description": "Potential Access to Arbitrary Content Providers",
+        "rule_id": ["access-of-arbitrary-1", "access-of-arbitrary-2"],
+        "author": [],
+        "options": {
+            "content_provider": {
+                "required": "YES",
+                "desc": "Target content provider uri"
+            },
+            "target_package": {
+                "required": "YES",
+                "desc": "Target package name"
+            },
+            "target_class": {
+                "required": "YES",
+                "desc": "Target class name"
+            },
+            "result_code": {
+                "required": "YES",
+                "desc": "Returned result code (default: -1)"
+            }
+        }
+    },
+    "access-to-arbitrary-implicit": {
+        "name": "android/app/access-to-arbitrary/2",
+        "category": "android",
+        "type": "app",
+        "status": "partial",
+        "description": "Potential Access to Arbitrary Content Providers via Implicit Intent Interception",
+        "rule_id": ["access-of-arbitrary-3", "access-of-arbitrary-4", "access-of-arbitrary-5"],
+        "author": [],
+        "options": {
+            "intercept_action": {
+                "required": "YES",
+                "desc": "Target package name"
+            },
+            "content_provider": {
+                "required": "YES",
+                "desc": "Target content provider uri"
+            },
+            "target_package": {
+                "required": "YES",
+                "desc": "Target package name"
+            },
+            "target_class": {
+                "required": "YES",
+                "desc": "Target class name"
+            },
+            "result_code": {
+                "required": "YES",
+                "desc": "Returned result code (default: -1)"
+            }
+        }
+    },
+    "access-to-arbitrary-deeplink-direct": {
+        "name": "android/app/access-to-arbitrary/3",
+        "category": "android",
+        "type": "app",
+        "status": "partial",
+        "description": "Potential Access to Arbitrary Content Providers via Deeplink",
+        "rule_id": ["access-of-arbitrary-1", "access-of-arbitrary-2"],
+        "author": [],
+        "options": {
+            "deeplink": {
+                "required": "YES",
+                "desc": "Deeplink scheme"
+            },
+            "intent_action": {
+                "required": "YES",
+                "desc": "Deeplink action"
+            },
+            "content_provider": {
+                "required": "YES",
+                "desc": "Target content provider uri"
+            },
+            "target_package": {
+                "required": "YES",
+                "desc": "Target package name"
+            },
+            "target_class": {
+                "required": "YES",
+                "desc": "Target class name"
+            },
+            "result_code": {
+                "required": "YES",
+                "desc": "Returned result code (default: -1)"
+            }
+        }
+    },
+    "access-to-arbitrary-deeplink-implicit": {
+        "name": "android/app/access-to-arbitrary/4",
+        "category": "android",
+        "type": "app",
+        "status": "partial",
+        "description": "Potential Access to Arbitrary Content Providers Deeplink and Implicit Intent Interception",
+        "rule_id": ["access-of-arbitrary-3", "access-of-arbitrary-4", "access-of-arbitrary-5"],
+        "author": [],
+        "options": {
+            "deeplink": {
+                "required": "YES",
+                "desc": "Deeplink scheme"
+            },
+            "intent_action": {
+                "required": "YES",
+                "desc": "Deeplink action"
+            },
+            "intercept_action": {
+                "required": "YES",
+                "desc": "Target package name"
+            },
+            "content_provider": {
+                "required": "YES",
+                "desc": "Target content provider uri"
+            },
+            "target_package": {
+                "required": "YES",
+                "desc": "Target package name"
+            },
+            "target_class": {
+                "required": "YES",
+                "desc": "Target class name"
+            },
+            "result_code": {
+                "required": "YES",
+                "desc": "Returned result code (default: -1)"
+            }
+        }
+    }
+}

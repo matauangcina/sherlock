@@ -22,7 +22,7 @@ def progress_bar(message, time=0.005, advance=1):
 
 def load_terminal(message, time=1, advance=50):
     print("")
-    desc = f"[bold cyan]\[*][/] {message}"
+    desc = f"[bold gold1]\[*][/] {message}"
     with Progress(
         "{task.description}", 
         SpinnerColumn(spinner_name="point", finished_text="...")

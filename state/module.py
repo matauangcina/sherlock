@@ -1,20 +1,29 @@
-class ModuleState(object):
+from settings.logger import get_logger
+from state.module_singleton import ModuleSingleton
+
+
+log = get_logger(__name__)
+
+
+class Module:
 
     def __init__(self):
-        self.category = None
-        self.module_name = None
+        self._filtered = None
+        self._datastore = ModuleSingleton()
 
-    def set_module_name(self, module_name):
-        self.module_name = module_name
-
-    def get_module_name(self):
-        return self.module_name
+    @property
+    def filtered(self):
+        return self._filtered
     
-    def set_category(self, category):
-        self.category = category
+    @filtered.setter
+    def filtered(self, filtered):
+        self._filtered = filtered
+
+    def get(self, key):
+        return self._datastore.get_module(key)
     
-    def get_category(self):
-        return self.category
+    def store(self, key, value):
+        self._datastore.store_module(key, value)
 
 
-module_state = ModuleState()
+module_state = Module()

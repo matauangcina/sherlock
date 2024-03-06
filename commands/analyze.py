@@ -1,10 +1,10 @@
 import os
 import settings.utils as utils
 
-from globals import TARGET_PATH
 from output.analyze import display_scan_result
 from settings.logger import get_logger
 from settings.scan import run_engine
+from settings.target_info import get_target_db, get_app_details
 
 
 log = get_logger(__name__)
@@ -30,19 +30,37 @@ def write_output(args, summary):
     log.info(f"Scan summary wrote to: {dest}\n")
 
 
-def get_targets(args):
-    target_ids = os.listdir(TARGET_PATH)
+def get_target_paths(args):
+    targets = get_target_db()
+    if targets is None:
+        log.error("Target file not found.")
+        return
+    ids = list(targets)
     if is_target_specified(args):
-        specified_targets = args[args.index("--target") + 1].split(",")
-        target_ids = [target for target in specified_targets]
-    targets = list()
-    for target_id in target_ids:
-        target_path = utils.get_target_path_by_id(target_id)
+        specified = args[args.index("--target") + 1].split(",")
+        valid_ids = list()
+        for id in specified:
+            target_id = id
+            if id.isdigit():
+                target_id = int(id)
+                if target_id < 1 or target_id > len(ids):
+                    log.error("Invalid target index.")
+                    return
+                valid_ids.append(ids[target_id - 1])
+            else:
+                if target_id in ids:
+                    valid_ids.append(target_id)
+        ids = valid_ids
+    if len(ids) == 0:
+        return None
+    paths = list()
+    for id in ids:
+        target_path = targets[id]["path"]
         if target_path is not None:
-            targets.append(target_path)
+            paths.append(target_path)
             continue
-        log.warning(f"Target invalid, skipping: {target_id}.")
-    return targets
+        log.warning(f"Target invalid, skipping: {id}.")
+    return paths
 
 
 def get_manifests(targets):
@@ -76,7 +94,7 @@ def get_scan_summary(target_paths, rules, target_ids):
         manifest = os.path.join(path, "AndroidManifest.xml")
         if "AndroidManifest.xml" in path:
             manifest = path
-        package = utils.get_app_details(manifest)["package"]
+        package = get_app_details(manifest)["package"]
         id = target_ids[i].split("/")[-1]
         if id not in target_summary:
             target_summary[id] = {
@@ -94,19 +112,18 @@ def get_scan_summary(target_paths, rules, target_ids):
 
 
 def manifest(args=None):
-    print("")
-    if not utils.is_path_exists(TARGET_PATH):
-        log.error("Workspace is empty. Please decompile target apps to workspace.\n")
+    targets = get_target_paths(args)
+    if targets is None:
+        log.error("No targets found.")
         return
-    targets = get_targets(args)
     manifests = get_manifests(targets)
     if len(manifests) == 0:
-        log.error("No manifest files can be found. Terminating..\n")
+        log.error("No manifest files can be found.")
         return
     log.debug("Initiating engine..")
     summary = get_scan_summary(manifests, ["manifest"], targets)
     if summary is None:
-        log.info("No vulnerabilities discovered!\n")
+        log.info("No vulnerabilities discovered!")
         return
     log.info("Scan completed.")
     if should_write_output(args):
@@ -117,19 +134,18 @@ def manifest(args=None):
 
 
 def codebase(args=None):
-    print("")
-    if not utils.is_path_exists(TARGET_PATH):
-        log.error("Workspace is empty. Please decompile target apps to workspace.\n")
+    targets = get_target_paths(args)
+    if targets is None:
+        log.error("No targets found.")
         return
-    targets = get_targets(args)
     codebases = get_codebases(targets)
     if len(codebases) == 0:
-        log.error("No target codebase can be found. Terminating..\n")
+        log.error("No target codebase can be found.")
         return
     log.debug("Initiating engine..")
     summary = get_scan_summary(codebases, ["code"], targets)
     if summary is None:
-        log.info("No vulnerabilities discovered!\n")
+        log.info("No vulnerabilities discovered!")
         return
     log.info("Scan completed.")
     if should_write_output(args):
@@ -140,19 +156,18 @@ def codebase(args=None):
 
 
 def all(args=None):
-    print("")
-    if not utils.is_path_exists(TARGET_PATH):
-        log.error("Workspace is empty. Please decompile target apps to workspace.\n")
+    targets = get_target_paths(args)
+    if targets is None:
+        log.error("No targets found.")
         return
-    targets = get_targets(args)
     codebases = get_codebases(targets)
     if len(codebases) == 0:
-        log.error("No target codebase can be found. Terminating..\n")
+        log.error("No target codebase can be found.")
         return
     log.debug("Initiating engine..")
     summary = get_scan_summary(codebases, ["manifest", "code"], targets)
     if summary is None:
-        log.info("No vulnerabilities discovered!\n")
+        log.info("No vulnerabilities discovered!")
         return
     log.info("Scan completed.")
     if should_write_output(args):

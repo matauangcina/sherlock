@@ -1,12 +1,11 @@
-import collections
 import json
 import os
 
 from database.commands import COMMANDS
 from datetime import datetime
-from globals import banner, INVALID_CMD
+from globals import INVALID_CMD
+from output.banner import display_banner
 from output.help import display_help_panel
-from output.progress import load_terminal
 from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion import Completer, Completion, CompleteEvent, FuzzyCompleter
@@ -22,16 +21,16 @@ from state.module import module_state
 log = get_logger(__name__)
 
 
-class CommandCompleter(Completer):
+class PromptCompleter(Completer):
 
     def __init__(self):
-        super(CommandCompleter, self).__init__()
-        self.commands = COMMANDS
+        super().__init__()
+        self._commands = COMMANDS
 
     def get_suggestions(self, document: Document):
         cmds = [cmd for cmd in get_commands(document.text) if not cmd.startswith('--')]
         flags = [flag for flag in get_commands(document.text) if flag.startswith('--')]
-        current = self.commands
+        current = self._commands
         for cmd in cmds:
             candidate = cmd.lower()
             if candidate in list(current.keys()):
@@ -42,8 +41,8 @@ class CommandCompleter(Completer):
                         flag: "" for flag in current[candidate]["flags"] if flag not in flags
                     }
                 else:
-                    return {}
-        suggestions = {}
+                    return dict()
+        suggestions = dict()
         if current and len(current) > 0:
             for key,_ in current.items():
                 if document.get_word_before_cursor().lower() in key.lower():
@@ -55,8 +54,8 @@ class CommandCompleter(Completer):
         commands = self.get_suggestions(document)
         if len(commands) == 0:
             return
-        sorted_commands = collections.OrderedDict(sorted(commands.items()))
-        for cmd,extra in sorted_commands.items():
+        sort_cmds = dict(sorted(commands.items()))
+        for cmd,extra in sort_cmds.items():
             if type(extra) is dict and "desc" in extra:
                 desc = extra["desc"]
             else:
@@ -64,63 +63,62 @@ class CommandCompleter(Completer):
             yield Completion(cmd, -(len(word)), display_meta=desc)
 
 
-class SherlockPrompt(object):
+class Prompt:
 
     def __init__(self):
-        self.cli = None
-        self.completer = FuzzyCompleter(CommandCompleter())
-        self.commands = COMMANDS
-        self.session = self.get_prompt_session()
+        self._cli = None
+        self._completer = FuzzyCompleter(PromptCompleter())
+        self._commands = COMMANDS
+        self._session = self.prompt_session()
 
-    def get_prompt_session(self):
+    def prompt_session(self):
         return PromptSession(
             history=FileHistory(os.path.expanduser("~/.sherlock/sherlock_history")),
-            completer=self.completer,
-            style=self.get_prompt_style(),
+            completer=self._completer,
+            style=self.prompt_style(),
             auto_suggest=AutoSuggestFromHistory(),
             reserve_space_for_menu=4,
             complete_in_thread=True
         )
 
     @staticmethod
-    def get_prompt_style():
+    def prompt_style():
         return Style.from_dict({
             "completion-menu.completion": "bg:#af8700 #ffffff",
             "completion-menu.completion.current": "bg:#d7af00 #000000",
             "scrollbar.background": "bg:#d7af87",
             "scrollbar.button": "bg:#222222",
             "completion-menu.completion fuzzymatch.outside": "fg:#000000",
-            "timestamp": "#007cff",
-            "device_id": "#00ff00",
-            "app_abbr": "bold underline",
-            "category": "#ffffff",
-            "module_name": "#ff0000",
-            "start_prompt": "#ffffff"
+            "timestamp": "#e95420",
+            "device_id": "#c061cb",
+            "name_prompt_open": "#5e5c64",
+            "name": "#33c7de",
+            "name_prompt_close": "#5e5c64",
+            "start_prompt": "#ffffff",
         })
 
     @staticmethod
-    def get_prompt_message():
+    def prompt_message():
         timestamp = datetime.now().strftime("%a, %Y-%m-%d %H:%M:%S")
-        device_id = device_state.get_device_id()
-        category = module_state.get_category()
-        module_name = module_state.get_module_name()
-        app_abbr = "shk"
+        device_id = device_state.device_id
+        name = module_state.get("name")
         time_prompt = f"({timestamp})"
-        device_id_prompt = f"(Connected: {device_id})\n" if device_id is not None else "\n"
-        category_prompt = f" {category}(" if category is not None else ""
-        module_name_prompt = f"{module_name}" if module_name is not None else ""
-        start_prompt = ") > " if module_name is not None else " > "
+        device_id_prompt = f"(Device: {device_id})" if device_id is not None else ""
+        name_prompt_open = f":["
+        name_prompt = f"{name}" if name is not None else "~"
+        name_prompt_close = "]\n"
+        start_prompt = "↳ "
         return [
             ("class:timestamp", time_prompt),
             ("class:device_id", device_id_prompt),
-            ("class:app_abbr", app_abbr),
-            ("class:category", category_prompt),
-            ("class:module_name", module_name_prompt),
+            ("class:name_prompt_open", name_prompt_open),
+            ("class:name", name_prompt),
+            ("class:name_prompt_close", name_prompt_close),
             ("class:start_prompt", start_prompt)
         ]
     
     def get_help(self, args):
-        cmds = self.commands
+        cmds = self._commands
         help_id = []
         help_message = dict()
         for arg in args:
@@ -131,7 +129,7 @@ class SherlockPrompt(object):
             else:
                 break
         if len(help_id) > 0:
-            id = "-".join(help_id)
+            id = "_".join(help_id)
             with open("database/help.json", "r") as file:
                 help = json.load(file)
             help_message = {
@@ -143,15 +141,15 @@ class SherlockPrompt(object):
         return help_message
     
     def get_execute_method(self, args):
-        cmds = self.commands
+        cmds = self._commands
         exec_method = None
         step = 0
         for arg in args:
             step += 1
             if arg in cmds:
                 if "cmds" not in cmds[arg]:
-                    if "execute" in cmds[arg]:
-                        exec_method = cmds[arg]["execute"]
+                    if "exec" in cmds[arg]:
+                        exec_method = cmds[arg]["exec"]
                         break
                 else:
                     cmds = cmds[arg]["cmds"]
@@ -170,26 +168,23 @@ class SherlockPrompt(object):
             cmds.remove("help")
             help_summary = self.get_help(cmds)
             if len(help_summary) == 0:
-                print("")
-                log.error(f"{INVALID_CMD}\n")
+                log.error(INVALID_CMD)
                 return
             display_help_panel(help_summary)
             return
         step = self.get_execute_method(cmds)["step"]
         exec_method = self.get_execute_method(cmds)["exec"]
         if exec_method is None:
-            print("")
-            log.error(f"{INVALID_CMD}\n")
+            log.error(INVALID_CMD)
             return
         args = cmds[step:]
         exec_method(args)
 
-    def run(self):
-        load_terminal("Starting console", 1)
-        print(banner)
+    def init(self):
+        display_banner()
         while True:
             try:
-                cmd = self.session.prompt(self.get_prompt_message())
+                cmd = self._session.prompt(self.prompt_message())
                 if (cmd.strip() in ["exit"]):
                     print("")
                     log.info("Thankyou for using Sherlock.\n")
@@ -206,4 +201,4 @@ class SherlockPrompt(object):
                 break
 
 
-prompt = SherlockPrompt()
+prompt = Prompt()

@@ -1,30 +1,42 @@
 from commands import analyze
+from commands import clear
 from commands import decompile
-from commands import get
+from commands import execute
+from commands import set
+from commands import show
 from commands import remove
 from commands import search
 from commands import use
 
+
 COMMANDS = {
-    "get": {
+    "show": {
         "desc": "Work with the 'get' command",
         "cmds": {
             "device": {
-                "desc": "Get connected device(s)",
+                "desc": "Show connected device(s)",
                 "cmds": {
                     "info": {
                         "desc": "Get connected device(s) info",
-                        "execute": get.device_info
+                        "exec": show.device_info
                     }
                 }
             },
             "target": {
-                "desc": "Get target app(s) from workspace",
+                "desc": "Show target app(s) from workspace",
                 "cmds": {
                     "info": {
-                        "desc": "Get information from target app(s) in workspace",
-                        "flags": ["--target"],
-                        "execute": get.target_info
+                        "desc": "Show information from target app(s) in workspace",
+                        "exec": show.target_info
+                    }
+                }
+            },
+            "module": {
+                "desc": "Show selected exploit module",
+                "cmds": {
+                    "options": {
+                        "desc": "Show options for selected exploit module",
+                        "exec": show.module_options
                     }
                 }
             }
@@ -32,13 +44,8 @@ COMMANDS = {
     },
     "decompile": {
         "desc": "Work with the 'decompile' command",
-        "cmds": {
-            "apk": {
-                "desc": "Decompile target apk(s) to workspace",
-                "flags": ["--quiet"],
-                "execute": decompile.apk
-            }
-        }
+        "flags": ["--quiet", "--output"],
+        "exec": decompile.decompile
     },
     "analyze": {
         "desc": "Work with the 'analyze' command",
@@ -49,17 +56,17 @@ COMMANDS = {
                     "manifest": {
                         "desc": "Analyze manifest",
                         "flags": ["--target", "--output", "--json"],
-                        "execute": analyze.manifest
+                        "exec": analyze.manifest
                     },
                     "code": {
                         "desc": "Analyze codebase",
                         "flags": ["--target", "--output", "--json"],
-                        "execute": analyze.codebase
+                        "exec": analyze.codebase
                     },
                     "all": {
                         "desc": "Analyze both manifest and codebase",
                         "flags": ["--target", "--output", "--json"],
-                        "execute": analyze.all
+                        "exec": analyze.all
                     }
                 }
             }
@@ -70,11 +77,11 @@ COMMANDS = {
         "cmds": {
             "device": {
                 "desc": "Use a device connected to host",
-                "execute": use.device
+                "exec": use.device
             },
             "module": {
                 "desc": "Use an exploit module",
-                "execute": use.module
+                "exec": use.module
             }
         }
     },
@@ -84,7 +91,7 @@ COMMANDS = {
             "target": {
                 "desc": "Remove target from workspace",
                 "flags": ["--target"],
-                "execute": remove.target
+                "exec": remove.target
             }
         }
     },
@@ -93,9 +100,21 @@ COMMANDS = {
         "cmds": {
             "module": {
                 "desc": "Search exploit module",
-                "execute": search.module
+                "exec": search.module
             }
         }
+    },
+    "set": {
+        "desc": "Set options value for selected exploit module",
+        "exec": set.option_value
+    },
+    "execute": {
+        "desc": "Execute an exploit module",
+        "exec": execute.module
+    },
+    "clear": {
+        "desc": "Clear terminal",
+        "exec": clear.prompt
     },
     "exit": {
         "desc": "Exit terminal"

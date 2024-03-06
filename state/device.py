@@ -1,13 +1,15 @@
-class DeviceConnectionState(object):
-    
+class DeviceState:
+
     def __init__(self):
-        self.device_id = None
+        self._device_id = None
 
-    def set_device_id(self, device_id):
-        self.device_id = device_id
+    @property
+    def device_id(self):
+        return self._device_id
+    
+    @device_id.setter
+    def device_id(self, id):
+        self._device_id = id
 
-    def get_device_id(self):
-        return self.device_id
 
-
-device_state = DeviceConnectionState()
+device_state = DeviceState()

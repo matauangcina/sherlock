@@ -1,17 +1,18 @@
 import os
 import ruamel.yaml
 import shutil
+import settings.utils as utils
+import sys
 
-from globals import TARGET_PATH, RULE_PATH
+from globals import RULE_PATH, MODULE_PATH
 from ruamel.yaml import YAML
-
-from settings.utils import get_manifest_file, get_codebase_path
 from settings.scan import run_engine
+
 
 def init_config():
     code_rules_path = RULE_PATH + "/code-analysis"
     for rule in os.listdir(code_rules_path):
-        rule_path = code_rules_path + "/" + rule
+        rule_path = os.path.join(code_rules_path, rule)
         yaml = YAML()
         with open(rule_path, "r") as file:
             yaml_data = yaml.load(file)
@@ -24,13 +25,23 @@ def init_config():
             yaml.dump(yaml_data, file)
 
 
-def post_decompile():
-    target_ids = os.listdir(TARGET_PATH)
+def post_decompile(db):
+    target_ids = list(db)
     codebases = list()
     for id in target_ids:
-        target_path = os.path.join(TARGET_PATH, id)
-        manifest = get_manifest_file(target_path)
-        codebase = get_codebase_path(target_path)
-        codebases.append(codebase)
+        path = db[id]["path"]
+        manifest = utils.get_manifest_file(path)
+        codebase = utils.get_codebase_path(path)
         shutil.copy(manifest, codebase)
+        codebases.append(codebase)
     _ = run_engine(codebases, "mod", True)
+
+
+def extend_search_path(module_name):
+    module_dirname = os.path.dirname(module_name)
+    module_location = [os.path.join(MODULE_PATH, module_dirname)]
+    sys.path.extend(module_location)
+
+
+def reset():
+    pass

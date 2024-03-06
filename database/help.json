@@ -1,62 +1,80 @@
 {
-    "get-device-info": {
-        "command": "get device info",
-        "description": "Get information from connected devices.",
-        "usage": "get device info",
-        "demo": "get device info"
+    "show_device_info": {
+        "command": "show device info",
+        "description": "Show information from connected devices.",
+        "usage": "show device info",
+        "demo": "show device info"
     },
-    "get-target-info": {
-        "command": "get target info",
-        "description": "Get information from target app by target id in application's workspace.",
-        "usage": "get target info (optional: --target <target_id>,<target_id>,..)",
-        "demo": "• get target info\n- get target info --target injuredandroid\n• get targeet info --target test,base"
+    "show_target_info": {
+        "command": "show target info",
+        "description": "Show information from target app by target id in application's workspace.",
+        "usage": "show target info (optional: --target <target_id>,<target_id>,..)",
+        "demo": "• show target info\n• show target info --target injuredandroid\n• show target info --target test,base"
     },
-    "decompile-apk": {
-        "command": "decompile apk",
+    "show_module_options": {
+        "command": "show module options",
+        "description": "Show options for selected exploit module.",
+        "usage": "show module options",
+        "demo": "show module options"
+    },
+    "decompile": {
+        "command": "decompile",
         "description": "Decompile target apk to workspace.",
-        "usage": "decompile apk <path_to_apk> <path_to_apk>.. (optional: --quiet)",
-        "demo": "• decompile apk /home/user/path/to/target.apk\n• decompile /home/user/path/to/target.apk --quiet"
+        "usage": "decompile <path_to_apk> <path_to_apk>.. (optional: --quiet)",
+        "demo": "• decompile /home/user/path/to/target.apk\n• decompile /home/user/path/to/target.apk --quiet"
     },
-    "analyze-target-manifest": {
+    "analyze_target_manifest": {
         "command": "analyze target manifest",
         "description": "Analyze target manifest from workspace.",
         "usage": "analyze target manifest (optional: --target <target_id>,<target_id>,.. --json --output <filename>)",
         "demo": "• analyze target manifest\n• analyze target manifest --target base\n• analyze target manifest --target injuredandroid --json\n• analyze target manifest --target insecureshop --json --output insecureshop.json"
     },
-    "analyze-target-code": {
+    "analyze_target_code": {
         "command": "analyze target code",
         "description": "Analyze target codebase from workspace.",
         "usage": "analyze target code (optional: --target <target_id>,<target_id>,.. --json --output <filename>)",
         "demo": "• analyze target code\n• analyze target code --target base\n• analyze target code --target injuredandroid --json\n• analyze target code --target insecureshop --json --output insecureshop.json"
     },
-    "analyze-target-all": {
+    "analyze_target_all": {
         "command": "analyze target all",
         "description": "Analyze target's both manifest and codebase from workspace.",
         "usage": "analyze target all (optional: --target <target_id>,<target_id>,.. --json --output <filename>)",
         "demo": "• analyze target all\n• analyze target all --target base\n• analyze target all --target injuredandroid --json\n• analyze target all --target insecureshop --json --output insecureshop.json"
     },
-    "use-device": {
+    "use_device": {
         "command": "use device",
         "description": "Use a device connected to host.",
         "usage": "use device <device_id>",
         "demo": "use device emulator-554"
     },
-    "use-module": {
+    "use_module": {
         "command": "use module",
         "description": "Use an exploit module.",
         "usage": "use module <module_name>",
         "demo": "use module android/app/access-to-arbitrary/1"
     },
-    "remove-target": {
+    "remove_target": {
         "command": "remove target",
         "description": "Remove target from workspace.",
         "usage": "remove target (optional: --target <target_id>,<target_id>,..)",
         "demo": "• remove target\n• remove target --target injuredandroid"
     },
-    "search-module": {
+    "search_module": {
         "command": "search module",
         "description": "Search for exploit modules.",
         "usage": "search module <keyword>",
         "demo": "• search module *\n• search module android"
+    },
+    "set": {
+        "command": "set",
+        "description": "Set option value for selected exploit module.",
+        "usage": "set <option> <value>",
+        "demo": "set TARGET_PACKAGE com.test.test"
+    },
+    "execute": {
+        "command": "execute",
+        "description": "Execute an exploit module.",
+        "usage": "execute",
+        "demo": "execute"
     }
 }

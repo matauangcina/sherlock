@@ -3,7 +3,7 @@ import logging
 from rich.logging import RichHandler
 
 
-class SherlockLogHandler(RichHandler):
+class LogHandler(RichHandler):
     def get_level_text(self, record):
         level_icon = {
             logging.DEBUG: "\[*]",
@@ -13,9 +13,9 @@ class SherlockLogHandler(RichHandler):
             logging.CRITICAL: "\[x]"
         }
         level_color = {
-            logging.DEBUG: "[bold gold1]",
+            logging.DEBUG: "[bold bright_magenta]",
             logging.INFO: "[bold bright_green]",
-            logging.WARNING: "[bold bright_yellow]",
+            logging.WARNING: "[bold gold1]",
             logging.ERROR: "[bold bright_red]",
             logging.CRITICAL: "[bold white on red]"
         }
@@ -27,6 +27,6 @@ class SherlockLogHandler(RichHandler):
 def get_logger(module):
     logger = logging.getLogger(module)
     logger.setLevel(logging.DEBUG)
-    handler = SherlockLogHandler(show_time=False, show_level=True, show_path=False)
+    handler = LogHandler(show_time=False, show_level=True, show_path=False)
     logger.addHandler(handler)
     return logger                
