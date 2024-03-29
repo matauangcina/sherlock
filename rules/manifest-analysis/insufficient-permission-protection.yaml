@@ -1,0 +1,10 @@
+rules:
+  - id: insufficient-permission-protection-manifest
+    patterns:
+      - pattern: <permission ... android:name="$PERM" ... />
+      - pattern-not: <permission ... android:name="$PERM" ... android:protectionLevel="signature" ... />
+      - focus-metavariable: $PERM
+    message: Insufficient permission protection level detected.
+    languages:
+      - xml
+    severity: WARNING

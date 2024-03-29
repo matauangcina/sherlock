@@ -1,19 +1,27 @@
 rules:
   - id: exported-activity-manifest
     patterns:
-      - pattern-not: |
-          <activity ... android:exported="false" ... />
+      - pattern-not: <activity ... android:exported="false" ... />
       - pattern-either:
-          - pattern: |
-              <activity ... android:name="$ACTIVITY" ... android:exported="true" ... />
-          - pattern: |
-              <activity ... android:name="$ACTIVITY" ... > ...
-              <intent-filter ...>
-              ...
-              </intent-filter>
-              </activity>
+        - pattern: <activity ... android:name="$ACTIVITY" ... android:exported="true" ... />
+        - pattern: |
+            <activity ... android:name="$ACTIVITY" ... >
+            <intent-filter ...>
+            ...
+            </intent-filter>
+            </activity>
+        - pattern: |
+            <activity ... android:name="$ACTIVITY" ... android:exported="true" ...>
+            <intent-filter ...>
+            ...
+            </intent-filter>
+            </activity>
       - focus-metavariable: $ACTIVITY
-    message: $ACTIVITY
+    message: Exported activity detected.
     languages:
       - xml
     severity: INFO
+    metadata:
+      cwe: cwe-285, cwe-926
+      score: 1.8 / Low
+      cvss: CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:A/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N

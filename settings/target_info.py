@@ -59,6 +59,7 @@ def get_app_components(manifest):
         "recv": list(),
         "serv": list()
     }
+    # fix this
     activities = dom.getElementsByTagName("activity")
     for activity in activities:
         name = activity.getAttribute(f"{ns}:name")

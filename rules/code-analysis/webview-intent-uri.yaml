@@ -1,0 +1,45 @@
+rules:
+- id: webview-intent-uri-basic
+  severity: ERROR
+  languages:
+  - java
+  mode: join
+  join:
+    refs:
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/webview-intent-uri/webview-intent-uri.yaml'
+      as: intent-uri
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/unprotected-webview/unprotected-webview-basic.yaml'
+      as: unprotected-webview
+    - rule: '/home/finechina/Project/sherlock-test/rules/manifest-analysis/exported-activity.yaml'
+      as: exported-activity
+    on:
+    - intent-uri.$WV == unprotected-webview.$WV
+    - exported-activity.$ACTIVITY > unprotected-webview.$CLASSNAME
+  message: |
+    Access to arbitrary protected components on an exported activity via WebView Intent URI scheme detected.
+  metadata:
+    cwe: cwe-285, cwe-926, cwe-940
+    score: 7.1 / High
+    cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
+- id: webview-intent-uri-implicit
+  severity: ERROR
+  languages:
+  - java
+  mode: join
+  join:
+    refs:
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/webview-intent-uri/webview-intent-uri.yaml'
+      as: intent-uri
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/unprotected-webview/unprotected-webview-implicit.yaml'
+      as: unprotected-webview
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/implicit-intent/implicit-intent.yaml'
+      as: implicit-intent
+    on:
+    - intent-uri.$WV == unprotected-webview.$WV
+    - implicit-intent.$CLASSNAME == unprotected-webview.$CLASSNAME
+  message: |
+    Access to arbitrary protected components via WebView Intent URI scheme and implicit intent interception detected.
+  metadata:
+    cwe: cwe-285, cwe-926, cwe-940
+    score: 7.1 / High
+    cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N

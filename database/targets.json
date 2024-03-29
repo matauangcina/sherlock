@@ -1,31 +1,15 @@
 {
-    "insecureshop": {
-        "app_name": "InsecureShop",
-        "path": "/home/finechina/Labs/android/workspace/insecureshop",
-        "package": "com.insecureshop",
-        "version": "1.0",
-        "min_sdk": "16",
-        "target_sdk": "29"
-    },
     "ovaa": {
         "app_name": "Oversecured Vulnerable Android App",
-        "path": "/home/finechina/Labs/android/ovaa/ovaa",
+        "path": "/home/finechina/Labs/android/workspace/ovaa",
         "package": "oversecured.ovaa",
         "version": "1.0",
         "min_sdk": "28",
         "target_sdk": "33"
     },
-    "injuredandroid": {
-        "app_name": "InjuredAndroid",
-        "path": "/home/finechina/Labs/android/workspace/injuredandroid",
-        "package": "b3nac.injuredandroid",
-        "version": "1.0.9",
-        "min_sdk": "21",
-        "target_sdk": "29"
-    },
-    "sherlocktest": {
+    "sherlock": {
         "app_name": "SherlockTest",
-        "path": "/home/finechina/Labs/android/workspace/sherlocktest",
+        "path": "/home/finechina/Labs/android/workspace/sherlock",
         "package": "sherlock.test",
         "version": "1.0",
         "min_sdk": "28",

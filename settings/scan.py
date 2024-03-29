@@ -1,5 +1,4 @@
 import json
-import sys
 import settings.utils as utils
 
 from globals import RULE_PATH
@@ -35,7 +34,7 @@ def run_engine(target, action, fix=False):
             return None
         return format_scan(findings)
     else:
-        log.error(f"Rules not found: {rules}")
+        log.error(f"Rules not found: {rules}\n")
         return None
     
 
@@ -115,8 +114,10 @@ def format_scan(findings):
             })
         message = finding["extra"]["message"]
         severity = finding["extra"]["severity"]
+        metadata = finding["extra"]["metadata"]
         rule = {
             "rule_id": rule_id,
+            "message": message,
             "location": location
         }
         if dataflow:
@@ -125,8 +126,8 @@ def format_scan(findings):
             })
         if category not in findings_summary:
             findings_summary[category] = {
-                "message": message,
                 "severity": severity,
+                "metadata": metadata,
                 "rules": [rule]
             }
         else:

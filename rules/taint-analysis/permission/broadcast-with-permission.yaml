@@ -1,0 +1,21 @@
+rules:
+  - id: broadcast-with-permission
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern: $VAR = "$PERM";
+        - metavariable-regex:
+            metavariable: $PERM
+            regex: ^\w+\.\w+\.\w+$
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    pattern-sinks:
+      - patterns:
+        - pattern-either:
+          - pattern: sendBroadcast($INTENT, $PERM)
+          - pattern: sendOrderedBroadcast($INTENT, $PERM, ...)
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+        - focus-metavariable: $PERM
+    message: $PERM
+    languages:
+      - java
+    severity: INFO

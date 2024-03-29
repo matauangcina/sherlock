@@ -6,7 +6,7 @@ from rich.progress import TimeRemainingColumn
 from time import sleep
 
 
-def progress_bar(message, time=0.005, advance=1):
+def progress_bar(message, time=0.002, advance=1):
     with Progress(
         "{task.description}", 
         SpinnerColumn(spinner_name="circleHalves"), 

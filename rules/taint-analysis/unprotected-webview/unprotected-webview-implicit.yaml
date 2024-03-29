@@ -1,0 +1,39 @@
+rules:
+  - id: unprotected-webview-implicit
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern: $SRC
+        - pattern-either:
+          - patterns:
+            - pattern-either:
+              - pattern: $SRC.getStringExtra(...)
+              - pattern: $SRC.getDataString()
+            - pattern: $ACC onActivityResult(..., Intent $SRC) {...}
+          - patterns:
+            - pattern-either:
+              - pattern: $SRC.getData()
+              - pattern: $SRC.getData().getStringExtra(...)
+              - pattern: $SRC.getData().getDataString()
+            - pattern-either:
+              - pattern: ActivityResultLauncher<Intent> $LAUNCHER = registerForActivityResult(..., $SRC -> {...});
+              - pattern: $ACC $METHOD(ActivityResult $SRC) {...}
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    pattern-sanitizers:
+      - patterns:
+        - pattern: if ($COND) {...}
+        - metavariable-regex:
+            metavariable: $COND
+            regex: ^.*(((\w+|"\w+")|Arrays\.asList\(.+\))\.(contains|equals|binarySearch)\(("\w+"|\w+))\)|(\w+\s?(==|!=)\s?("\w+"|(?!((Activity\.)*RESULT_(OK|FIRST_USER|CANCELLED)|(.*(code|Code|CODE))))[a-zA-Z]+)).*$
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    pattern-sinks:
+      - patterns:
+        - pattern: $WV.loadUrl($URL, ...);
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+        - focus-metavariable: $URL
+    message: $CLASSNAME
+    languages:
+      - java
+    severity: ERROR
+
+# DONE

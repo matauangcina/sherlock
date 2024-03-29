@@ -168,7 +168,7 @@ class Prompt:
             cmds.remove("help")
             help_summary = self.get_help(cmds)
             if len(help_summary) == 0:
-                log.error(INVALID_CMD)
+                log.error(f"{INVALID_CMD}\n")
                 return
             display_help_panel(help_summary)
             return
@@ -186,7 +186,6 @@ class Prompt:
             try:
                 cmd = self._session.prompt(self.prompt_message())
                 if (cmd.strip() in ["exit"]):
-                    print("")
                     log.info("Thankyou for using Sherlock.\n")
                     break
                 try:
@@ -196,7 +195,6 @@ class Prompt:
             except KeyboardInterrupt:
                 pass
             except EOFError:
-                print("")
                 log.info("Thankyou for using Sherlock.\n")
                 break
 

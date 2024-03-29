@@ -1,8 +1,8 @@
 rules:
   - id: set-classname
-    message: Format setClassName
-    pattern: $INTENT.setClassName("$PACKAGE", "$CLASSNAME");
-    fix: $INTENT = $INTENT.setClassName("$PACKAGE", "$CLASSNAME");
+    message: setClassName
+    pattern: $INTENT.setClassName($PACKAGE, $CLASSNAME);
+    fix: $INTENT = $INTENT.setClassName($PACKAGE, $CLASSNAME);
     languages:
       - java
-    severity: WARNING
+    severity: INFO

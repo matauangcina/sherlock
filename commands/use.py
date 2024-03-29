@@ -2,7 +2,6 @@ import os
 import settings.utils as utils
 
 from globals import MODULE_PATH
-from settings.config import extend_search_path
 from settings.logger import get_logger
 from settings.device_info import get_connected_devices
 from settings.modules_info import store_module_info
@@ -37,18 +36,19 @@ def module(args):
     use_module = args[0]
     if use_module.isdigit():
         use_module = int(use_module)
+        if search is None:
+            log.error("Selecting module with index can only be done after listing the modules. List modules with: 'search module <keyword>'")
+            return
         if use_module < 1 or use_module > len(search):
             log.error("Invalid module index.")
             return
         use_module = search[use_module - 1]["name"]
-    extend_search_path(use_module)
     module_path = os.path.join(MODULE_PATH, use_module + ".py")
     if utils.is_path_exists(module_path):
         store_module_info(use_module)
         module_name = os.path.basename(use_module)
-        exploit_module = __import__(module_name)
-        exploit_instance = getattr(exploit_module, "SherlockModule")()
-        exploit_instance.register_options()
+        module = utils.import_module(os.path.dirname(module_path), module_name)
+        module.SherlockModule().register_options()
         log.info(f"Module: '{use_module}'")
     else:
         log.error("Selected module does not exist.")

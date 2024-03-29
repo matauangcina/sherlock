@@ -1,0 +1,16 @@
+rules:
+  - id: notification
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern: $NOTIF.setContentIntent($PI)
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    pattern-sinks:
+      - patterns:
+        - pattern: $NMC.notify(..., $NOTIF)
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+        - focus-metavariable: $NOTIF
+    message: $NOTIF
+    languages:
+      - java
+    severity: ERROR

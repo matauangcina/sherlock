@@ -1,14 +1,11 @@
-from settings.config import init_config
-from settings.logger import get_logger
+from settings.config import init_config, reset
 from settings.prompt import prompt
-
-
-log = get_logger(__name__)
 
 
 def main():
     init_config()
     prompt.init()
+    reset()
 
 
 if __name__ == '__main__':

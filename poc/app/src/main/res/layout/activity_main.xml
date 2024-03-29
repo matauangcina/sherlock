@@ -8,11 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp">
-        <Button
-            android:id="@+id/access_to_arbitrary_base"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Access to Arbitrary - Base"/>
         <!-- (( placeholder )) -->
     </LinearLayout>
 </ScrollView>

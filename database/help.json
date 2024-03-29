@@ -35,11 +35,11 @@
         "usage": "analyze target code (optional: --target <target_id>,<target_id>,.. --json --output <filename>)",
         "demo": "• analyze target code\n• analyze target code --target base\n• analyze target code --target injuredandroid --json\n• analyze target code --target insecureshop --json --output insecureshop.json"
     },
-    "analyze_target_all": {
-        "command": "analyze target all",
+    "analyze_target_*": {
+        "command": "analyze target *",
         "description": "Analyze target's both manifest and codebase from workspace.",
-        "usage": "analyze target all (optional: --target <target_id>,<target_id>,.. --json --output <filename>)",
-        "demo": "• analyze target all\n• analyze target all --target base\n• analyze target all --target injuredandroid --json\n• analyze target all --target insecureshop --json --output insecureshop.json"
+        "usage": "analyze target * (optional: --target <target_id>,<target_id>,.. --json --output <filename>)",
+        "demo": "• analyze target *\n• analyze target * --target base\n• analyze target * --target injuredandroid --json\n• analyze target * --target insecureshop --json --output insecureshop.json"
     },
     "use_device": {
         "command": "use device",
@@ -68,8 +68,8 @@
     "set": {
         "command": "set",
         "description": "Set option value for selected exploit module.",
-        "usage": "set <option> <value>",
-        "demo": "set TARGET_PACKAGE com.test.test"
+        "usage": "set <option>=<value> <option>=<value>",
+        "demo": "set TARGET_PACKAGE=com.test.test"
     },
     "execute": {
         "command": "execute",

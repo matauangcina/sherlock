@@ -6,8 +6,14 @@ class OptEnum(Opt):
     def __init__(self, name, attr=[]):
         super().__init__(name, attr)
 
-    def type(self):
-        return "enum"
+    def cast(self, value):
+        for enum in self._enums:
+            if value == str(enum):
+                if isinstance(enum, bool):
+                    return value.lower() in ["true"]
+                elif isinstance(enum, int):
+                    return int(value)
+                return value
     
     @property
     def desc(self):
@@ -21,6 +27,6 @@ class OptEnum(Opt):
         return f"{self._desc} (Accepted: {allowed})"
     
     def is_valid(self, value="", is_empty=True):
-        if super().is_valid(value, is_empty) and value != "":
-            return value in self._enums
+        if super().is_valid(value, is_empty):
+            return str(value) in str(self._enums)
         return False

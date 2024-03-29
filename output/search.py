@@ -1,6 +1,9 @@
 from rich import box
-from rich import print
+from rich.console import Console
 from rich.table import Table
+
+
+console = Console(width=150)
 
 
 def display_modules(modules):
@@ -12,17 +15,15 @@ def display_modules(modules):
         title_justify="left"
     )
     table.add_column("#", style="bright_white", justify="center")
-    table.add_column("Name", style="bright_cyan")
+    table.add_column("Name", style="bright_cyan", overflow="fold")
     table.add_column("Status", style="bright_yellow", justify="center")
-    table.add_column("Rule ID", style="bright_green")
     table.add_column("Description", style="bright_white")
     for i,module in enumerate(modules):
         table.add_row(
             str(i+1),
             module["name"],
             module["status"],
-            "".join(["• " + rule + "\n" for rule in module["rule_id"]]),
             module["desc"]
         )
-    print(table)
+    console.print(table)
     print("")

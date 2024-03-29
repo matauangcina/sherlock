@@ -1,0 +1,25 @@
+rules:
+  - id: implicit-base-intent
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern-either:
+          - pattern: new Intent()
+          - pattern: new Intent("$ACTION")
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    pattern-sanitizers:
+      - patterns:
+        - pattern-either:
+          - pattern: $INTENT.setClassName(...)
+          - pattern: $INTENT.setPackage(...)
+          - pattern: $INTENT.setComponentName(...)
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    pattern-sinks:
+      - patterns:
+        - pattern: PendingIntent.getActivity(..., $CODE, $INTENT, ...);
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+        - focus-metavariable: $INTENT
+    message: $CODE
+    languages:
+      - java
+    severity: WARNING

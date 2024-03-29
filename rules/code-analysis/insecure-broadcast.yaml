@@ -1,0 +1,55 @@
+rules:
+- id: insecure-broadcast-no_protection
+  mode: taint
+  pattern-sources:
+  - patterns:
+    - pattern-either:
+      - pattern: new Intent()
+      - pattern: new Intent("$ACTION")
+    - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+  pattern-sanitizers:
+  - patterns:
+    - pattern-either:
+      - pattern: $INTENT.setClassName(...)
+      - pattern: $INTENT.setPackage(...)
+      - pattern: $INTENT.setClass(...)
+      - pattern: $INTENT.setComponentName(...)
+    - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+  pattern-sinks:
+  - patterns:
+    - pattern-either:
+      - pattern: sendBroadcast($INTENT)
+      - pattern: sendOrderedBroadcast($INTENT, null, ...)
+    - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    - focus-metavariable: $INTENT
+  message: |
+    Insecure broadcast transmitted over an implicit intent with no protection detected.
+  languages:
+  - java
+  severity: ERROR
+  metadata:
+    cwe: cwe-927
+    score: 7.0 / High
+    cvss: CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:A/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N
+- id: insecure-broadcast-insufficient_protection
+  severity: ERROR
+  languages:
+  - java
+  mode: join
+  join:
+    refs:
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/implicit-intent/implicit-broadcast-permission.yaml'
+      as: implicit-broadcast
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/permission/broadcast-with-permission.yaml'
+      as: broadcast-permission
+    - rule: '/home/finechina/Project/sherlock-test/rules/manifest-analysis/insufficient-permission-protection.yaml'
+      as: permission
+    on:
+    - permission.$PERM == broadcast-permission.$PERM
+    - broadcast-permission.$INTENT == implicit-broadcast.$INTENT
+  message: |
+    Insecure broadcast transmitted over an implicit intent with insufficient protection detected.
+  metadata:
+    cwe: cwe-927
+    score: 7.0 / High
+    cvss: CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:A/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N

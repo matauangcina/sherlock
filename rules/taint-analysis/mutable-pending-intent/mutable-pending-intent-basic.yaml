@@ -1,0 +1,19 @@
+rules:
+  - id: mutable-pending-intent-basic
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern: PendingIntent.$GET(..., $CODE, $BASE, $FLAG)
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+        - metavariable-regex:
+            metavariable: $FLAG
+            regex: ^(?!AccessibilityEventCompat\.TYPE_VIEW_TARGETED_BY_SCROLL$|PendingIntent\.FLAG_IMMUTABLE$).*$
+    pattern-sinks:
+      - patterns:
+        - pattern: $INTENT.putExtra(..., $PI)
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+        - focus-metavariable: $PI
+    message: $CODE
+    languages:
+      - java
+    severity: WARNING

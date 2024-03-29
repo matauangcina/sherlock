@@ -23,7 +23,7 @@ def is_quiet(args):
 def run_decompiler(apks, is_quiet, output_dir):
     targets = get_target_db()
     if targets is None:
-        log.error("Target DB not found.")
+        log.error("Target DB not found.\n")
         return
     ids = targets.keys()
     output = list()
@@ -33,7 +33,7 @@ def run_decompiler(apks, is_quiet, output_dir):
             log.warning(f"Duplicated target. Consider renaming the apk file, skipping: '{id}'")
             continue
         output_path = os.path.join(output_dir if output_dir is not None else os.path.dirname(apk), id)
-        decompile_cmd = ["bash", JADX_BIN, "--deobf", apk, "-d", output_path]
+        decompile_cmd = ["bash", JADX_BIN, "--deobf", apk, "-d", output_path, "--comments-level", "none"]
         if is_quiet:
             decompile_cmd.append("--quiet")
         log.debug(f"Decompiling: '{apk}'")
@@ -41,11 +41,11 @@ def run_decompiler(apks, is_quiet, output_dir):
         log.info(f"Target decompiled to: '{output_path}'")
         output.append(output_path)
     if len(output) == 0:
-        log.error("No target apk can be processed further.")
+        log.error("No target apk can be processed further.\n")
         return
     update_db(targets, output)
     post_decompile(targets)
-    log.info("Decompilation completed.")
+    log.info("Decompilation completed.\n")
 
 
 def update_db(db, paths):
@@ -68,6 +68,7 @@ def update_db(db, paths):
 
 
 def decompile(args):
+    print("")
     apks = list()
     quiet = False
     output_dir = None
@@ -76,16 +77,16 @@ def decompile(args):
     if should_output_dir(args):
         output_dir = args[args.index("--output") + 1]
         if not utils.is_path_exists(output_dir):
-            log.error("Output directory not found. Terminating..")
+            log.error("Output directory not found. Terminating..\n")
             return
     for arg in args:
-        if re.match(r".+\.apk$", arg):
+        if re.match(r"^.+\.apk$", arg):
             if utils.is_path_exists(arg) and utils.is_file(arg):
                 apks.append(arg)
                 continue
             log.warning(f"APK file not found, skipping: {arg}")
     if len(apks) == 0:
-        log.error("No apk can be found.")
+        log.error("No apk can be found.\n")
         return
     log.debug("Running decompiler...")
     run_decompiler(apks, quiet, output_dir)

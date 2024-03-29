@@ -4,38 +4,30 @@ rules:
     pattern-sources:
       - patterns:
         - pattern-either:
-          - pattern: |
-              new Intent("$ACTION");
-          - pattern: |
-              Intent $INTENT = new Intent();
-              ...
-              $INTENT.setAction("$ACTION");
-        - pattern-inside: |
-            public class $CLASSNAME extends $COMPONENT {...}
+          - pattern: new Intent()
+          - pattern: new Intent("$ACTION")
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sanitizers:
       - patterns:
         - pattern-either:
-          - pattern: |
-              $INTENT.setClassName(...);
-          - pattern: |
-              $INTENT.setPackage(...);
-          - pattern: |
-              $INTENT.setComponentName(...);
-        - pattern-inside: |
-            public class $CLASSNAME extends $COMPONENT {...}
+          - pattern: $INTENT.setClassName(...)
+          - pattern: $INTENT.setPackage(...)
+          - pattern: $INTENT.setClass(...)
+          - pattern: $INTENT.setComponentName(...)
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sinks:
       - patterns:
         - pattern-either:
-          - pattern: |
-              startActivityForResult($INTENT, $CODE);
-          - pattern: |
-              $LAUNCHER.launch($INTENT);
-          - pattern: |
-              startActivity($INTENT);
-        - pattern-inside: |
-            public class $CLASSNAME extends $COMPONENT {...}
+          - pattern: startActivityForResult($INTENT, ...)
+          - pattern: $LAUNCHER.launch($INTENT)
+          - pattern: startActivity($INTENT)
+          - pattern: sendBroadcast($INTENT)
+          - pattern: sendBroadcast($INTENT, $PERM)
+          - pattern: sendOrderedBroadcast($INTENT, ...)
+          - pattern: sendOrderedBroadcast($INTENT, $PERM, ...)
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
         - focus-metavariable: $INTENT
     message: $CLASSNAME
     languages:
       - java
-    severity: INFO
+    severity: WARNING

@@ -5,9 +5,9 @@ class OptStr(Opt):
 
     def __init__(self, name, attr=[]):
         super().__init__(name, attr)
-
-    def type(self):
-        return "string"
+    
+    def cast(self, value):
+        return value
     
     def is_valid(self, value="", is_empty=True):
         if is_empty and self.empty_required_value(value):

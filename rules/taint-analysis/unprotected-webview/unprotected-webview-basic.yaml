@@ -1,0 +1,31 @@
+rules:
+  - id: unprotected-webview-basic
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern: getIntent()
+        - pattern-either:
+          - pattern: Intent $INTENT = getIntent();
+          - pattern: getIntent().getDataString()
+          - pattern: getIntent().getStringExtra(...)
+          - pattern: Uri $URI = getIntent().getData();
+          - pattern: getIntent().getData().getQueryParameter(...)
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    pattern-sanitizers:
+      - patterns:
+        - pattern: if ($COND) {...}
+        - metavariable-regex:
+            metavariable: $COND
+            regex: .*(((\w+|"\w+")|Arrays\.asList\(.+\))\.(contains|equals|binarySearch)\(("\w+"|\w+))\)|(\w+\s?(==|!=)\s?("\w+"|[A-Za-z]+)).*
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    pattern-sinks:
+      - patterns:
+        - pattern: $WV.loadUrl($URL, ...);
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+        - focus-metavariable: $URL
+    message: $CLASSNAME
+    languages:
+      - java
+    severity: ERROR
+
+# DONE

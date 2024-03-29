@@ -1,0 +1,25 @@
+rules:
+  - id: webview-intent-uri
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern: $SRC.getUrl();
+        - pattern: $ACC shouldOverrideUrlLoading(..., WebResourceRequest $SRC) {...}
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    pattern-sinks:
+      - patterns:
+        - pattern-either:
+          - pattern-inside: startActivity($INTENT)
+          - pattern-inside: $CTX.startActivity($INTENT)
+        - pattern-inside: if ($COND) {...}
+        - metavariable-regex:
+            metavariable: $COND
+            regex: .*(("intent".equals\(\w+\.getScheme\(\)\))|(\w+.getScheme\(\)\s?==\s?"intent")).*
+        - pattern-inside: $ACC shouldOverrideUrlLoading(...) {...}
+        - pattern-inside: $WV.setWebViewClient(...)
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+        - focus-metavariable: $INTENT
+    message: $CLASSNAME
+    languages:
+      - java
+    severity: WARNING

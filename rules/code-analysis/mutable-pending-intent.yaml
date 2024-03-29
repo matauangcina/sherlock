@@ -1,0 +1,45 @@
+rules:
+- id: mutable-pending-intent-basic
+  severity: ERROR
+  languages:
+  - java
+  mode: join
+  join:
+    refs:
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/implicit-base-intent/implicit-base-intent.yaml'
+      as: base-intent
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/mutable-pending-intent/mutable-pending-intent-basic.yaml'
+      as: mutable-pending-intent
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/implicit-intent/implicit-intent.yaml'
+      as: implicit-intent
+    on:
+    - base-intent.$CODE == mutable-pending-intent.$CODE
+    - mutable-pending-intent.$INTENT == implicit-intent.$INTENT
+  message: |
+    Mutable pending intent wrapped on an implicit intent with implicit base intent detected.
+  metadata:
+    cwe: cwe-285, cwe-926
+    score: 7.1 / High
+    cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
+- id: mutable-pending-intent-notification
+  severity: ERROR
+  languages:
+  - java
+  mode: join
+  join:
+    refs:
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/implicit-base-intent/implicit-base-intent.yaml'
+      as: base-intent
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/mutable-pending-intent/mutable-pending-intent-notification.yaml'
+      as: mutable-pending-intent
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/notification/notification.yaml'
+      as: notification
+    on:
+    - base-intent.$CODE == mutable-pending-intent.$CODE
+    - mutable-pending-intent.$NOTIF == notification.$NOTIF
+  message: |
+    Mutable pending intent with implicit base intent on app's notification detected.
+  metadata:
+    cwe: cwe-285, cwe-926
+    score: 7.1 / High
+    cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N

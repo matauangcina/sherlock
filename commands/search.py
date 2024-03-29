@@ -12,6 +12,7 @@ def module(args=None):
     if len(modules) == 0:
         log.error("No modules found.")
         return
+    print("")
     module_state.filtered = modules
     log.debug("Displaying modules..\n")
     display_modules(modules)

@@ -18,8 +18,8 @@ def output_layout(dataflow):
         Layout(name="content"),
     )
     layout["content"].split_row(
-        Layout(name="description", ratio=1),
-        Layout(name="code", ratio=1)
+        Layout(name="description"),
+        Layout(name="code")
     )
     if dataflow:
         layout["code"].split(
@@ -34,38 +34,44 @@ def get_code_snippet(component, line):
         component, 
         theme="github-dark",
         line_numbers=True,
-        line_range=[line-1,line+5],
+        line_range=[line-1,line+10],
         highlight_lines={line},
-        word_wrap=True
+        # word_wrap=True
     )
     return syntax
 
 
-def display_layout(console, finding, keys):
+def display_layout(console, findings_id, type, keys):
     rules = keys["rules"]
     for i, rule in enumerate(rules):
         progress_bar("Loading panel")
         dataflow = False
-        message = keys["message"].strip()
-        severity = keys["severity"]
+        metadata = keys["metadata"]
+        severity = metadata["score"].split("/")[-1].strip()
         rule_id = rule["rule_id"]
+        message = rule["message"].strip()
         component = rule["location"]["component"]
         line_num = rule["location"]["line"]["end"]
         snippet = rule["location"]["snippet"].strip()
         table = Table.grid(padding=(0,1))
-        table.add_column(style="bold white", ratio=10)
+        table.add_column(style="bold white", ratio=2)
         table.add_column(style="bold white", ratio=1)
-        table.add_column(style="bright_white", ratio=10)
+        table.add_column(style="bright_white", ratio=10, overflow="fold")
         table.add_row("[underline]Summary[/]")
         table.add_row("Rule id", ":", rule_id)
         table.add_row("Message", ":", message)
-        table.add_row("Severity", ":", severity)
+        table.add_row("Severity", ":", f"[bold red]{severity}[/]" if severity.lower() == "high" else (f"[bold yellow]{severity}[/]" if severity.lower() == "medium" else f"[bold green]{severity}[/]"))
+        table.add_row("")
+        table.add_row("[underline]Metadata[/]")
+        table.add_row("CWE", ":", metadata["cwe"])
+        table.add_row("CVSS Score", ":", metadata["score"])
+        table.add_row("CVSS Vector", ":", metadata["cvss"])
         if rule["location"].get("sink") is not None:
             vuln_code = rule["location"]["sink"]
             table.add_row("")
             table.add_row("[underline]Sink[/]")
-            table.add_row("Sink", ":", vuln_code)
-        table.add_row("Snippet", ":", snippet)
+            table.add_row("Sink", ":", f"[bold]{vuln_code}[/]")
+        table.add_row("Snippet", ":", f"[bright_red]{snippet}[/]")
         table.add_row("Component", ":", component.split("/")[-1])
         table.add_row("Line", ":", str(line_num))
         if rule.get("source") is not None:
@@ -75,7 +81,7 @@ def display_layout(console, finding, keys):
             source_snippet = rule["source"]["source"]
             table.add_row("")
             table.add_row("[underline]Source[/]")
-            table.add_row("Snippet", ":", source_snippet)
+            table.add_row("Snippet", ":", f"[bright_cyan]{source_snippet}[/]")
             table.add_row("Component", ":", source_component.split("/")[-1])
             table.add_row("Line", ":", str(source_line_num))
         summary_panel = Panel(
@@ -132,8 +138,10 @@ def display_layout(console, finding, keys):
                         Panel(
                             layout, 
                             box=box.ROUNDED, 
-                            title=f"[bold]{finding}[/]", 
+                            title=f"[bold]{findings_id}[/]", 
                             title_align="center",
+                            subtitle=f"[bold]{type}-analysis[/]",
+                            subtitle_align="right",
                             border_style="bold orange3", 
                             padding=(0,1)
                         ), 
@@ -146,8 +154,10 @@ def display_layout(console, finding, keys):
                         Panel(
                             layout, 
                             box=box.ROUNDED, 
-                            title=f"[bold]{finding}[/]", 
-                            title_align="right", 
+                            title=f"[bold]{findings_id}[/]", 
+                            title_align="right",
+                            subtitle=f"[bold]{type}-analysis[/]",
+                            subtitle_align="left",
                             border_style="bold yellow", 
                             padding=(0,1)
                         ), 
@@ -160,15 +170,16 @@ def display_layout(console, finding, keys):
                     Panel(
                         layout, 
                         box=box.ROUNDED, 
-                        title=f"[bold]{finding}[/]", 
-                        title_align="left", 
+                        title=f"[bold]{findings_id}[/]", 
+                        title_align="left",
+                        subtitle=f"[bold]{type}-analysis[/]",
+                        subtitle_align="right",
                         border_style="bold cyan", 
                         padding=(0,1)
                     ), 
                     (0,20,0,2)
                 )
             )
-    console.print("")
 
 
 def get_rules(keys):
@@ -181,7 +192,7 @@ def get_rules(keys):
 
 
 def display_scan_result(summary, output_json=False, file=None):
-    console = Console(file=file, width=150, height=22)
+    console = Console(file=file, width=160, height=28)
     if output_json:
         console.print_json(json.dumps(summary))
         console.print("")
@@ -191,7 +202,7 @@ def display_scan_result(summary, output_json=False, file=None):
         console.print(
             Panel.fit(
                 Text(
-                    f"Target #{i+1}: {target} (package: {summary['targets'][target]['package']})", 
+                    f"Target #{i+1}: {target} ({summary['targets'][target]['package']})", 
                     style="bold white", 
                     justify="center"
                 ), 
@@ -203,9 +214,9 @@ def display_scan_result(summary, output_json=False, file=None):
         target_details = list(target_id)
         rules = get_rules(target_details)
         for rule in rules:
-            console.rule(f"[bold red]{rule}[/]", align="right")
             findings = target_id[rule]["findings"]
             finding_ids = list(findings)
             for id in finding_ids:
                 details = findings[id]
-                display_layout(console, id, details)
+                display_layout(console, id, rule, details)
+    console.print("")

@@ -27,6 +27,7 @@ COMMANDS = {
                 "cmds": {
                     "info": {
                         "desc": "Show information from target app(s) in workspace",
+                        "flags": ["--component", "--activity", "--provider", "--receiver", "--service"],
                         "exec": show.target_info
                     }
                 }
@@ -63,7 +64,7 @@ COMMANDS = {
                         "flags": ["--target", "--output", "--json"],
                         "exec": analyze.codebase
                     },
-                    "all": {
+                    "*": {
                         "desc": "Analyze both manifest and codebase",
                         "flags": ["--target", "--output", "--json"],
                         "exec": analyze.all

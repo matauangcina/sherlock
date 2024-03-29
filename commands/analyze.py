@@ -1,4 +1,5 @@
 import os
+import re
 import settings.utils as utils
 
 from output.analyze import display_scan_result
@@ -33,7 +34,7 @@ def write_output(args, summary):
 def get_target_paths(args):
     targets = get_target_db()
     if targets is None:
-        log.error("Target file not found.")
+        log.error("Target file not found.\n")
         return
     ids = list(targets)
     if is_target_specified(args):
@@ -44,7 +45,7 @@ def get_target_paths(args):
             if id.isdigit():
                 target_id = int(id)
                 if target_id < 1 or target_id > len(ids):
-                    log.error("Invalid target index.")
+                    log.error("Invalid target index.\n")
                     return
                 valid_ids.append(ids[target_id - 1])
             else:
@@ -112,13 +113,14 @@ def get_scan_summary(target_paths, rules, target_ids):
 
 
 def manifest(args=None):
+    print("")
     targets = get_target_paths(args)
     if targets is None:
-        log.error("No targets found.")
+        log.error("No targets found.\n")
         return
     manifests = get_manifests(targets)
     if len(manifests) == 0:
-        log.error("No manifest files can be found.")
+        log.error("No manifest files can be found.\n")
         return
     log.debug("Initiating engine..")
     summary = get_scan_summary(manifests, ["manifest"], targets)
@@ -134,6 +136,7 @@ def manifest(args=None):
 
 
 def codebase(args=None):
+    print("")
     targets = get_target_paths(args)
     if targets is None:
         log.error("No targets found.")
@@ -156,13 +159,14 @@ def codebase(args=None):
 
 
 def all(args=None):
+    print("")
     targets = get_target_paths(args)
     if targets is None:
-        log.error("No targets found.")
+        log.error("No targets found.\n")
         return
     codebases = get_codebases(targets)
     if len(codebases) == 0:
-        log.error("No target codebase can be found.")
+        log.error("No target codebase can be found.\n")
         return
     log.debug("Initiating engine..")
     summary = get_scan_summary(codebases, ["manifest", "code"], targets)

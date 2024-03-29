@@ -16,11 +16,6 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.accessToArbitraryBase.setOnClickListener(v1 -> {
-            Intent i = AccessToArbitraryBaseActivity.newIntent(this);
-            startActivity(i);
-        });
-
         // (( placeholder ))
     }
 

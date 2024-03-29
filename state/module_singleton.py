@@ -39,4 +39,7 @@ class ModuleSingleton:
         return self._options
     
     def delete_option(self, key):
-        del self._option[key]
+        del self._options[key]
+
+    def delete_options(self):
+        self._options.clear()

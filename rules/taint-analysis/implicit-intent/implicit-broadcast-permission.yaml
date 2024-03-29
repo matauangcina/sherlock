@@ -1,0 +1,28 @@
+rules:
+  - id: insecure-broadcast-permission
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern-either:
+          - pattern: new Intent()
+          - pattern: new Intent("$ACTION")
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    pattern-sanitizers:
+      - patterns:
+        - pattern-either:
+          - pattern: $INTENT.setClassName(...)
+          - pattern: $INTENT.setPackage(...)
+          - pattern: $INTENT.setClass(...)
+          - pattern: $INTENT.setComponentName(...)
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    pattern-sinks:
+      - patterns:
+        - pattern-either:
+          - pattern: sendBroadcast($INTENT, $PERM)
+          - pattern: sendOrderedBroadcast($INTENT, $PERM, ...)
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+        - focus-metavariable: $INTENT
+    message: $PERM
+    languages:
+      - java
+    severity: INFO

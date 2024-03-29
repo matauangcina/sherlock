@@ -1,0 +1,39 @@
+rules:
+- id: intent-redirection-basic
+  severity: ERROR
+  languages:
+  - java
+  mode: join
+  join:
+    refs:
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/intent-redirection/intent-redirection-basic.yaml'
+      as: intent-redirection
+    - rule: '/home/finechina/Project/sherlock-test/rules/manifest-analysis/exported-activity.yaml'
+      as: exported-activity
+    on:
+    - exported-activity.$ACTIVITY > intent-redirection.$CLASSNAME
+  message: |
+    Intent redirection on an exported activity detected.
+  metadata:
+    cwe: cwe-285, cwe-926, cwe-940
+    score: 7.1 / High
+    cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
+- id: intent-redirection-implicit
+  severity: ERROR
+  languages:
+  - java
+  mode: join
+  join:
+    refs:
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/intent-redirection/intent-redirection-implicit.yaml'
+      as: intent-redirection
+    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/implicit-intent/implicit-intent.yaml'
+      as: implicit-intent
+    on:
+    - implicit-intent.$CLASSNAME == intent-redirection.$CLASSNAME
+  message: |
+    Intent redirection via implicit intent interception detected.
+  metadata:
+    cwe: cwe-285, cwe-926, cwe-940
+    score: 7.1 / High
+    cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N

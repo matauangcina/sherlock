@@ -13,7 +13,7 @@ class LogHandler(RichHandler):
             logging.CRITICAL: "\[x]"
         }
         level_color = {
-            logging.DEBUG: "[bold bright_magenta]",
+            logging.DEBUG: "[bold bright_cyan]",
             logging.INFO: "[bold bright_green]",
             logging.WARNING: "[bold gold1]",
             logging.ERROR: "[bold bright_red]",

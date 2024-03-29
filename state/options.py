@@ -14,6 +14,8 @@ class Options:
     def add_options(self, options):
         if len(options) == 0:
             return
+        if len(self.get_all_options()) != 0:
+            self.reset_options()
         for option in options:
             if isinstance(option, list):
                 option_class = option[0]
@@ -31,6 +33,9 @@ class Options:
     
     def remove(self, name):
         self._datastore.delete_option(name)
+
+    def reset_options(self):
+        self._datastore.delete_options()
 
     def get(self, name):
         return self._datastore.get_option(name)

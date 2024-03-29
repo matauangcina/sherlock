@@ -1,3 +1,5 @@
+import importlib.util
+import sys
 import os
 import psutil
 import shlex
@@ -20,7 +22,10 @@ def is_dir(path):
 
 
 def get_commands(text):
-    return shlex.split(text)
+    try:
+        return shlex.split(text)
+    except ValueError:
+        return []
 
 
 def get_manifest_file(target_path):
@@ -82,10 +87,21 @@ def run_adb(device_id, cmd, shell=False, realtime=False):
         try:
             output = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
             return output
-        except Exception:
+        except Exception as e:
+            print(e)
             return None
     try:
         output = subprocess.check_output(command, stderr=subprocess.STDOUT, text=True)
         return output
     except Exception:
         return None
+    
+
+def import_module(path, basename):
+    module_path = path + f".{basename}"
+    if module_path in sys.modules:
+        return sys.modules[module_path]
+    spec = importlib.util.spec_from_file_location(module_path, path + f"/{basename}.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module

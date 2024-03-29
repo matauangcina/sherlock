@@ -17,7 +17,6 @@ def get_modules_info():
         data["status"] = modules[id]["status"]
         data["path"] = modules[id]["path"]
         data["desc"] = modules[id]["description"]
-        data["rule_id"] = modules[id]["rule_id"]
         summary.append(data)
     return summary
 

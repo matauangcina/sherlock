@@ -4,8 +4,8 @@ class Opt:
             name,
             attr=[],
             required=False,
-            desc=None,
-            default=None,
+            desc="",
+            default="",
             enums=[]
         ):
         self._name = name
