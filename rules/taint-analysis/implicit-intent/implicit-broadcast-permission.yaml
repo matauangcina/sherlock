@@ -1,11 +1,12 @@
 rules:
-  - id: insecure-broadcast-permission
+  - id: implicit-broadcast-permission
     mode: taint
     pattern-sources:
       - patterns:
         - pattern-either:
           - pattern: new Intent()
           - pattern: new Intent("$ACTION")
+          - pattern: new Intent("$ACTION", $URI)
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sanitizers:
       - patterns:
@@ -13,13 +14,25 @@ rules:
           - pattern: $INTENT.setClassName(...)
           - pattern: $INTENT.setPackage(...)
           - pattern: $INTENT.setClass(...)
-          - pattern: $INTENT.setComponentName(...)
+          - pattern: $INTENT.setComponent(...)
+          - pattern: $INTENT.setSelector(...)
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sinks:
       - patterns:
         - pattern-either:
           - pattern: sendBroadcast($INTENT, $PERM)
+          - pattern: $CTX.sendBroadcast($INTENT, $PERM)
+          - patterns: 
+            - pattern: $CTX.sendBroadcast($INTENT, $PERM)
+            - metavariable-regex:
+                metavariable: $CTX
+                regex: ^(?!.*(L|l)ocal(B|b)roadcast.*$|.*(L|l)(B|b)(M|m).*$).*$
           - pattern: sendOrderedBroadcast($INTENT, $PERM, ...)
+          - patterns: 
+            - pattern: $CTX.sendOrderedBroadcast($INTENT, $PERM, ...)
+            - metavariable-regex:
+                metavariable: $CTX
+                regex: ^(?!.*(L|l)ocal(B|b)roadcast.*$|.*(L|l)(B|b)(M|m).*$).*$
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
         - focus-metavariable: $INTENT
     message: $PERM

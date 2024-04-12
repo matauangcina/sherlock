@@ -7,12 +7,12 @@ rules:
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
         - metavariable-regex:
             metavariable: $FLAG
-            regex: ^(?!AccessibilityEventCompat\.TYPE_VIEW_TARGETED_BY_SCROLL$|PendingIntent\.FLAG_IMMUTABLE$).*$
+            regex: ^(?!.*AccessibilityEventCompat\.TYPE_VIEW_TARGETED_BY_SCROLL$|PendingIntent\.FLAG_IMMUTABLE$|67108864.*$).*$
     pattern-sinks:
       - patterns:
-        - pattern: $NOTIF.setContentIntent($PI)
+        - pattern-inside: $NOTIF.setContentIntent(...)
+        - pattern-not-inside: $NOTIF.setDeleteIntent(...)
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
-        - focus-metavariable: $PI
     message: $NOTIF
     languages:
       - java

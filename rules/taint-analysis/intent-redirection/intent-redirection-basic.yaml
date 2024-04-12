@@ -5,19 +5,31 @@ rules:
       - patterns:
         - pattern: getIntent()
         - pattern-either:
-          - pattern: Intent $INTENT = getIntent();
-          - pattern: getIntent().getParcelableExtra(...)
+          - patterns:
+            - pattern: getIntent().getParcelableExtra(...)
+            - pattern-not-inside: new Intent(...)
+          - pattern: new Intent((Intent) getIntent().getParcelableExtra(...))
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sanitizers:
       - patterns:
-        - pattern: if ($COND) {...}
+        - pattern-either:
+          - patterns:
+            - pattern: if ($COND) {...}
+            - metavariable-regex:
+                metavariable: $COND
+                regex: .*\w+\.getPackageName\(\)\.equals\(.+\)\s*\&\&\s*\w+\.getClassName\(\)\.equals\(.+\).*
+          - pattern-inside: $INTENT.putExtra(...)
+          - patterns: 
+            - pattern: if ($COND) {...}
+            - metavariable-regex:
+                metavariable: $COND
+                regex: .*\w+\.exported.*
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
-        - metavariable-regex:
-            metavariable: $COND
-            regex: .*\w+\.getPackageName\(\)\.equals\(.+\)\s*\&\&\s*\w+\.getClassName\(\)\.equals\(.+\).*
     pattern-sinks:
       - patterns:
-        - pattern: startActivity($INTENT);
+        - pattern-either:
+          - pattern: startActivity($INTENT)
+          - pattern: $CTX.startActivity($INTENT)
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
         - focus-metavariable: $INTENT
     message: $CLASSNAME

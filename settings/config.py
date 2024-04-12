@@ -2,9 +2,8 @@ import os
 import ruamel.yaml
 import shutil
 import settings.utils as utils
-import sys
 
-from globals import RULE_PATH, MODULE_PATH, POC_PATH
+from globals import RULE_PATH, POC_PATH
 from ruamel.yaml import YAML
 from settings.scan import run_engine
 
@@ -26,16 +25,12 @@ def init_config():
             yaml.dump(yaml_data, file)
 
 
-def post_decompile(db):
-    target_ids = list(db)
-    codebases = list()
-    for id in target_ids:
-        path = db[id]["path"]
-        manifest = utils.get_manifest_file(path)
-        codebase = utils.get_codebase_path(path)
+def post_decompile(db, id):
+    path = db[id]["path"]
+    manifest = utils.get_manifest_file(path)
+    codebase = utils.get_codebase_path(path)
+    if manifest is not None and codebase is not None:
         shutil.copy(manifest, codebase)
-        codebases.append(codebase)
-    _ = run_engine(codebases, "mod", True)
 
 
 def reset():

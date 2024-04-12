@@ -1,0 +1,24 @@
+rules:
+  - id: broadcast-sensitive-info
+    message: $INTENT
+    patterns:
+      - pattern-either:
+        - patterns:
+          - pattern: Intent $INTENT = $IMP;
+          - metavariable-regex:
+              metavariable: $IMP
+              regex: ^new Intent(.*)\..*\.*putExtra\(.*(.*(U|u)(S|s)(E|e)(R|r).*)|(.*(T|t)(O|o)(K|k)(E|e)(N|n).*)|(.*(P|p)(A|a)(S|s)(S|s).*)|(.*(K|k)(E|e)(Y|y).*)|(.*(P|p)(I|i)(N|n).*)|(.*(E|e)(M|m)(A|a)(I|i)(L|l).*)|(.*(P|p)(A|a)(Y|y).*)|(.*(S|s)(E|e)(C|c)(R|r)(E|e)(T|t).*)|(.*(C|c)(R|r)(E|e)(D|d).*)|(.*(D|d)(A|a)(T|t)(A|a).*)|(.*(E|e)(N|n)(C|c)(R|r)(Y|y)(P|p)(T|t).*)|(.*(A|a)(U|u)(T|t)(H|h).*)|(.*(L|l)(O|o)(G|g)(I|i)(N|n).*).*\)\.*.*$
+        - patterns:
+          - pattern: $INTENT.putExtra($KEY, ...)
+          - metavariable-regex:
+              metavariable: $KEY
+              regex: ^.*(.*(U|u)(S|s)(E|e)(R|r).*)|(.*(T|t)(O|o)(K|k)(E|e)(N|n).*)|(.*(P|p)(A|a)(S|s)(S|s).*)|(.*(K|k)(E|e)(Y|y).*)|(.*(P|p)(I|i)(N|n).*)|(.*(E|e)(M|m)(A|a)(I|i)(L|l).*)|(.*(P|p)(A|a)(Y|y).*)|(.*(S|s)(E|e)(C|c)(R|r)(E|e)(T|t).*)|(.*(C|c)(R|r)(E|e)(D|d).*)|(.*(D|d)(A|a)(T|t)(A|a).*)|(.*(E|e)(N|n)(C|c)(R|r)(Y|y)(P|p)(T|t).*)|(.*(A|a)(U|u)(T|t)(H|h).*)|(.*(L|l)(O|o)(G|g)(I|i)(N|n).*).*$
+        - patterns:
+          - pattern: $INTENT.putExtra(..., $VAL)
+          - metavariable-regex:
+              metavariable: $VAL
+              regex: ^.*(.*(U|u)(S|s)(E|e)(R|r).*)|(.*(T|t)(O|o)(K|k)(E|e)(N|n).*)|(.*(P|p)(A|a)(S|s)(S|s).*)|(.*(K|k)(E|e)(Y|y).*)|(.*(P|p)(I|i)(N|n).*)|(.*(E|e)(M|m)(A|a)(I|i)(L|l).*)|(.*(P|p)(A|a)(Y|y).*)|(.*(S|s)(E|e)(C|c)(R|r)(E|e)(T|t).*)|(.*(C|c)(R|r)(E|e)(D|d).*)|(.*(D|d)(A|a)(T|t)(A|a).*)|(.*(E|e)(N|n)(C|c)(R|r)(Y|y)(P|p)(T|t).*)|(.*(A|a)(U|u)(T|t)(H|h).*)|(.*(L|l)(O|o)(G|g)(I|i)(N|n).*).*$
+      - pattern-inside: public class $CLASS extends $COMPONENT {...}
+    languages:
+      - java
+    severity: INFO

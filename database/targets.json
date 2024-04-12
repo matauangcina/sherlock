@@ -1,18 +1,1 @@
-{
-    "ovaa": {
-        "app_name": "Oversecured Vulnerable Android App",
-        "path": "/home/finechina/Labs/android/workspace/ovaa",
-        "package": "oversecured.ovaa",
-        "version": "1.0",
-        "min_sdk": "28",
-        "target_sdk": "33"
-    },
-    "sherlock": {
-        "app_name": "SherlockTest",
-        "path": "/home/finechina/Labs/android/workspace/sherlock",
-        "package": "sherlock.test",
-        "version": "1.0",
-        "min_sdk": "28",
-        "target_sdk": "33"
-    }
-}
+{}

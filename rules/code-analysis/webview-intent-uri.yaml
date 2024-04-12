@@ -6,11 +6,11 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/webview-intent-uri/webview-intent-uri.yaml'
+    - rule: '(( rules_path ))/taint-analysis/webview-intent-uri/webview-intent-uri.yaml'
       as: intent-uri
-    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/unprotected-webview/unprotected-webview-basic.yaml'
+    - rule: '(( rules_path ))/taint-analysis/unprotected-webview/unprotected-webview-basic.yaml'
       as: unprotected-webview
-    - rule: '/home/finechina/Project/sherlock-test/rules/manifest-analysis/exported-activity.yaml'
+    - rule: '(( rules_path ))/manifest-analysis/exported-activity.yaml'
       as: exported-activity
     on:
     - intent-uri.$WV == unprotected-webview.$WV
@@ -28,11 +28,11 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/webview-intent-uri/webview-intent-uri.yaml'
+    - rule: '(( rules_path ))/taint-analysis/webview-intent-uri/webview-intent-uri.yaml'
       as: intent-uri
-    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/unprotected-webview/unprotected-webview-implicit.yaml'
+    - rule: '(( rules_path ))/taint-analysis/unprotected-webview/unprotected-webview-implicit.yaml'
       as: unprotected-webview
-    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/implicit-intent/implicit-intent.yaml'
+    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-intent.yaml'
       as: implicit-intent
     on:
     - intent-uri.$WV == unprotected-webview.$WV

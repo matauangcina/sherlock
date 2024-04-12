@@ -36,7 +36,6 @@ def get_code_snippet(component, line):
         line_numbers=True,
         line_range=[line-1,line+10],
         highlight_lines={line},
-        # word_wrap=True
     )
     return syntax
 
@@ -72,7 +71,7 @@ def display_layout(console, findings_id, type, keys):
             table.add_row("[underline]Sink[/]")
             table.add_row("Sink", ":", f"[bold]{vuln_code}[/]")
         table.add_row("Snippet", ":", f"[bright_red]{snippet}[/]")
-        table.add_row("Component", ":", component.split("/")[-1])
+        table.add_row("Component", ":", component)
         table.add_row("Line", ":", str(line_num))
         if rule.get("source") is not None:
             dataflow = True
@@ -192,7 +191,7 @@ def get_rules(keys):
 
 
 def display_scan_result(summary, output_json=False, file=None):
-    console = Console(file=file, width=160, height=28)
+    console = Console(file=file, width=160, height=32)
     if output_json:
         console.print_json(json.dumps(summary))
         console.print("")

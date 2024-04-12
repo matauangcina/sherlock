@@ -16,11 +16,15 @@ def should_output_dir(args):
     return len(args) > 0 and "--output" in args
 
 
-def is_quiet(args):
-    return len(args) > 0 and "--quiet" in args
+def is_verbose(args):
+    return len(args) > 0 and "--verbose" in args
 
 
-def run_decompiler(apks, is_quiet, output_dir):
+def is_file_specified(args):
+    return len(args) > 0 and "--file" in args
+
+
+def run_decompiler(apks, is_verbose, output_dir):
     targets = get_target_db()
     if targets is None:
         log.error("Target DB not found.\n")
@@ -30,41 +34,41 @@ def run_decompiler(apks, is_quiet, output_dir):
     for apk in apks:
         id = os.path.basename(apk).split(".")[0]
         if id in ids:
-            log.warning(f"Duplicated target. Consider renaming the apk file, skipping: '{id}'")
+            log.warning(f"Duplicated target, skipping: '{id}'")
             continue
         output_path = os.path.join(output_dir if output_dir is not None else os.path.dirname(apk), id)
         decompile_cmd = ["bash", JADX_BIN, "--deobf", apk, "-d", output_path, "--comments-level", "none"]
-        if is_quiet:
-            decompile_cmd.append("--quiet")
-        log.debug(f"Decompiling: '{apk}'")
+        if is_verbose:
+            decompile_cmd.remove("--quiet")
+        log.debug(f"Decompiling: '{os.path.basename(apk)}'")
         subprocess.run(decompile_cmd)
         log.info(f"Target decompiled to: '{output_path}'")
         output.append(output_path)
     if len(output) == 0:
         log.error("No target apk can be processed further.\n")
         return
-    update_db(targets, output)
-    post_decompile(targets)
+    for o in output:
+        update_db(targets, o)
     log.info("Decompilation completed.\n")
 
 
-def update_db(db, paths):
-    for path in paths:
-        id = os.path.basename(path)
-        manifest = utils.get_manifest_file(path)
-        strings = utils.get_string_file(path)
-        app_details = get_app_details(manifest)
-        app_name = get_app_name(strings)
-        if id not in db:
-            db[id] = {
-                "app_name": app_name,
-                "path": path,
-                "package": app_details["package"],
-                "version": app_details["version"],
-                "min_sdk": app_details["min_sdk"],
-                "target_sdk": app_details["target_sdk"]
-            }
-    update_target_db(db)
+def update_db(db, path):
+    id = os.path.basename(path)
+    manifest = utils.get_manifest_file(path)
+    strings = utils.get_string_file(path)
+    app_details = get_app_details(manifest)
+    app_name = get_app_name(strings)
+    if id not in db:
+        db[id] = {
+            "app_name": app_name,
+            "path": path,
+            "package": app_details["package"],
+            "version": app_details["version"],
+            "min_sdk": app_details["min_sdk"],
+            "target_sdk": app_details["target_sdk"]
+        }
+        update_target_db(db)
+        post_decompile(db, id)
 
 
 def decompile(args):
@@ -72,19 +76,33 @@ def decompile(args):
     apks = list()
     quiet = False
     output_dir = None
-    if is_quiet(args):
+    if is_verbose(args):
         quiet = True
     if should_output_dir(args):
         output_dir = args[args.index("--output") + 1]
         if not utils.is_path_exists(output_dir):
             log.error("Output directory not found. Terminating..\n")
             return
-    for arg in args:
-        if re.match(r"^.+\.apk$", arg):
-            if utils.is_path_exists(arg) and utils.is_file(arg):
-                apks.append(arg)
+    if is_file_specified(args):
+        file_path = args[args.index("--file") + 1]
+        if not utils.is_path_exists(file_path):
+            log.error("File not found! Terminating..\n")
+            return
+        with open(file_path, "r") as f:
+            content = f.readlines()
+        for line in content:
+            line = line.split("\n")[0]
+            if re.match(r"^.+\.apk$", line):
+                apks.append(line)
                 continue
-            log.warning(f"APK file not found, skipping: {arg}")
+            log.warning(f"APK file not found, skipping: {line}")
+    else:
+        for arg in args:
+            if re.match(r"^.+\.apk$", arg):
+                if utils.is_path_exists(arg) and utils.is_file(arg):
+                    apks.append(arg)
+                    continue
+                log.warning(f"APK file not found, skipping: {arg}")
     if len(apks) == 0:
         log.error("No apk can be found.\n")
         return

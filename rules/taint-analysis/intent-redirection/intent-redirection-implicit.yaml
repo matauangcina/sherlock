@@ -3,29 +3,57 @@ rules:
     mode: taint
     pattern-sources:
       - patterns:
+        - pattern: $SRC
         - pattern-either:
           - patterns:
-            - pattern: $SRC.getParcelableExtra(...)
+            - pattern-either:
+              - patterns:
+                - pattern: $SRC.getParcelableExtra(...)
+                - pattern-not-inside: new Intent(...)
+              - pattern: new Intent((Intent) $SRC.getParcelableExtra(...))
             - pattern: $ACC onActivityResult(..., Intent $SRC) {...}
           - patterns:
             - pattern-either:
-              - pattern: Intent $DATA = $SRC.getData();
-              - pattern: $SRC.getData().getParcelableExtra(...)
+              - patterns:
+                - pattern-either:
+                  - pattern: |
+                      Intent $DATA = $SRC.getData(...);
+                      ...
+                      Intent $INTENT = $DATA.getParcelableExtra(...);
+                  - pattern: |
+                      Intent $DATA = $SRC.getData(...);
+                      ...
+                      Intent $INTENT = new Intent((Intent) $DATA.getParcelableExtra(...));
+                - pattern-not-inside: new Intent(...)
+              - pattern-either:
+                - patterns:
+                  - pattern: $SRC.getData().getParcelableExtra(...)
+                  - pattern-not-inside: new Intent(...)
+                - pattern: new Intent((Intent) $SRC.getData().getParcelableExtra(...))
             - pattern-either:
               - pattern: ActivityResultLauncher<Intent> $LAUNCHER = registerForActivityResult(..., $SRC -> {...});
               - pattern: $ACC $METHOD(ActivityResult $SRC) {...}
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
-        - focus-metavariable: $SRC
     pattern-sanitizers:
       - patterns:
-        - pattern: if ($COND) {...}
+        - pattern-either:
+          - patterns:
+            - pattern: if ($COND) {...}
+            - metavariable-regex:
+                metavariable: $COND
+                regex: .*\w+\.getPackageName\(\)\.equals\(.+\)\s*\&\&\s*\w+\.getClassName\(\)\.equals\(.+\).*
+          - pattern-inside: $INTENT.putExtra(...)
+          - patterns: 
+            - pattern: if ($COND) {...}
+            - metavariable-regex:
+                metavariable: $COND
+                regex: .*\w+\.exported.*
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
-        - metavariable-regex:
-            metavariable: $COND
-            regex: ^.*\w+\.getPackageName\(\)\.equals\(.+\)\s*\&\&\s*\w+\.getClassName\(\)\.equals\(.+\).*$
     pattern-sinks:
       - patterns:
-        - pattern: startActivity($INTENT);
+        - pattern-either:
+          - pattern: startActivity($INTENT)
+          - pattern: $CTX.startActivity($INTENT)
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
         - focus-metavariable: $INTENT
     message: $CLASSNAME

@@ -9,8 +9,8 @@ rules:
     pattern-sinks:
       - patterns:
         - pattern-either:
-          - pattern-inside: startActivity($INTENT)
-          - pattern-inside: $CTX.startActivity($INTENT)
+          - pattern: startActivity($INTENT)
+          - pattern: $CTX.startActivity($INTENT)
         - pattern-inside: if ($COND) {...}
         - metavariable-regex:
             metavariable: $COND

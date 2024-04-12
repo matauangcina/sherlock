@@ -6,9 +6,9 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/intent-redirection/intent-redirection-basic.yaml'
+    - rule: '(( rules_path ))/taint-analysis/intent-redirection/intent-redirection-basic.yaml'
       as: intent-redirection
-    - rule: '/home/finechina/Project/sherlock-test/rules/manifest-analysis/exported-activity.yaml'
+    - rule: '(( rules_path ))/manifest-analysis/exported-activity.yaml'
       as: exported-activity
     on:
     - exported-activity.$ACTIVITY > intent-redirection.$CLASSNAME
@@ -25,9 +25,9 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/intent-redirection/intent-redirection-implicit.yaml'
+    - rule: '(( rules_path ))/taint-analysis/intent-redirection/intent-redirection-implicit.yaml'
       as: intent-redirection
-    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/implicit-intent/implicit-intent.yaml'
+    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-intent.yaml'
       as: implicit-intent
     on:
     - implicit-intent.$CLASSNAME == intent-redirection.$CLASSNAME

@@ -30,7 +30,7 @@ def run_engine(target, action, fix=False):
     rules = get_rules_path_by_action(action)
     if rules != None and utils.is_path_exists(rules):
         findings = init_engine(target, rules, fix)
-        if len(findings) == 0:
+        if len(findings["results"]) == 0:
             return None
         return format_scan(findings)
     else:
@@ -62,6 +62,7 @@ def init_engine(target_paths, rules, fix, **kwargs):
         lang=None,
         configs=[rules],
         autofix=fix,
+        timeout=10,
         **kwargs
     )
     output_handler.rule_matches = [

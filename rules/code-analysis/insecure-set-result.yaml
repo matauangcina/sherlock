@@ -6,9 +6,9 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/insecure-set-result/insecure-set-result-basic.yaml'
+    - rule: '(( rules_path ))/taint-analysis/insecure-set-result/insecure-set-result-basic.yaml'
       as: insecure-set-result
-    - rule: '/home/finechina/Project/sherlock-test/rules/manifest-analysis/exported-activity.yaml'
+    - rule: '(( rules_path ))/manifest-analysis/exported-activity.yaml'
       as: exported-activity
     on:
     - exported-activity.$ACTIVITY > insecure-set-result.$CLASSNAME
@@ -25,11 +25,11 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/insecure-set-result/insecure-set-result-implicit.yaml'
+    - rule: '(( rules_path ))/taint-analysis/insecure-set-result/insecure-set-result-implicit.yaml'
       as: insecure-set-result
-    - rule: '/home/finechina/Project/sherlock-test/rules/taint-analysis/implicit-intent/implicit-intent.yaml'
+    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-intent.yaml'
       as: implicit-intent
-    - rule: '/home/finechina/Project/sherlock-test/rules/manifest-analysis/exported-activity.yaml'
+    - rule: '(( rules_path ))/manifest-analysis/exported-activity.yaml'
       as: exported-activity
     on:
     - implicit-intent.$CLASSNAME == insecure-set-result.$CLASSNAME

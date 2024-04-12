@@ -1,8 +1,12 @@
 rules:
-  - id: set-component
+  - id: set-component-method
     message: setComponent
-    pattern: $INTENT.setComponent($COMPONENT);
-    fix: $INTENT = $INTENT.setComponent($COMPONENT);
+    patterns: 
+      - pattern: $INTENT.setComponent($COMP);
+      - metavariable-regex:
+          metavariable: $INTENT
+          regex: ^(?!new Intent\(.*\)$).*$
+    fix: $INTENT = $INTENT.setComponent($COMP);
     languages:
       - java
     severity: INFO

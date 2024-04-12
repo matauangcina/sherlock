@@ -1,7 +1,11 @@
 rules:
-  - id: set-package
+  - id: set-package-method
     message: setPackage
-    pattern: $INTENT.setPackage($PACKAGE);
+    patterns:
+      - pattern: $INTENT.setPackage($PACKAGE);
+      - metavariable-regex:
+          metavariable: $INTENT
+          regex: ^(?!new Intent\(.*\)$).*$
     fix: $INTENT = $INTENT.setPackage($PACKAGE);
     languages:
       - java

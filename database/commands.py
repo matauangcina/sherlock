@@ -45,7 +45,7 @@ COMMANDS = {
     },
     "decompile": {
         "desc": "Work with the 'decompile' command",
-        "flags": ["--quiet", "--output"],
+        "flags": ["--verbose", "--output", "--file"],
         "exec": decompile.decompile
     },
     "analyze": {

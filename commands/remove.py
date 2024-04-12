@@ -1,3 +1,5 @@
+import shutil
+
 from settings.logger import get_logger
 from settings.target_info import get_target_db, update_target_db
 
@@ -35,6 +37,7 @@ def target(args=None):
         return
     for id in ids:
         log.debug(f"Removing target: {id}")
+        shutil.rmtree(targets[id]["path"])
         del targets[id]
         log.info(f"Target removed")
     update_target_db(targets)

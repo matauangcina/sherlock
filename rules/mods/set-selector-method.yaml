@@ -1,12 +1,12 @@
 rules:
-  - id: set-classname-method
-    message: setClassName
+  - id: set-selector-method
+    message: setSelector
     patterns: 
-      - pattern: $INTENT.setClassName($PACKAGE, $CLASS);
+      - pattern: $INTENT.setSelector($SEL);
       - metavariable-regex:
           metavariable: $INTENT
           regex: ^(?!new Intent\(.*\)$).*$
-    fix: $INTENT = $INTENT.setClassName($PACKAGE, $CLASS);
+    fix: $INTENT = $INTENT.setSelector($SEL);
     languages:
       - java
     severity: INFO

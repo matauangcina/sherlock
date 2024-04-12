@@ -7,7 +7,7 @@ rules:
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
         - metavariable-regex:
             metavariable: $FLAG
-            regex: ^(?!AccessibilityEventCompat\.TYPE_VIEW_TARGETED_BY_SCROLL$|PendingIntent\.FLAG_IMMUTABLE$).*$
+            regex: ^(?!.*AccessibilityEventCompat\.TYPE_VIEW_TARGETED_BY_SCROLL$|PendingIntent\.FLAG_IMMUTABLE$|67108864.*$).*$
     pattern-sinks:
       - patterns:
         - pattern: $INTENT.putExtra(..., $PI)

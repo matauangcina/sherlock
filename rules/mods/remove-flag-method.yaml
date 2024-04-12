@@ -1,7 +1,11 @@
 rules:
-  - id: remove-flags
+  - id: remove-flags-method
     message: removeFlags
-    pattern: $INTENT.removeFlags($FLAG);
+    patterns:
+      - pattern: $INTENT.removeFlags($FLAG);
+      - metavariable-regex:
+          metavariable: $INTENT
+          regex: ^(?!new Intent\(.*\)$).*$
     fix: $INTENT = $INTENT.removeFlags($FLAG);
     languages:
       - java

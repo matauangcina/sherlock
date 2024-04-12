@@ -18,7 +18,7 @@ def update_target_db(target_dict):
     target_file = os.path.join(DB_PATH, "targets.json")
     if utils.is_path_exists(target_file):
         with open(target_file, "w") as f:
-            json.dump(target_dict, f, indent=4)
+            json.dump(target_dict, f, indent=4, sort_keys=True)
     else:
         return
 
@@ -41,6 +41,8 @@ def get_app_details(manifest_file):
 
 
 def get_app_name(strings_file):
+    if strings_file is None:
+        return "Not Found"
     dom = parse(strings_file)
     strings = dom.getElementsByTagName("string")
     for string in strings:
@@ -59,7 +61,6 @@ def get_app_components(manifest):
         "recv": list(),
         "serv": list()
     }
-    # fix this
     activities = dom.getElementsByTagName("activity")
     for activity in activities:
         name = activity.getAttribute(f"{ns}:name")
