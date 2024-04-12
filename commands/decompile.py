@@ -16,15 +16,11 @@ def should_output_dir(args):
     return len(args) > 0 and "--output" in args
 
 
-def is_verbose(args):
-    return len(args) > 0 and "--verbose" in args
-
-
 def is_file_specified(args):
     return len(args) > 0 and "--file" in args
 
 
-def run_decompiler(apks, is_verbose, output_dir):
+def run_decompiler(apks, output_dir):
     targets = get_target_db()
     if targets is None:
         log.error("Target DB not found.\n")
@@ -38,10 +34,16 @@ def run_decompiler(apks, is_verbose, output_dir):
             continue
         output_path = os.path.join(output_dir if output_dir is not None else os.path.dirname(apk), id)
         decompile_cmd = ["bash", JADX_BIN, "--deobf", apk, "-d", output_path, "--comments-level", "none"]
-        if is_verbose:
-            decompile_cmd.remove("--quiet")
         log.debug(f"Decompiling: '{os.path.basename(apk)}'")
-        subprocess.run(decompile_cmd)
+        try:
+            jadx = subprocess.check_output(decompile_cmd, stderr=subprocess.STDOUT, text=True).splitlines()
+        except Exception as e:
+            log.error(f"Decompilation failed: {e}, skipping: '{id}'")
+            continue
+        for line in jadx:
+            if line == "Killed":
+                log.error(f"Process killed, skipped: '{id}'")
+                continue
         log.info(f"Target decompiled to: '{output_path}'")
         output.append(output_path)
     if len(output) == 0:
@@ -74,10 +76,7 @@ def update_db(db, path):
 def decompile(args):
     print("")
     apks = list()
-    quiet = False
     output_dir = None
-    if is_verbose(args):
-        quiet = True
     if should_output_dir(args):
         output_dir = args[args.index("--output") + 1]
         if not utils.is_path_exists(output_dir):
@@ -107,4 +106,4 @@ def decompile(args):
         log.error("No apk can be found.\n")
         return
     log.debug("Running decompiler...")
-    run_decompiler(apks, quiet, output_dir)
+    run_decompiler(apks, output_dir)

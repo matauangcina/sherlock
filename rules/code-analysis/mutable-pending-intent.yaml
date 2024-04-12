@@ -16,6 +16,7 @@ rules:
     - base-intent.$CODE == mutable-pending-intent.$CODE
     - base-intent.$CLASSNAME == mutable-pending-intent.$CLASSNAME
     - base-intent.$INTENT == mutable-pending-intent.$BASE
+    - mutable-pending-intent.$CLASSNAME == implicit-intent.$CLASSNAME
     - mutable-pending-intent.$INTENT == implicit-intent.$INTENT
   message: |
     Mutable pending intent wrapped on an implicit intent with implicit base intent detected.
@@ -40,6 +41,7 @@ rules:
     - base-intent.$CODE == mutable-pending-intent.$CODE
     - base-intent.$CLASSNAME == mutable-pending-intent.$CLASSNAME
     - base-intent.$INTENT == mutable-pending-intent.$BASE
+    - mutable-pending-intent.$CLASSNAME == notification.$CLASSNAME
     - mutable-pending-intent.$NOTIF == notification.$NOTIF
   message: |
     Mutable pending intent with implicit base intent on app's notification detected.

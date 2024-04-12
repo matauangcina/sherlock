@@ -11,6 +11,7 @@ rules:
     - rule: '(( rules_path ))/taint-analysis/permission/broadcast-with-sensitive-info.yaml'
       as: broadcast-info
     on:
+    - broadcast-info.$CLASSNAME == implicit-broadcast.$CLASSNAME
     - broadcast-info.$INTENT == implicit-broadcast.$INTENT
   message: |
     Insecure broadcast transmitted over an implicit intent without protection detected.
@@ -36,6 +37,7 @@ rules:
     on:
     - permission.$PERM == broadcast-permission.$PERM
     - broadcast-info.$INTENT == implicit-broadcast.$INTENT
+    - broadcast-info.$CLASSNAME == implicit-broadcast.$CLASSNAME
     - broadcast-permission.$INTENT == implicit-broadcast.$INTENT
   message: |
     Insecure broadcast transmitted over an implicit intent with insufficient protection detected.
