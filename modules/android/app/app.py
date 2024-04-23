@@ -118,6 +118,14 @@ class App:
                 log.warning(f"Option not found, skipping: '{key.upper()}'")
 
 
+    def print_option_template(self):
+        opts = option_state.get_all_options()
+        opt_str = "set"
+        for key in opts.keys():
+            opt_str += f' {key.lower()}='
+        log.debug(f"Command: '{opt_str}'")
+
+
     def replace_placeholder(self, file, content):
         if content is None:
             return
@@ -173,7 +181,8 @@ class App:
         return True
 
 
-    def check_logcat(self, stat_dict):
+    def check_logcat(self):
+        stat_dict = self.log_stat()
         log.debug("Init logcat..")
         cmd = ["logcat", "--clear"]
         _ = utils.run_adb(device_state.device_id, cmd)
@@ -193,9 +202,10 @@ class App:
                     if re.match(err["regex"], line):
                         msg = re.search(err["msg"], line).group()
                         log.error(f"ERR: {msg}")
+                        break
                 if re.match(stat_dict["succeed"]["regex"], line):
                     data = re.search(stat_dict["succeed"]["data"], line).group()
-                    log.info(f"ELEMENTARY!: '{data}'\n")
+                    log.info(f"BINGO: '{data}'\n")
                     logcat.terminate()
                     break
             logcat.wait()
@@ -203,6 +213,41 @@ class App:
             print("")
             log.error("Terminating logcat..\n")
             logcat.terminate()
+
+    
+    def log_stat(self):
+        return {
+            "failed": [
+                {
+                    "regex": r"^.*java\.lang\.SecurityException:.*$",
+                    "msg": r"java\.lang\.SecurityException:.*"
+                },
+                {
+                    "regex": r"^.*java\.lang\.NullPointerException:.*$",
+                    "msg": r"java\.lang\.NullPointerException:.*"
+                },
+                {
+                    "regex": r"^.*java\.lang\.RuntimeException:.*$",
+                    "msg": r"java\.lang\.RuntimeException:.*"
+                }
+            ],
+            "succeed": {
+                "regex": r"^.*BINGO!.*$",
+                "data": r"Data:.*"
+            }
+        }
+    
+
+    def check_component_log(self, opts):
+        if opts.get('IS_EXPORTED') is not None:
+            if not opts['IS_EXPORTED']:
+                log.warning("Press the button displayed to execute the exploit module.")
+            else:
+                log.warning(f'Navigate to target class: \"{opts["TARGET_CLASS"]}\" and trigger the implicit intent.')
+        if opts.get('LEAK_PROVIDER') is None:
+            return
+        if not opts['LEAK_PROVIDER']:
+            log.info(f'Check whether the protected component: \"{opts["COMPONENT_CLASS"]}\" is successfully accessed.')
 
 
     def build(self, app):

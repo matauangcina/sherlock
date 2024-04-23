@@ -7,8 +7,10 @@ rules:
     message: Insufficient permission protection level detected.
     languages:
       - xml
-    severity: WARNING
+    severity: INFO
     metadata:
       cwe: cwe-285, cwe-926
       score: 1.8 / Low
       cvss: CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:A/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N
+
+

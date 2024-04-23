@@ -1,16 +1,16 @@
 rules:
-- id: webview-intent-uri-basic
+- id: unsafe-intent-uri-basic
   severity: ERROR
   languages:
   - java
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/webview-intent-uri/webview-intent-uri.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unsafe-intent-uri/unsafe-intent-uri.yaml'
       as: intent-uri
-    - rule: '(( rules_path ))/taint-analysis/unprotected-webview/unprotected-webview-basic.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unprotected-webview/unprotected-webview-basic.yaml'
       as: unprotected-webview
-    - rule: '(( rules_path ))/manifest-analysis/exported-activity.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/manifest-analysis/exported-activity.yaml'
       as: exported-activity
     on:
     - intent-uri.$WV == unprotected-webview.$WV
@@ -21,18 +21,18 @@ rules:
     cwe: cwe-285, cwe-926, cwe-940
     score: 7.1 / High
     cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
-- id: webview-intent-uri-implicit
+- id: unsafe-intent-uri-implicit
   severity: ERROR
   languages:
   - java
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/webview-intent-uri/webview-intent-uri.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unsafe-intent-uri/unsafe-intent-uri.yaml'
       as: intent-uri
-    - rule: '(( rules_path ))/taint-analysis/unprotected-webview/unprotected-webview-implicit.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unprotected-webview/unprotected-webview-implicit.yaml'
       as: unprotected-webview
-    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-intent.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-start-activity-for-result.yaml'
       as: implicit-intent
     on:
     - intent-uri.$WV == unprotected-webview.$WV
@@ -43,3 +43,5 @@ rules:
     cwe: cwe-285, cwe-926, cwe-940
     score: 7.1 / High
     cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
+
+

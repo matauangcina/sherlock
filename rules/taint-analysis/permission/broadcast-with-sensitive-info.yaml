@@ -21,4 +21,6 @@ rules:
       - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     languages:
       - java
-    severity: INFO
+    severity: WARNING
+
+

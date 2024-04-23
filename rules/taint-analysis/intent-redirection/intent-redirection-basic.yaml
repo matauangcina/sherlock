@@ -5,10 +5,10 @@ rules:
       - patterns:
         - pattern: getIntent()
         - pattern-either:
-          - patterns:
-            - pattern: getIntent().getParcelableExtra(...)
-            - pattern-not-inside: new Intent(...)
-          - pattern: new Intent((Intent) getIntent().getParcelableExtra(...))
+          - pattern: Intent $INTENT = getIntent();
+          - pattern: getIntent().getBundleExtra(...)
+          - pattern: getIntent().getExtras(...)
+          - pattern: getIntent().getParcelableExtra(...)
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sanitizers:
       - patterns:
@@ -17,13 +17,13 @@ rules:
             - pattern: if ($COND) {...}
             - metavariable-regex:
                 metavariable: $COND
-                regex: .*\w+\.getPackageName\(\)\.equals\(.+\)\s*\&\&\s*\w+\.getClassName\(\)\.equals\(.+\).*
+                regex: ^.*\w+\.getPackageName\(\)\.equals\(.+\)\s*&&\s*\w+\.getClassName\(\)\.equals\(.+\).*$
           - pattern-inside: $INTENT.putExtra(...)
           - patterns: 
             - pattern: if ($COND) {...}
             - metavariable-regex:
                 metavariable: $COND
-                regex: .*\w+\.exported.*
+                regex: ^.*\w+\.exported.*$
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sinks:
       - patterns:
@@ -36,3 +36,4 @@ rules:
     languages:
       - java
     severity: WARNING
+

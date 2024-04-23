@@ -21,21 +21,29 @@ rules:
       - patterns:
         - pattern-either:
           - pattern: sendBroadcast($INTENT, $PERM)
-          - pattern: $CTX.sendBroadcast($INTENT, $PERM)
           - patterns: 
             - pattern: $CTX.sendBroadcast($INTENT, $PERM)
             - metavariable-regex:
                 metavariable: $CTX
                 regex: ^(?!.*(L|l)ocal(B|b)roadcast.*$|.*(L|l)(B|b)(M|m).*$).*$
-          - pattern: sendOrderedBroadcast($INTENT, $PERM, ...)
+          - pattern-either:
+            - pattern: sendOrderedBroadcast($INTENT, $PERM)
+            - pattern: sendOrderedBroadcast($INTENT, $PERM, ...)
           - patterns: 
-            - pattern: $CTX.sendOrderedBroadcast($INTENT, $PERM, ...)
+            - pattern-either:
+              - pattern: $CTX.sendOrderedBroadcast($INTENT, $PERM)
+              - pattern: $CTX.sendOrderedBroadcast($INTENT, $PERM, ...)
             - metavariable-regex:
                 metavariable: $CTX
                 regex: ^(?!.*(L|l)ocal(B|b)roadcast.*$|.*(L|l)(B|b)(M|m).*$).*$
+        - metavariable-regex:
+            metavariable: $PERM
+            regex: ^(?!null$).*$
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
         - focus-metavariable: $INTENT
     message: $PERM
     languages:
       - java
     severity: INFO
+
+

@@ -20,13 +20,15 @@ ADB_BIN = None
 
 INVALID_CMD = "Invalid command. Use 'help' for assistance."
 
-banner = """                        
+banner = """[bold yellow]                        
+
 
        _____ _           _         _   
       |   __| |_ ___ ___| |___ ___| |_ 
       |__   |   | -_|  _| | . |  _| '_|
       |_____|_|_|___|_| |_|___|___|_,_|
 
-                                ({0})
+                                [/][bold blue]({0})[/]
 
+                                
 """.format(VERSION)

@@ -72,8 +72,14 @@ class Prompt:
         self._session = self.prompt_session()
 
     def prompt_session(self):
+        history = os.path.expanduser("~/.sherlock/sherlock_history")
+        history_dir = os.path.dirname(history)
+        if not os.path.exists(history_dir):
+            os.makedirs(history_dir)
+        if not os.path.exists(history):
+            open(history, "a").close()
         return PromptSession(
-            history=FileHistory(os.path.expanduser("~/.sherlock/sherlock_history")),
+            history=FileHistory(history),
             completer=self._completer,
             style=self.prompt_style(),
             auto_suggest=AutoSuggestFromHistory(),

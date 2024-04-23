@@ -6,18 +6,18 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/implicit-base-intent/implicit-base-intent.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-base-intent/implicit-base-intent.yaml'
       as: base-intent
-    - rule: '(( rules_path ))/taint-analysis/mutable-pending-intent/mutable-pending-intent-basic.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/mutable-pending-intent/mutable-pending-intent-basic.yaml'
       as: mutable-pending-intent
-    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-intent.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-intent.yaml'
       as: implicit-intent
     on:
     - base-intent.$CODE == mutable-pending-intent.$CODE
     - base-intent.$CLASSNAME == mutable-pending-intent.$CLASSNAME
-    - base-intent.$INTENT == mutable-pending-intent.$BASE
     - mutable-pending-intent.$CLASSNAME == implicit-intent.$CLASSNAME
     - mutable-pending-intent.$INTENT == implicit-intent.$INTENT
+    - base-intent.$INTENT == mutable-pending-intent.$BASE
   message: |
     Mutable pending intent wrapped on an implicit intent with implicit base intent detected.
   metadata:
@@ -31,21 +31,23 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/implicit-base-intent/implicit-base-intent.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-base-intent/implicit-base-intent.yaml'
       as: base-intent
-    - rule: '(( rules_path ))/taint-analysis/mutable-pending-intent/mutable-pending-intent-notification.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/mutable-pending-intent/mutable-pending-intent-notification.yaml'
       as: mutable-pending-intent
-    - rule: '(( rules_path ))/taint-analysis/notification/notification.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/notification/notification.yaml'
       as: notification
     on:
     - base-intent.$CODE == mutable-pending-intent.$CODE
     - base-intent.$CLASSNAME == mutable-pending-intent.$CLASSNAME
-    - base-intent.$INTENT == mutable-pending-intent.$BASE
     - mutable-pending-intent.$CLASSNAME == notification.$CLASSNAME
     - mutable-pending-intent.$NOTIF == notification.$NOTIF
+    - base-intent.$INTENT == mutable-pending-intent.$BASE
   message: |
     Mutable pending intent with implicit base intent on app's notification detected.
   metadata:
     cwe: cwe-285, cwe-926
     score: 7.1 / High
     cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
+
+

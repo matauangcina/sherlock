@@ -5,6 +5,7 @@ rules:
       - patterns:
         - pattern-either:
           - pattern: new Intent()
+          - pattern: new Intent($ACTION)
           - pattern: new Intent("$ACTION")
           - pattern: new Intent("$ACTION", $URI)
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}

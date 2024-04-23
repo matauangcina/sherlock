@@ -76,5 +76,11 @@
         "description": "Execute an exploit module.",
         "usage": "execute",
         "demo": "execute"
+    },
+    "option": {
+        "command": "option",
+        "description": "Print option input template.",
+        "usage": "option",
+        "demo": "option"
     }
 }

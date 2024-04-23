@@ -1,0 +1,12 @@
+rules:
+  - id: set-flags-method
+    message: setFlags
+    patterns:
+      - pattern: $INTENT.setFlags($FLAG);
+      - metavariable-regex:
+          metavariable: $INTENT
+          regex: ^(?!new Intent\(.*\)$).*$
+    fix: $INTENT = $INTENT.setFlags($FLAG);
+    languages:
+      - java
+    severity: INFO

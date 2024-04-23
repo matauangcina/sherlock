@@ -7,29 +7,17 @@ rules:
         - pattern-either:
           - patterns:
             - pattern-either:
-              - patterns:
-                - pattern: $SRC.getParcelableExtra(...)
-                - pattern-not-inside: new Intent(...)
-              - pattern: new Intent((Intent) $SRC.getParcelableExtra(...))
+              - pattern: Intent $INTENT = $SRC;
+              - pattern: $SRC.getBundleExtra(...)
+              - pattern: $SRC.getExtras(...)
+              - pattern: $SRC.getParcelableExtra(...)
             - pattern: $ACC onActivityResult(..., Intent $SRC) {...}
           - patterns:
             - pattern-either:
-              - patterns:
-                - pattern-either:
-                  - pattern: |
-                      Intent $DATA = $SRC.getData(...);
-                      ...
-                      Intent $INTENT = $DATA.getParcelableExtra(...);
-                  - pattern: |
-                      Intent $DATA = $SRC.getData(...);
-                      ...
-                      Intent $INTENT = new Intent((Intent) $DATA.getParcelableExtra(...));
-                - pattern-not-inside: new Intent(...)
-              - pattern-either:
-                - patterns:
-                  - pattern: $SRC.getData().getParcelableExtra(...)
-                  - pattern-not-inside: new Intent(...)
-                - pattern: new Intent((Intent) $SRC.getData().getParcelableExtra(...))
+              - pattern: Intent $INTENT = $SRC.getData();
+              - pattern: $SRC.getData().getBundleExtra(...)
+              - pattern: $SRC.getData().getExtras(...)
+              - pattern: $SRC.getData().getParcelableExtra(...)
             - pattern-either:
               - pattern: ActivityResultLauncher<Intent> $LAUNCHER = registerForActivityResult(..., $SRC -> {...});
               - pattern: $ACC $METHOD(ActivityResult $SRC) {...}
@@ -60,3 +48,4 @@ rules:
     languages:
       - java
     severity: WARNING
+

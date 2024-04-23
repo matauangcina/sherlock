@@ -58,18 +58,18 @@ class Template(App):
         ):
         intent = f"Intent {intent_var} = new Intent();\n"
         if set_action is not None:
-            intent += f"{intent_var}.setAction(\"{set_action}\");\n"
+            intent += f'{intent_var}.setAction("{set_action}");\n'
         if set_data is not None:
             intent += f"{intent_var}.setData(Uri.parse({set_data}));\n"
         if set_selector is not None:
-            intent += f"{intent_var}.setSelector(new Intent().setClassName(\"{set_selector[0]}\", \"{set_selector[1]}\"));\n"
+            intent += f'{intent_var}.setSelector(new Intent().setClassName("{set_selector[0]}", "{set_selector[1]}"));\n'
         if set_clipdata is not None:
-            intent += f"{intent_var}.setClipData(ClipData.newRawUri(null, Uri.parse(\"{set_clipdata}\")));\n"
+            intent += f'{intent_var}.setClipData(ClipData.newRawUri(null, Uri.parse("{set_clipdata}")));\n'
         if len(put_extra) != 0:
-            for extra in put_extra: 
-                intent += f"{intent_var}.putExtra(\"{extra[0]}\", {extra[1]});\n"
+            for extra in put_extra:
+                intent += f'{intent_var}.putExtra("{extra[0]}", {extra[1]});\n'
         if set_selector is None and len(set_classname) != 0:
-            intent += f"{intent_var}.setClassName(\"{set_classname[0]}\", \"{set_classname[1]}\");\n"
+            intent += f'{intent_var}.setClassName("{set_classname[0]}", "{set_classname[1]}");\n'
         if len(set_flags) != 0:
             intent += f"{intent_var}.setFlags({''.join([flag + ('|' if i < len(set_flags) - 1 else '') for i,flag in enumerate(set_flags)])});\n"
         if start_activity:
@@ -237,4 +237,4 @@ class Template(App):
 
 
     def resolve_content(self, provider_type):
-        return "Cursor c = getContentResolver().query(uri, null, null, null, null);\ntry {\nif (c.getCount() == 0) {\nreturn;\n}\nc.moveToFirst();\nStringBuilder sb = new StringBuilder();\nwhile (!c.isAfterLast()) {\nfor (int i = 0; i < c.getColumnCount(); i++) {\nString providerData = c.getColumnName(i) + \":\" + c.getString(i) + \";\";\nsb.append(providerData);\n}\nc.moveToNext();\n}\nLog.i(\"ELEMENTARY!!!\", \"Data:\" + sb);\n} finally {\nc.close();\n}" if provider_type == 1 else "try {\nInputStream inputStream = getContentResolver().openInputStream(providerUri);\nStringBuilder outputBuilder = new StringBuilder();\nBufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));\nString line;\ntry {\nwhile ((line = reader.readLine()) != null) {\noutputBuilder.append(line);\n}\nbyte[] bytes = outputBuilder.toString().getBytes(StandardCharsets.UTF_8);\nLog.d(\"ELEMENTARY!!!\", \"Data:\" + Base64.encodeToString(bytes, Base64.DEFAULT));\n} catch (IOException e) {\ne.printStackTrace();\n} finally {\ntry {\ninputStream.close();\n} catch (IOException e) {\ne.printStackTrace();\n}\n}\n} catch (FileNotFoundException e) {\nthrow new RuntimeException(e);\n}"
+        return "Cursor c = getContentResolver().query(uri, null, null, null, null);\ntry {\nif (c.getCount() == 0) {\nreturn;\n}\nc.moveToFirst();\nStringBuilder sb = new StringBuilder();\nwhile (!c.isAfterLast()) {\nfor (int i = 0; i < c.getColumnCount(); i++) {\nString providerData = c.getColumnName(i) + \":\" + c.getString(i) + \";\";\nsb.append(providerData);\n}\nc.moveToNext();\n}\nLog.i(\"BINGO!\", \"Data:\" + sb);\n} finally {\nc.close();\n}" if provider_type == 1 else "try {\nInputStream inputStream = getContentResolver().openInputStream(providerUri);\nStringBuilder outputBuilder = new StringBuilder();\nBufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));\nString line;\ntry {\nwhile ((line = reader.readLine()) != null) {\noutputBuilder.append(line);\n}\nbyte[] bytes = outputBuilder.toString().getBytes(StandardCharsets.UTF_8);\nLog.d(\"BINGO!\", \"Data:\" + Base64.encodeToString(bytes, Base64.DEFAULT));\n} catch (IOException e) {\ne.printStackTrace();\n} finally {\ntry {\ninputStream.close();\n} catch (IOException e) {\ne.printStackTrace();\n}\n}\n} catch (FileNotFoundException e) {\nthrow new RuntimeException(e);\n}"

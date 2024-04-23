@@ -7,12 +7,17 @@ rules:
         - pattern-either:
           - patterns:
             - pattern-either:
+              - pattern: Intent $INTENT = $SRC;
               - pattern: $SRC.getStringExtra(...)
               - pattern: $SRC.getDataString()
+              - pattern: $SRC.getBundleExtra(...)
+              - pattern: $SRC.getExtras(...)
             - pattern: $ACC onActivityResult(..., Intent $SRC) {...}
           - patterns:
             - pattern-either:
-              - pattern: $SRC.getData()
+              - pattern: Intent $INTENT = $SRC.getData();
+              - pattern: $SRC.getData().getBundleExtra(...)
+              - pattern: $SRC.getData().getExtras(...)
               - pattern: $SRC.getData().getStringExtra(...)
               - pattern: $SRC.getData().getDataString()
             - pattern-either:
@@ -34,6 +39,4 @@ rules:
     message: $CLASSNAME
     languages:
       - java
-    severity: ERROR
-
-# DONE
+    severity: WARNING

@@ -7,10 +7,14 @@ rules:
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sinks:
       - patterns:
-        - pattern: $NMC.notify(..., $NOTIF)
+        - pattern-either:
+          - pattern: $INTENT.putExtra(..., $NOTIF)
+          - pattern: $NMC.notify(..., $NOTIF)
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
         - focus-metavariable: $NOTIF
     message: $NOTIF
     languages:
       - java
-    severity: ERROR
+    severity: INFO
+
+

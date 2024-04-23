@@ -1,5 +1,5 @@
 rules:
-  - id: implicit-broadcast-no_protection
+  - id: implicit-start-activity-for-result
     mode: taint
     pattern-sources:
       - patterns:
@@ -20,27 +20,14 @@ rules:
     pattern-sinks:
       - patterns:
         - pattern-either:
-          - pattern: sendBroadcast($INTENT)
-          - patterns: 
-            - pattern: $CTX.sendBroadcast($INTENT)
-            - metavariable-regex:
-                metavariable: $CTX
-                regex: ^(?!.*(L|l)ocal(B|b)roadcast.*$|.*(L|l)(B|b)(M|m).*$).*$
-          - pattern-either: 
-            - pattern: sendOrderedBroadcast($INTENT, null)
-            - pattern: sendOrderedBroadcast($INTENT, null, ...)
-          - patterns: 
-            - pattern-either: 
-              - pattern: $CTX.sendOrderedBroadcast($INTENT, null)
-              - pattern: $CTX.sendOrderedBroadcast($INTENT, null, ...)
-            - metavariable-regex:
-                metavariable: $CTX
-                regex: ^(?!.*(L|l)ocal(B|b)roadcast.*$|.*(L|l)(B|b)(M|m).*$).*$
+          - pattern: startActivityForResult($INTENT, ...)
+          - pattern: $CTX.startActivityForResult($INTENT, ...)
+          - pattern: $LAUNCHER.launch($INTENT)
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
         - focus-metavariable: $INTENT
-    message: |
-      $CLASSNAME
+    message: $CLASSNAME
     languages:
-    - java
+      - java
     severity: WARNING
+
 

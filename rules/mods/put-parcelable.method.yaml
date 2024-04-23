@@ -1,0 +1,12 @@
+rules:
+  - id: put-parcelable-method
+    message: putParcelable
+    patterns:
+      - pattern: $BUNDLE.putParcelable($KEY, $VAL);
+      - metavariable-regex:
+          metavariable: $BUNDLE
+          regex: ^(?!new Bundle\(\)$).*$
+    fix: $BUNDLE = $BUNDLE.putParcelable($KEY, $VAL);
+    languages:
+      - java
+    severity: INFO

@@ -1,0 +1,12 @@
+rules:
+  - id: put-serializable-method
+    message: putSerializable
+    patterns:
+      - pattern: $BUNDLE.putSerializable($KEY, $VAL);
+      - metavariable-regex:
+          metavariable: $BUNDLE
+          regex: ^(?!new Bundle\(\)$).*$
+    fix: $BUNDLE = $BUNDLE.putSerializable($KEY, $VAL);
+    languages:
+      - java
+    severity: INFO

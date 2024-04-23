@@ -9,5 +9,5 @@ console = Console()
 
 def display_banner():
     load_terminal("Starting console", 1)
-    print(banner)
+    console.print(banner)
     console.print(Panel.fit("Type 'help' for assistance.", padding=(0,2)))

@@ -1,73 +1,73 @@
 {
     "insecure_set_result_basic": {
-        "name": "android/app/access-protected-components/insecure-set-result/basic",
+        "name": "android/app/privilege-escalation/insecure-set-result/basic",
         "platform": "android",
         "category": "app",
         "status": "partial",
-        "path": "android/app/access-protected-components/insecure-set-result/basic.py",
+        "path": "android/app/privilege-escalation/insecure-set-result/basic.py",
         "description": "Potential Access to Protected Content Providers",
         "author": []
     },
     "insecure_set_result_implicit": {
-        "name": "android/app/access-protected-components/insecure-set-result/implicit",
+        "name": "android/app/privilege-escalation/insecure-set-result/implicit",
         "platform": "android",
         "category": "app",
         "status": "partial",
-        "path": "android/app/access-protected-components/insecure-set-result/implicit.py",
+        "path": "android/app/privilege-escalation/insecure-set-result/implicit.py",
         "description": "Potential Access to Arbitrary Content Providers via Implicit Intent Interception",
         "author": []
     },
     "intent_redirection_basic": {
-        "name": "android/app/access-protected-components/intent-redirection/basic",
+        "name": "android/app/privilege-escalation/intent-redirection/basic",
         "platform": "android",
         "category": "app",
         "status": "partial",
-        "path": "android/app/access-protected-components/intent-redirection/basic.py",
+        "path": "android/app/privilege-escalation/intent-redirection/basic.py",
         "description": "Intent Redirection which Leads to Unrestricted Access to Arbitrary Protected Application Components",
         "author": []
     },
     "intent_redirection_implicit": {
-        "name": "android/app/access-protected-components/intent-redirection/implicit",
+        "name": "android/app/privilege-escalation/intent-redirection/implicit",
         "platform": "android",
         "category": "app",
         "status": "partial",
-        "path": "android/app/access-protected-components/intent-redirection/implicit.py",
+        "path": "android/app/privilege-escalation/intent-redirection/implicit.py",
         "description": "Intent Redirection which Leads to Unrestricted Access to Arbitrary Protected Application Components via Implicit Intent Interception",
         "author": []
     },
-    "webview_intent_uri_basic": {
-        "name": "android/app/access-protected-components/webview-intent-uri/basic",
+    "unsafe_intent_uri_basic": {
+        "name": "android/app/privilege-escalation/unsafe-intent-uri/basic",
         "platform": "android",
         "category": "app",
         "status": "partial",
-        "path": "android/app/access-protected-components/webview-intent-uri/basic.py",
+        "path": "android/app/privilege-escalation/unsafe-intent-uri/basic.py",
         "description": "Access to Arbitrary Protected Application Components via WebView Intent URI Scheme.",
         "author": []
     },
-    "webview_intent_uri_implicit": {
-        "name": "android/app/access-protected-components/webview-intent-uri/implicit",
+    "unsafe_intent_uri_implicit": {
+        "name": "android/app/privilege-escalation/unsafe-intent-uri/implicit",
         "platform": "android",
         "category": "app",
         "status": "partial",
-        "path": "android/app/access-protected-components/webview-intent-uri/implicit.py",
+        "path": "android/app/privilege-escalation/unsafe-intent-uri/implicit.py",
         "description": "Access to Arbitrary Protected Application Components via WebView Intent URI Scheme and Implicit Intent Interception.",
         "author": []
     },
     "mutable_pending_intent_basic": {
-        "name": "android/app/access-protected-components/mutable-pending-intent/basic",
+        "name": "android/app/privilege-escalation/mutable-pending-intent/basic",
         "platform": "android",
         "category": "app",
         "status": "partial",
-        "path": "android/app/access-protected-components/mutable-pending-intent/basic.py",
+        "path": "android/app/privilege-escalation/mutable-pending-intent/basic.py",
         "description": "Mutable Pending Intent with an Implicit Base Intent Wrapped on an Implicit Intent which Leads to Unrestricted Access to Arbitrary Protected Application Components.",
         "author": []
     },
     "mutable_pending_intent_notification": {
-        "name": "android/app/access-protected-components/mutable-pending-intent/notification",
+        "name": "android/app/privilege-escalation/mutable-pending-intent/notification",
         "platform": "android",
         "category": "app",
         "status": "partial",
-        "path": "android/app/access-protected-components/mutable-pending-intent/notification.py",
+        "path": "android/app/privilege-escalation/mutable-pending-intent/notification.py",
         "description": "Mutable Pending Intent with an Implicit Base Intent Wrapped on an App's Notification which Leads to Unrestricted Access to Arbitrary Protected Application Components.",
         "author": []
     },

@@ -3,7 +3,7 @@ import ruamel.yaml
 import shutil
 import settings.utils as utils
 
-from globals import RULE_PATH, POC_PATH
+from globals import RULE_PATH, POC_PATH, ROOT_PATH
 from ruamel.yaml import YAML
 from settings.scan import run_engine
 
@@ -23,6 +23,8 @@ def init_config():
                     )
         with open(rule_path, "w") as file:
             yaml.dump(yaml_data, file)
+    if utils.is_path_exists("/usr/local/lib/python3.10/site-packages/semgrep/join_rule.py") and utils.is_path_exists(os.path.join(ROOT_PATH, "venv/lib/python3.10/site-packages/semgrep/join_rule.py")):
+        shutil.copy(os.path.join(ROOT_PATH, "venv/lib/python3.10/site-packages/semgrep/join_rule.py"), "/usr/local/lib/python3.10/site-packages/semgrep/join_rule.py")
 
 
 def post_decompile(db, id):
@@ -31,6 +33,7 @@ def post_decompile(db, id):
     codebase = utils.get_codebase_path(path)
     if manifest is not None and codebase is not None:
         shutil.copy(manifest, codebase)
+    _ = run_engine([codebase], "mod", True)
 
 
 def reset():

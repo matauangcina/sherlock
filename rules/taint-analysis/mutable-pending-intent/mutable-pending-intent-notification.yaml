@@ -16,4 +16,6 @@ rules:
     message: $NOTIF
     languages:
       - java
-    severity: ERROR
+    severity: WARNING
+
+

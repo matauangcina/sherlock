@@ -8,6 +8,8 @@ rules:
           - pattern: Intent $INTENT = getIntent();
           - pattern: getIntent().getDataString()
           - pattern: getIntent().getStringExtra(...)
+          - pattern: getIntent().getBundleExtra(...)
+          - pattern: getIntent().getExtras(...)
           - pattern: Uri $URI = getIntent().getData();
           - pattern: getIntent().getData().getQueryParameter(...)
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
@@ -26,6 +28,4 @@ rules:
     message: $CLASSNAME
     languages:
       - java
-    severity: ERROR
-
-# DONE
+    severity: WARNING

@@ -24,7 +24,7 @@ class SherlockModule(App):
             OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
             OptStr("TARGET_PACKAGE", [True, "Target package name"]),
             OptStr("TARGET_CLASS", [True, "Target class name"]),
-            OptList("INTENT_EXTRA", [False, "Intent extra data"]),
+            OptList("PUT_EXTRA", [False, "Intent extra data"]),
             OptEnum("RESULT_CODE", [True, "(Default: -1) Result code returned to the caller", -1, [-1, 0, 1, "RESULT_OK", "RESULT_FIRST_USER", "RESULT_CANCELED"]])
         ])
 
@@ -35,6 +35,13 @@ class SherlockModule(App):
 
     def execute(self):
         opts = self.get_options_value()
+
+        provider_type = opts['PROVIDER_TYPE']
+        provider_uri = opts['PROVIDER_URI']
+        target_package = opts['TARGET_PACKAGE']
+        target_class = opts['TARGET_CLASS']
+        put_extra = opts['PUT_EXTRA']
+        result_code = opts['RESULT_CODE']
 
         component = self._template.build_activity(
             name=self.activity_name(self._id, opts['TARGET_PACKAGE']),
@@ -58,18 +65,18 @@ class SherlockModule(App):
             ],
             bind_button=True,
             on_create=[self._template.build_intent(
-                set_data=f"\"{opts['PROVIDER_URI']}\"",
-                set_classname=[opts['TARGET_PACKAGE'], opts['TARGET_CLASS']],
-                put_extra=[[extra[0], f"\"{extra[1]}\""] for extra in opts['INTENT_EXTRA']] if opts['INTENT_EXTRA'] != "" else [],
+                set_data=f'"{provider_uri}"',
+                set_classname=[target_package, target_class],
+                put_extra=[[extra[0], f'"{extra[1]}"'] for extra in put_extra] if put_extra != "" else [],
                 set_flags=["Intent.FLAG_GRANT_READ_URI_PERMISSION", "Intent.FLAG_GRANT_WRITE_URI_PERMISSION"],
                 start_activity=False,
                 start_for_result=True
             )],
             listener=[
                 self._template.build_start_for_result_launcher(
-                    opts['RESULT_CODE'],
+                    result_code,
                     process_result=[
-                        self._template.resolve_content(opts['PROVIDER_TYPE'])
+                        self._template.resolve_content(provider_type)
                     ]
                 )
             ]
@@ -77,37 +84,16 @@ class SherlockModule(App):
 
         app = {
             "manifest": [
-                self._template.build_manifest_component(self.activity_name(self._id, opts['TARGET_PACKAGE']))
+                self._template.build_manifest_component(self.activity_name(self._id, target_package))
             ],
-            "layout": self._template.button_layout(self._id, opts['TARGET_PACKAGE']),
-            "bind_button": self._template.bind_button(self._id, opts['TARGET_PACKAGE']),
+            "layout": self._template.button_layout(self._id, target_package),
+            "bind_button": self._template.bind_button(self._id, target_package),
             "component": [
                 {
-                    "name": f"{self.activity_name(self._id, opts['TARGET_PACKAGE'])}.java",
+                    "name": f"{self.activity_name(self._id, target_package)}.java",
                     "content": component 
                 }
             ]
-        }
-
-        stat = {
-            "failed": [
-                {
-                    "regex": r"^.*java\.lang\.SecurityException:.*$",
-                    "msg": r"java\.lang\.SecurityException:.*"
-                },
-                {
-                    "regex": r"^.*java\.lang\.NullPointerException:.*$",
-                    "msg": r"java\.lang\.NullPointerException:.*"
-                },
-                {
-                    "regex": r"^.*java\.lang\.RuntimeException:.*$",
-                    "msg": r"java\.lang\.RuntimeException:.*"
-                }
-            ],
-            "succeed": {
-                "regex": r"^.*ELEMENTARY!!!.*$",
-                "data": r"Data:.*"
-            }
         }
 
         build_app = self.build(app)
@@ -115,7 +101,4 @@ class SherlockModule(App):
             log.error("Module failed to execute, terminating module..\n")
             return
 
-        self.check_logcat(stat)
-
-# DONE
-# RETESTED
+        self.check_logcat()

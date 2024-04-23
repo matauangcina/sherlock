@@ -2,6 +2,7 @@ from commands import analyze
 from commands import clear
 from commands import decompile
 from commands import execute
+from commands import option
 from commands import set
 from commands import show
 from commands import remove
@@ -112,6 +113,10 @@ COMMANDS = {
     "execute": {
         "desc": "Execute an exploit module",
         "exec": execute.module
+    },
+    "option": {
+        "desc": "Print option input template",
+        "exec": option.print
     },
     "clear": {
         "desc": "Clear terminal",

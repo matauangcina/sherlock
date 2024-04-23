@@ -6,12 +6,13 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-broadcast-no-protection.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-broadcast-no-protection.yaml'
       as: implicit-broadcast
-    - rule: '(( rules_path ))/taint-analysis/permission/broadcast-with-sensitive-info.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/permission/broadcast-with-sensitive-info.yaml'
       as: broadcast-info
     on:
     - broadcast-info.$INTENT == implicit-broadcast.$INTENT
+    - broadcast-info.$CLASSNAME == implicit-broadcast.$CLASSNAME
   message: |
     Insecure broadcast transmitted over an implicit intent without protection detected.
   metadata:
@@ -25,21 +26,23 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-broadcast-permission.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-broadcast-permission.yaml'
       as: implicit-broadcast
-    - rule: '(( rules_path ))/taint-analysis/permission/broadcast-with-sensitive-info.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/permission/broadcast-with-sensitive-info.yaml'
       as: broadcast-info
-    - rule: '(( rules_path ))/taint-analysis/permission/broadcast-with-permission.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/permission/broadcast-with-permission.yaml'
       as: broadcast-permission
-    - rule: '(( rules_path ))/manifest-analysis/insufficient-permission-protection.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/manifest-analysis/insufficient-permission-protection.yaml'
       as: permission
     on:
     - permission.$PERM == broadcast-permission.$PERM
     - broadcast-info.$INTENT == implicit-broadcast.$INTENT
     - broadcast-permission.$INTENT == implicit-broadcast.$INTENT
+    - broadcast-info.$CLASSNAME == implicit-broadcast.$CLASSNAME
   message: |
     Insecure broadcast transmitted over an implicit intent with insufficient protection detected.
   metadata:
     cwe: cwe-927
     score: 5.7 / Medium
     cvss: CVSS:4.0/AV:L/AC:H/AT:P/PR:N/UI:A/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N
+

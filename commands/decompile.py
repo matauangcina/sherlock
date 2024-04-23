@@ -38,10 +38,10 @@ def run_decompiler(apks, output_dir):
         try:
             jadx = subprocess.check_output(decompile_cmd, stderr=subprocess.STDOUT, text=True).splitlines()
         except Exception as e:
-            log.error(f"Decompilation failed: {e}, skipping: '{id}'")
+            log.error(f"Decompilation failed: {e}, skipping: \'{id}\'")
             continue
         for line in jadx:
-            if line == "Killed":
+            if re.match(r"^.*Killed.*$", line):
                 log.error(f"Process killed, skipped: '{id}'")
                 continue
         log.info(f"Target decompiled to: '{output_path}'")
