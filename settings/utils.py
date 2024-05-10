@@ -4,10 +4,8 @@ import os
 import psutil
 import shlex
 import subprocess
-import re
 
 from globals import ADB_BIN, POC_PATH
-from settings.target_info import get_app_details
 
 
 def is_path_exists(path):
@@ -30,12 +28,12 @@ def get_commands(text):
 
 
 def get_manifest_file(target_path):
-    manifest = os.path.join(target_path, "resources/AndroidManifest.xml")
+    manifest = os.path.join(target_path, "app", "src", "main", "AndroidManifest.xml")
     return manifest if is_path_exists(manifest) else None
 
 
 def get_string_file(target_path):
-    strings = os.path.join(target_path, "resources/res/values/strings.xml")
+    strings = os.path.join(target_path, "app", "src", "main", "res", "values", "strings.xml")
     return strings if is_path_exists(strings) else None
 
 
@@ -55,7 +53,7 @@ def get_poc_main():
 
 
 def get_codebase_path(target_path):
-    return os.path.join(target_path, "sources") if is_path_exists(os.path.join(target_path, "sources")) else None
+    return os.path.join(target_path, "app", "src", "main", "java") if is_path_exists(os.path.join(target_path, "app", "src", "main", "java")) else None
 
 
 def find_process_by_name(name):

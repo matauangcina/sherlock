@@ -45,5 +45,3 @@ rules:
     languages:
       - java
     severity: INFO
-
-

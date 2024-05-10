@@ -82,5 +82,11 @@
         "description": "Print option input template.",
         "usage": "option",
         "demo": "option"
+    },
+    "add_target": {
+        "command": "add",
+        "description": "Add new target to target DB.",
+        "usage": "add <target_path>",
+        "demo": "add /home/User/Labs/android/sherlock"
     }
 }

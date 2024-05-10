@@ -35,9 +35,11 @@ def target(args=None):
     if len(ids) == 0:
         log.error("No targets found.")
         return
+    print("")
     for id in ids:
         log.debug(f"Removing target: {id}")
         shutil.rmtree(targets[id]["path"])
         del targets[id]
         log.info(f"Target removed")
+    print("")
     update_target_db(targets)

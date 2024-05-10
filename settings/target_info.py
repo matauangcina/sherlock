@@ -23,9 +23,35 @@ def update_target_db(target_dict):
         return
 
 
+def add_target_to_db(db, path):
+    id = os.path.basename(path)
+    manifest = utils.get_manifest_file(path)
+    strings = utils.get_string_file(path)
+    app_details = get_app_details(manifest)
+    app_name = get_app_name(strings)
+    if id not in db:
+        db[id] = {
+            "app_name": app_name,
+            "path": path,
+            "package": app_details["package"],
+            "version": app_details["version"],
+            "min_sdk": app_details["min_sdk"],
+            "target_sdk": app_details["target_sdk"]
+        }
+        update_target_db(db)
+
+
 def get_app_details(manifest_file):
     ns = "android"
-    dom = parse(manifest_file)
+    try:
+        dom = parse(manifest_file)
+    except Exception:
+        return {
+            "package": "Error",
+            "version": "Error",
+            "min_sdk": "Error",
+            "target_sdk": "Error"
+        }
     manifest = dom.getElementsByTagName("manifest")
     sdk = dom.getElementsByTagName("uses-sdk")
     package_name = manifest[0].getAttribute("package")
@@ -47,8 +73,10 @@ def get_app_name(strings_file):
     strings = dom.getElementsByTagName("string")
     for string in strings:
         if string.getAttribute("name") == "app_name":
-            app_name = string.firstChild.nodeValue
-            return app_name
+            if string.firstChild is not None:
+                app_name = string.firstChild.nodeValue
+                return app_name
+            return "None"
     return "Not found"
 
 

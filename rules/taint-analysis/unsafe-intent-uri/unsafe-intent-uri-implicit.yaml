@@ -1,13 +1,13 @@
 rules:
-  - id: implicit-intent
+  - id: unsafe-intent-uri-implicit
     mode: taint
     pattern-sources:
       - patterns:
+        - pattern: Intent.parseUri($URI, ...)
         - pattern-either:
-          - pattern: new Intent()
-          - pattern: new Intent($ACTION)
-          - pattern: new Intent("$ACTION")
-          - pattern: new Intent("$ACTION", $URI)
+          - pattern-inside: $ACC onActivityResult(..., Intent $SRC) {...}
+          - pattern-inside: ActivityResultLauncher<Intent> $LAUNCHER = registerForActivityResult(..., $SRC -> {...});
+          - pattern-inside: $ACC $METHOD(ActivityResult $SRC) {...}
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sanitizers:
       - patterns:
@@ -17,24 +17,18 @@ rules:
           - pattern: $INTENT.setClass(...)
           - pattern: $INTENT.setComponent(...)
           - pattern: $INTENT.setSelector(...)
+          - patterns:
+            - pattern: if ($COND) {...}
+            - metavariable-regex:
+                metavariable: $COND
+                regex: ^.*\w+\.(getPackageName|getClassName)\(\)\.equals\(.+\)\s*\&\&\s*\w+\.(getPackageName|getClassName)\(\)\.equals\(.+\).*$
+          - pattern-inside: $INTENT.putExtra(...)
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sinks:
       - patterns:
         - pattern-either:
           - pattern: startActivity($INTENT)
           - pattern: $CTX.startActivity($INTENT)
-          - pattern: sendBroadcast($INTENT)
-          - pattern: sendOrderedBroadcast($INTENT, null, ...)
-          - patterns: 
-            - pattern: $CTX.sendBroadcast($INTENT)
-            - metavariable-regex:
-                metavariable: $CTX
-                regex: ^(?!.*(L|l)ocal(B|b)roadcast.*$|.*(L|l)(B|b)(M|m).*$).*$
-          - patterns: 
-            - pattern: $CTX.sendOrderedBroadcast($INTENT, null, ...)
-            - metavariable-regex:
-                metavariable: $CTX
-                regex: ^(?!.*(L|l)ocal(B|b)roadcast.*$|.*(L|l)(B|b)(M|m).*$).*$
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
         - focus-metavariable: $INTENT
     message: $CLASSNAME

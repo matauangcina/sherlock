@@ -13,9 +13,10 @@ log = get_logger(__name__)
 
 
 def device(args):
+    print("")
     devices = get_connected_devices()
     if len(devices) == 0:
-        log.error("No device is connected to host. Please connect a device before proceeding.")
+        log.error("No device is connected to host. Please connect a device before proceeding.\n")
         return
     use_device = args[0]
     if use_device.isdigit():
@@ -25,22 +26,23 @@ def device(args):
             return
         use_device = devices[use_device - 1]
     elif use_device not in devices:
-        log.error(f"Device '{use_device}' is not connected.")
+        log.error(f"Device '{use_device}' is not connected.\n")
         return
-    log.info(f"Selected device: '{use_device}'")
+    log.info(f"Selected device: '{use_device}'\n")
     device_state.device_id = use_device
 
 
 def module(args):
+    print("")
     search = module_state.filtered
     use_module = args[0]
     if use_module.isdigit():
         use_module = int(use_module)
         if search is None:
-            log.error("Selecting module with index can only be done after listing the modules. List modules with: 'search module <keyword>'")
+            log.error("Selecting module with index can only be done after listing the modules. List modules with: 'search module <keyword>'\n")
             return
         if use_module < 1 or use_module > len(search):
-            log.error("Invalid module index.")
+            log.error("Invalid module index.\n")
             return
         use_module = search[use_module - 1]["name"]
     module_path = os.path.join(MODULE_PATH, use_module + ".py")
@@ -49,6 +51,6 @@ def module(args):
         module_name = os.path.basename(use_module)
         module = utils.import_module(os.path.dirname(module_path), module_name)
         module.SherlockModule().register_options()
-        log.info(f"Module: '{use_module}'")
+        log.info(f"Module: '{use_module}'\n")
     else:
-        log.error("Selected module does not exist.")
+        log.error("Selected module does not exist.\n")

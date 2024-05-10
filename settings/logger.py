@@ -21,7 +21,7 @@ class LogHandler(RichHandler):
         }
         icon = level_icon.get(record.levelno)
         color = level_color.get(record.levelno)
-        return f"{color}{icon}[/]"
+        return f"{color}{icon}"
 
 
 def get_logger(module):

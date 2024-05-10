@@ -1,0 +1,57 @@
+rules:
+  - id: get-uri-string
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern-either:
+          - patterns:
+            - pattern-either:
+              - pattern: getIntent()
+              - pattern: $CTX.getIntent()
+            - pattern-either:
+              - pattern: Intent $INTENT = getIntent();
+              - pattern: Intent $INTENT = $CTX.getIntent();
+              - pattern: getIntent().getBundleExtra(...)
+              - pattern: $CTX.getIntent().getBundleExtra(...)
+              - pattern: getIntent().getExtras()
+              - pattern: $CTX.getIntent().getExtras()
+              - pattern: getIntent().getExtras().get(...)
+              - pattern: $CTX.getIntent().getExtras().get(...)
+              - pattern: getIntent().getStringExtra(...)
+              - pattern: $CTX.getIntent().getStringExtra(...)
+              - pattern: getIntent().getQueryParameter(...)
+              - pattern: $CTX.getIntent().getQueryParameter(...)
+          - patterns:
+            - pattern: $SRC
+            - pattern-either:
+              - patterns:
+                - pattern-either:
+                  - pattern: Intent $INTENT = $SRC;
+                  - pattern: $SRC.getBundleExtra(...)
+                  - pattern: $SRC.getExtras()
+                  - pattern: $SRC.getExtras().get(...)
+                  - pattern: $SRC.getStringExtra(...)
+                - pattern: $ACC onActivityResult(..., Intent $SRC) {...}
+              - patterns:
+                - pattern-either:
+                  - pattern: Intent $INTENT = $SRC.getData();
+                  - pattern: $SRC.getData().getBundleExtra(...)
+                  - pattern: $SRC.getData().getExtras()
+                  - pattern: $SRC.getData().getExtras().get(...)
+                  - pattern: $SRC.getData().getStringExtra(...)
+                - pattern-either:
+                  - pattern: ActivityResultLauncher<Intent> $LAUNCHER = registerForActivityResult(..., $SRC -> {...});
+                  - pattern: $ACC $METHOD(ActivityResult $SRC) {...}
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    pattern-sinks:
+      - patterns:
+        - pattern-either:
+          - pattern: $INTENT.getStringExtra($KEY)
+          - pattern: $INTENT.getQueryParameter($KEY)
+          - pattern: $BUNDLE.getString($KEY)
+          - pattern: $BUNDLE.get($KEY)
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    message: $CLASSNAME
+    languages:
+      - java
+    severity: WARNING

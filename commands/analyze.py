@@ -37,7 +37,6 @@ def get_target_paths(args):
         return
     ids = list(targets)
     if is_target_specified(args):
-        specified = args[args.index("--target") + 1].split(",")
         is_range = False
         if "-" in args[args.index("--target") + 1]:
             specified = args[args.index("--target") + 1].split("-")
@@ -50,6 +49,7 @@ def get_target_paths(args):
             for i in range(start, end):
                 valid_ids.append(ids[i-1])
         else:
+            specified = args[args.index("--target") + 1].split(",")
             for id in specified:
                 target_id = id
                 if id.isdigit():
@@ -107,11 +107,6 @@ def get_scan_summary(target_paths, rules, target_ids):
             manifest = path
         package = get_app_details(manifest)["package"]
         id = target_ids[i].split("/")[-1]
-        # if id not in target_summary:
-        #     target_summary[id] = {
-        #         "package": package,
-        #         "path": path
-        #     }
         log.debug(f"Scanning: {id} ({package})")
         for rule in rules:
             result = run_engine([path], rule)

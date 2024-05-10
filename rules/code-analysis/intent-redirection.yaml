@@ -6,11 +6,14 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/intent-redirection/intent-redirection-basic.yaml'
+    - rule: '(( rules_path ))/taint-analysis/get-extra/get-parcelable.yaml'
+      as: get-parcelable
+    - rule: '(( rules_path ))/taint-analysis/intent-redirection/intent-redirection-basic.yaml'
       as: intent-redirection
-    - rule: '/home/finechina/Tools/sherlock/src/rules/manifest-analysis/exported-activity.yaml'
+    - rule: '(( rules_path ))/manifest-analysis/exported-activity.yaml'
       as: exported-activity
     on:
+    - get-parcelable.$KEY == intent-redirection.$KEY
     - exported-activity.$ACTIVITY > intent-redirection.$CLASSNAME
   message: |
     Intent redirection on an exported activity detected.
@@ -25,11 +28,14 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/intent-redirection/intent-redirection-implicit.yaml'
+    - rule: '(( rules_path ))/taint-analysis/get-extra/get-parcelable.yaml'
+      as: get-parcelable
+    - rule: '(( rules_path ))/taint-analysis/intent-redirection/intent-redirection-implicit.yaml'
       as: intent-redirection
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-start-activity-for-result.yaml'
+    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-start-activity-for-result.yaml'
       as: implicit-intent
     on:
+    - get-parcelable.$KEY == intent-redirection.$KEY
     - implicit-intent.$CLASSNAME == intent-redirection.$CLASSNAME
   message: |
     Intent redirection via implicit intent interception detected.
@@ -37,5 +43,3 @@ rules:
     cwe: cwe-285, cwe-926, cwe-940
     score: 7.1 / High
     cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
-
-

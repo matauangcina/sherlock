@@ -1,35 +1,25 @@
 rules:
-  - id: unprotected-webview-implicit
+  - id: unprotected-webview-basic
     mode: taint
     pattern-sources:
       - patterns:
-        - pattern: $SRC
         - pattern-either:
-          - patterns:
-            - pattern-either:
-              - pattern: Intent $INTENT = $SRC;
-              - pattern: $SRC.getStringExtra(...)
-              - pattern: $SRC.getDataString()
-              - pattern: $SRC.getBundleExtra(...)
-              - pattern: $SRC.getExtras(...)
-            - pattern: $ACC onActivityResult(..., Intent $SRC) {...}
-          - patterns:
-            - pattern-either:
-              - pattern: Intent $INTENT = $SRC.getData();
-              - pattern: $SRC.getData().getBundleExtra(...)
-              - pattern: $SRC.getData().getExtras(...)
-              - pattern: $SRC.getData().getStringExtra(...)
-              - pattern: $SRC.getData().getDataString()
-            - pattern-either:
-              - pattern: ActivityResultLauncher<Intent> $LAUNCHER = registerForActivityResult(..., $SRC -> {...});
-              - pattern: $ACC $METHOD(ActivityResult $SRC) {...}
+          - pattern: $INTENT.getStringExtra($KEY)
+          - pattern: $INTENT.getDataString()
+          - pattern: $INTENT.getQueryParameter($KEY)
+          - pattern: $BUNDLE.getString($KEY)
+          - pattern: $BUNDLE.get($KEY)
+        - pattern-either:
+          - pattern-inside: $ACC onActivityResult(..., Intent $SRC) {...}
+          - pattern-inside: ActivityResultLauncher<Intent> $LAUNCHER = registerForActivityResult(..., $SRC -> {...});
+          - pattern-inside: $ACC $METHOD(ActivityResult $SRC) {...}
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sanitizers:
       - patterns:
         - pattern: if ($COND) {...}
         - metavariable-regex:
             metavariable: $COND
-            regex: ^.*(((\w+|"\w+")|Arrays\.asList\(.+\))\.(contains|equals|binarySearch)\(("\w+"|\w+))\)|(\w+\s?(==|!=)\s?("\w+"|(?!((Activity\.)*RESULT_(OK|FIRST_USER|CANCELLED)|(.*(code|Code|CODE))))[a-zA-Z]+)).*$
+            regex: ^.*(((\w+|".+")|Arrays\.asList\(.+\))\.(contains|equals|binarySearch)\(("\w+"|\w+))\)|(\w+\s?(==|!=)\s?("\w+"|[A-Za-z]+)).*$
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sinks:
       - patterns:

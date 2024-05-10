@@ -1,10 +1,12 @@
 import json
+import os
 
+from globals import DB_PATH
 from state.module import module_state
 
 
 def get_modules_info():
-    with open("database/modules.json", "r") as file:
+    with open(os.path.join(DB_PATH, "modules.json"), "r") as file:
         modules = json.load(file)
     module_ids = list(modules)
     summary = list()

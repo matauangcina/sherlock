@@ -34,7 +34,7 @@ def get_code_snippet(component, line):
         component, 
         theme="github-dark",
         line_numbers=True,
-        line_range=[line-1,line+10],
+        line_range=[line-2,line+15],
         highlight_lines={line},
     )
     return syntax
@@ -191,7 +191,7 @@ def get_rules(keys):
 
 
 def display_scan_result(summary, output_json=False, file=None):
-    console = Console(file=file, width=160, height=32)
+    console = Console(file=file, width=180, height=36)
     if output_json:
         console.print_json(json.dumps(summary))
         console.print("")

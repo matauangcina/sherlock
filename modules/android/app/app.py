@@ -50,14 +50,6 @@ class App:
 
     def activity_name(self, id, package):
         return self.format_activity_name(id) + self.format_package_name(package)
-    
-
-    def intercept_activity_name(self, id, package):
-        return self.format_activity_name(id) + self.format_package_name(package) + "Intercept"
-
-
-    def leak_provider_activity_name(self, id, package):
-        return self.format_activity_name(id) + self.format_package_name(package) + "LeakProvider"
 
 
     def button_id(self, id, package):
@@ -197,18 +189,32 @@ class App:
             log.error("Process failed, terminating..\n")
             return
         try:
+            exception = list()
+            succeed = False
+            provider_data = ""
             for line in logcat.stdout:
-                for err in stat_dict["failed"]:
-                    if re.match(err["regex"], line):
-                        msg = re.search(err["msg"], line).group()
-                        log.error(f"ERR: {msg}")
-                        break
-                if re.match(stat_dict["succeed"]["regex"], line):
-                    data = re.search(stat_dict["succeed"]["data"], line).group()
-                    log.info(f"BINGO: '{data}'\n")
+                if succeed and not re.match(stat_dict["succeed"]["regex"], line):
                     logcat.terminate()
                     break
+                if re.match(stat_dict["succeed"]["regex"], line):
+                    succeed = True
+                    match = re.search(stat_dict["succeed"]["data"], line)
+                    if match:
+                        data = re.search(stat_dict["succeed"]["data"], line).group()
+                        provider_data += data.replace("BINGO!", "").replace(" ", "").replace(":", "")
+                    continue
+                for err in stat_dict["exception"]:
+                    if re.match(err["regex"], line):
+                        match = re.search(err["msg"], line)
+                        if match:
+                            msg = match.group()
+                            if msg not in exception:
+                                log.error(f"ERR: {msg}")
+                                exception.append(msg)
+                        break
             logcat.wait()
+            if succeed:
+                log.info(f"BINGO: '{provider_data}'\n")
         except KeyboardInterrupt:
             print("")
             log.error("Terminating logcat..\n")
@@ -217,7 +223,7 @@ class App:
     
     def log_stat(self):
         return {
-            "failed": [
+            "exception": [
                 {
                     "regex": r"^.*java\.lang\.SecurityException:.*$",
                     "msg": r"java\.lang\.SecurityException:.*"
@@ -233,7 +239,7 @@ class App:
             ],
             "succeed": {
                 "regex": r"^.*BINGO!.*$",
-                "data": r"Data:.*"
+                "data": r"BINGO!.*"
             }
         }
     

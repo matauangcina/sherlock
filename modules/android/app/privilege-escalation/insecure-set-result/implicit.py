@@ -60,12 +60,15 @@ class SherlockModule(App):
         intercept_extra = opts['INTERCEPT_EXTRA']
         result_code = opts['RESULT_CODE']
 
+        exploit_activity_name = self.activity_name(self._id, target_package)
+        intercept_activity_name = f'{self.activity_name(self._id, target_package)}Intercept'
+
         manifest = [
             self._template.build_manifest_component(
-                self.activity_name(self._id, target_package)
+                exploit_activity_name
             ),
             self._template.build_manifest_component(
-                self.intercept_activity_name(self._id, target_package),
+                intercept_activity_name,
                 is_exported=True,
                 intercept=True, 
                 action=intent_action
@@ -73,7 +76,7 @@ class SherlockModule(App):
         ]
 
         exploit_activity = self._template.build_activity(
-            name=self.activity_name(self._id, target_package),
+            name=exploit_activity_name,
             libs=[
                 "android.content.Context",
                 "android.content.Intent",
@@ -112,7 +115,7 @@ class SherlockModule(App):
         )
 
         intercept_activity = self._template.build_activity(
-            name=self.intercept_activity_name(self._id, target_package),
+            name=intercept_activity_name,
             libs=[
                 "android.content.Intent",
                 "android.net.Uri",
@@ -132,11 +135,11 @@ class SherlockModule(App):
 
         component = [
             {
-                "name": f"{self.activity_name(self._id, target_package)}.java",
+                "name": f"{exploit_activity_name}.java",
                 "content": exploit_activity
             },
             {
-                "name": f"{self.intercept_activity_name(self._id, target_package)}.java",
+                "name": f"{intercept_activity_name}.java",
                 "content": intercept_activity
             }
         ]

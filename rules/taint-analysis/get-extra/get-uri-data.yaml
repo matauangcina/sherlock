@@ -1,0 +1,39 @@
+rules:
+  - id: get-uri-data
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern-either:
+          - patterns:
+            - pattern-either:
+              - pattern: getIntent()
+              - pattern: $CTX.getIntent()
+            - pattern-either:
+              - pattern: Intent $INTENT = getIntent();
+              - pattern: Intent $INTENT = $CTX.getIntent();
+              - pattern: getIntent().getDataString()
+              - pattern: $CTX.getIntent().getDataString()
+          - patterns:
+            - pattern: $SRC
+            - pattern-either:
+              - patterns:
+                - pattern-either:
+                  - pattern: Intent $INTENT = $SRC;
+                  - pattern: $SRC.getDataStrirng()
+                - pattern: $ACC onActivityResult(..., Intent $SRC) {...}
+              - patterns:
+                - pattern-either:
+                  - pattern: Intent $INTENT = $SRC.getData();
+                  - pattern: $SRC.getData().getDataStrirng()
+                - pattern-either:
+                  - pattern: ActivityResultLauncher<Intent> $LAUNCHER = registerForActivityResult(..., $SRC -> {...});
+                  - pattern: $ACC $METHOD(ActivityResult $SRC) {...}
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    pattern-sinks:
+      - patterns:
+        - pattern: $INTENT.getDataString()
+        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+    message: $CLASSNAME
+    languages:
+      - java
+    severity: WARNING

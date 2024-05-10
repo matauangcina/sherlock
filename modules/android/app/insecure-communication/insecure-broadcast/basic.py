@@ -63,7 +63,10 @@ class SherlockModule(App):
         put_extra = opts['PUT_EXTRA']
         broadcast_extra = opts['BROADCAST_EXTRA']
 
+        exploit_activity_name = self.activity_name(self._id, target_package)
+
         on_create = [
+            f'Toast.makeText(this, "Registering receiver with action: {intent_filter}", Toast.LENGTH_SHORT).show();',
             self._template.register_receiver(
                 intent_filter=intent_filter,
             ),
@@ -79,7 +82,7 @@ class SherlockModule(App):
             on_create.pop()
 
         component = self._template.build_activity(
-            name=self.activity_name(self._id, target_package),
+            name=exploit_activity_name,
             libs=[
                 "android.content.BroadcastReceiver",
                 "android.content.Context",
@@ -87,6 +90,7 @@ class SherlockModule(App):
                 "android.content.IntentFilter",
                 "android.os.Bundle",
                 "android.util.Log",
+                "android.widget.Toast",
                 "androidx.appcompat.app.AppCompatActivity",
             ],
             bind_button=True,
@@ -101,7 +105,7 @@ class SherlockModule(App):
                         "StringBuilder sb = new StringBuilder();",
                         ''.join([f'String data{i} = bundle.getString("{string[0]}");\nsb.append(data{i}).append(";");\n' for i,string in enumerate(bundle_string)]) if bundle_extra != "" else "",
                         ''.join([f'String data{i} = intent.getStringExtra("{extra[0]}");\nsb.append(data{i}).append(";");\n' for i,extra in enumerate(broadcast_extra)]),
-                        'Log.i("BINGO!", "Data:" + sb);'
+                        'Log.i("BINGO!", "Data: " + sb);'
                     ]
                 )
             ]
@@ -109,13 +113,13 @@ class SherlockModule(App):
 
         app = {
             "manifest": [
-                self._template.build_manifest_component(self.activity_name(self._id, target_package))
+                self._template.build_manifest_component(exploit_activity_name)
             ],
             "layout": self._template.button_layout(self._id, target_package),
             "bind_button": self._template.bind_button(self._id, target_package),
             "component": [
                 {
-                    "name": f"{self.activity_name(self._id, target_package)}.java",
+                    "name": f"{exploit_activity_name}.java",
                     "content": component 
                 }
             ]

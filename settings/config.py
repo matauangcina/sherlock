@@ -23,11 +23,9 @@ def init_config():
                     )
         with open(rule_path, "w") as file:
             yaml.dump(yaml_data, file)
-    if utils.is_path_exists("/usr/local/lib/python3.10/site-packages/semgrep/join_rule.py") and utils.is_path_exists(os.path.join(ROOT_PATH, "venv/lib/python3.10/site-packages/semgrep/join_rule.py")):
-        shutil.copy(os.path.join(ROOT_PATH, "venv/lib/python3.10/site-packages/semgrep/join_rule.py"), "/usr/local/lib/python3.10/site-packages/semgrep/join_rule.py")
 
 
-def post_decompile(db, id):
+def post_process(db, id):
     path = db[id]["path"]
     manifest = utils.get_manifest_file(path)
     codebase = utils.get_codebase_path(path)

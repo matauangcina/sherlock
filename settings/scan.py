@@ -2,12 +2,10 @@ import json
 import settings.utils as utils
 
 from globals import RULE_PATH
-
 from semgrep.constants import OutputFormat
 from semgrep.output import OutputHandler
 from semgrep.output import OutputSettings
 from semgrep.run_scan import run_scan
-
 from settings.logger import get_logger
 
 
@@ -63,13 +61,10 @@ def init_engine(target_paths, rules, fix, **kwargs):
         configs=[rules],
         autofix=fix,
         timeout=10,
+        max_target_bytes=104857600,
         **kwargs
     )
-    output_handler.rule_matches = [
-        match
-        for matches_of_one_rule in rule_matches.values()
-        for match in matches_of_one_rule
-    ]
+    output_handler.rule_matches = [match for matches in rule_matches.values() for match in matches]
     return json.loads(output_handler._build_output())
 
 

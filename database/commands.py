@@ -1,3 +1,4 @@
+from commands import add
 from commands import analyze
 from commands import clear
 from commands import decompile
@@ -48,6 +49,15 @@ COMMANDS = {
         "desc": "Work with the 'decompile' command",
         "flags": ["--output", "--file"],
         "exec": decompile.decompile
+    },
+    "add": {
+        "desc": "Work with the 'add' command",
+        "cmds": {
+            "target": {
+                "desc": "Add target to workspace",
+                "exec": add.target
+            }
+        }
     },
     "analyze": {
         "desc": "Work with the 'analyze' command",

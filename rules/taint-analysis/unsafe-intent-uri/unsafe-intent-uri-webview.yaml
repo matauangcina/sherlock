@@ -1,13 +1,10 @@
 rules:
-  - id: implicit-intent
+  - id: unsafe-intent-uri-webview
     mode: taint
     pattern-sources:
       - patterns:
-        - pattern-either:
-          - pattern: new Intent()
-          - pattern: new Intent($ACTION)
-          - pattern: new Intent("$ACTION")
-          - pattern: new Intent("$ACTION", $URI)
+        - pattern: $SRC.getUrl();
+        - pattern: $ACC shouldOverrideUrlLoading(..., WebResourceRequest $SRC) {...}
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sanitizers:
       - patterns:
@@ -17,24 +14,24 @@ rules:
           - pattern: $INTENT.setClass(...)
           - pattern: $INTENT.setComponent(...)
           - pattern: $INTENT.setSelector(...)
+          - patterns:
+            - pattern: if ($COND) {...}
+            - metavariable-regex:
+                metavariable: $COND
+                regex: ^.*\w+\.(getPackageName|getClassName)\(\)\.equals\(.+\)\s*\&\&\s*\w+\.(getPackageName|getClassName)\(\)\.equals\(.+\).*$
+          - pattern-inside: $INTENT.putExtra(...)
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sinks:
       - patterns:
         - pattern-either:
           - pattern: startActivity($INTENT)
           - pattern: $CTX.startActivity($INTENT)
-          - pattern: sendBroadcast($INTENT)
-          - pattern: sendOrderedBroadcast($INTENT, null, ...)
-          - patterns: 
-            - pattern: $CTX.sendBroadcast($INTENT)
-            - metavariable-regex:
-                metavariable: $CTX
-                regex: ^(?!.*(L|l)ocal(B|b)roadcast.*$|.*(L|l)(B|b)(M|m).*$).*$
-          - patterns: 
-            - pattern: $CTX.sendOrderedBroadcast($INTENT, null, ...)
-            - metavariable-regex:
-                metavariable: $CTX
-                regex: ^(?!.*(L|l)ocal(B|b)roadcast.*$|.*(L|l)(B|b)(M|m).*$).*$
+        - pattern-inside: if ($COND) {...}
+        - metavariable-regex:
+            metavariable: $COND
+            regex: ^.*(("intent".equals\(\w+\.getScheme\(\)\))|(\w+.getScheme\(\)\s?==\s?"intent")).*$
+        - pattern-inside: $ACC shouldOverrideUrlLoading(...) {...}
+        - pattern-inside: $WV.setWebViewClient(...)
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
         - focus-metavariable: $INTENT
     message: $CLASSNAME

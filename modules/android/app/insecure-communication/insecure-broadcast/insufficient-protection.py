@@ -65,6 +65,8 @@ class SherlockModule(App):
         put_extra = opts['PUT_EXTRA']
         broadcast_extra = opts['BROADCAST_EXTRA']
 
+        exploit_activity_name = self.activity_name(self._id, target_package)
+
         register_receiver=[
             self._template.register_receiver(intent_filter=intent_filter),
             self._template.build_intent(
@@ -79,7 +81,7 @@ class SherlockModule(App):
             register_receiver.pop()
 
         component = self._template.build_activity(
-            name=self.activity_name(self._id, target_package),
+            name=exploit_activity_name,
             libs=[
                 "android.content.BroadcastReceiver",
                 "android.content.Context",
@@ -88,6 +90,7 @@ class SherlockModule(App):
                 "android.content.pm.PackageManager",
                 "android.os.Bundle",
                 "android.util.Log",
+                "android.widget.Toast",
                 "androidx.activity.result.ActivityResultLauncher",
                 "androidx.activity.result.contract.ActivityResultContracts",
                 "androidx.appcompat.app.AppCompatActivity",
@@ -95,6 +98,7 @@ class SherlockModule(App):
             ],
             bind_button=True,
             on_create=[
+                f'Toast.makeText(this, "Registering receiver with action: {intent_filter}", Toast.LENGTH_SHORT).show();',
                 self._template.request_permission(
                     permission=permission,
                     granted_content=register_receiver,
@@ -124,13 +128,13 @@ class SherlockModule(App):
 
         app = {
             "manifest": [
-                self._template.build_manifest_component(self.activity_name(self._id, target_package))
+                self._template.build_manifest_component(exploit_activity_name)
             ],
             "layout": self._template.button_layout(self._id, target_package),
             "bind_button": self._template.bind_button(self._id, target_package),
             "component": [
                 {
-                    "name": f"{self.activity_name(self._id, target_package)}.java",
+                    "name": f"{exploit_activity_name}.java",
                     "content": component 
                 }
             ],
@@ -141,7 +145,7 @@ class SherlockModule(App):
         if not build_app:
             log.error("Module failed to execute, terminating module..\n")
             return
-        
+
         self.check_component_log(opts)
 
         self.check_logcat()

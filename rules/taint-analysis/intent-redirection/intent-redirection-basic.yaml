@@ -3,27 +3,28 @@ rules:
     mode: taint
     pattern-sources:
       - patterns:
-        - pattern: getIntent()
         - pattern-either:
-          - pattern: Intent $INTENT = getIntent();
-          - pattern: getIntent().getBundleExtra(...)
-          - pattern: getIntent().getExtras(...)
-          - pattern: getIntent().getParcelableExtra(...)
+          - pattern: $INTENT.getParcelableExtra($KEY)
+          - pattern: $BUNDLE.getParcelable($KEY)
+          - pattern: $BUNDLE.get($KEY)
+        - pattern-not-inside: $ACC onActivityResult(..., Intent $SRC) {...}
+        - pattern-not-inside: ActivityResultLauncher<Intent> $LAUNCHER = registerForActivityResult(..., $SRC -> {...});
+        - pattern-not-inside: $ACC $METHOD(ActivityResult $SRC) {...}
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sanitizers:
       - patterns:
         - pattern-either:
+          - pattern: $INTENT.setClassName(...)
+          - pattern: $INTENT.setPackage(...)
+          - pattern: $INTENT.setClass(...)
+          - pattern: $INTENT.setComponent(...)
+          - pattern: $INTENT.setSelector(...)
           - patterns:
             - pattern: if ($COND) {...}
             - metavariable-regex:
                 metavariable: $COND
-                regex: ^.*\w+\.getPackageName\(\)\.equals\(.+\)\s*&&\s*\w+\.getClassName\(\)\.equals\(.+\).*$
+                regex: ^.*\w+\.(getPackageName|getClassName)\(\)\.equals\(.+\)\s*&&\s*\w+\.(getPackageName|getClassName)\(\)\.equals\(.+\).*$
           - pattern-inside: $INTENT.putExtra(...)
-          - patterns: 
-            - pattern: if ($COND) {...}
-            - metavariable-regex:
-                metavariable: $COND
-                regex: ^.*\w+\.exported.*$
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sinks:
       - patterns:
@@ -36,4 +37,3 @@ rules:
     languages:
       - java
     severity: WARNING
-
