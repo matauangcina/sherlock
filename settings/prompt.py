@@ -3,7 +3,7 @@ import os
 
 from database.commands import COMMANDS
 from datetime import datetime
-from globals import INVALID_CMD
+from globals import INVALID_CMD, DB_PATH
 from output.banner import display_banner
 from output.help import display_help_panel
 from prompt_toolkit import PromptSession
@@ -136,7 +136,7 @@ class Prompt:
                 break
         if len(help_id) > 0:
             id = "_".join(help_id)
-            with open("database/help.json", "r") as file:
+            with open(os.path.join(DB_PATH, "help.json"), "r") as file:
                 help = json.load(file)
             help_message = {
                 "command": help[id]["command"],

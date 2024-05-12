@@ -7,13 +7,21 @@
         "target_sdk": "33",
         "version": "2.81.1"
     },
-    "element": {
+    "camscanner": {
         "app_name": "Not Found",
         "min_sdk": "21",
+        "package": "com.intsig.camscanner",
+        "path": "/home/finechina/Labs/android/workspace/camscanner",
+        "target_sdk": "33",
+        "version": "6.62.1.2403290000"
+    },
+    "element": {
+        "app_name": "Element",
+        "min_sdk": "Not found",
         "package": "im.vector.app",
         "path": "/home/finechina/Labs/android/workspace/element",
-        "target_sdk": "33",
-        "version": "1.6.8"
+        "target_sdk": "Not found",
+        "version": ""
     },
     "opennotesscanner": {
         "app_name": "Open Note Scanner",
@@ -22,6 +30,14 @@
         "path": "/home/finechina/Labs/android/workspace/opennotesscanner",
         "target_sdk": "29",
         "version": "1.0.35-fdroid"
+    },
+    "ovaa": {
+        "app_name": "Oversecured Vulnerable Android App",
+        "min_sdk": "17",
+        "package": "oversecured.ovaa",
+        "path": "/home/finechina/Labs/android/workspace/ovaa",
+        "target_sdk": "28",
+        "version": "1.0"
     },
     "sherlock": {
         "app_name": "SherlockTest",

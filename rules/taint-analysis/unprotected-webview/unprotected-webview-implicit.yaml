@@ -1,5 +1,5 @@
 rules:
-  - id: unprotected-webview-basic
+  - id: unprotected-webview-implicit
     mode: taint
     pattern-sources:
       - patterns:

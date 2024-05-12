@@ -1,9 +1,9 @@
 import os
 import re
-import subprocess
 import settings.utils as utils
 
-from globals import JADX_BIN
+from globals import DECOMPILER_LIST
+from settings.decompiler import jadx, cfr
 from settings.config import post_process
 from settings.logger import get_logger
 from settings.target_info import get_target_db, add_target_to_db
@@ -16,11 +16,15 @@ def should_output_dir(args):
     return len(args) > 0 and "--output" in args
 
 
+def is_decompiler_specified(args):
+    return len(args) > 0 and "--decompiler" in args
+
+
 def is_file_specified(args):
     return len(args) > 0 and "--file" in args
 
 
-def run_decompiler(apks, output_dir):
+def run_decompiler(apks, decompiler, output_dir):
     targets = get_target_db()
     if targets is None:
         log.error("Target DB not found.\n")
@@ -33,17 +37,11 @@ def run_decompiler(apks, output_dir):
             log.warning(f"Duplicated target, skipping: '{id}'")
             continue
         output_path = os.path.join(output_dir if output_dir is not None else os.path.dirname(apk), id)
-        decompile_cmd = ["bash", JADX_BIN, "--deobf", apk, "-d", output_path, "--comments-level", "none", "--export-gradle"]
         log.debug(f"Decompiling: '{os.path.basename(apk)}'")
-        try:
-            jadx = subprocess.check_output(decompile_cmd, stderr=subprocess.STDOUT, text=True).splitlines()
-        except Exception as e:
-            log.error(f"Decompilation failed: {e}, skipping: \'{id}\'")
-            continue
-        for line in jadx:
-            if re.match(r"^.*Killed.*$", line):
-                log.error(f"Process killed, skipped: '{id}'")
-                continue
+        if decompiler == "cfr":
+            cfr(apk, output_path)
+        else:
+            jadx(apk, output_path)
         log.info(f"Target decompiled to: '{output_path}'")
         output.append(output_path)
     if len(output) == 0:
@@ -63,8 +61,15 @@ def decompile(args):
     if should_output_dir(args):
         output_dir = args[args.index("--output") + 1]
         if not utils.is_path_exists(output_dir):
-            log.error("Output directory not found. Terminating..\n")
+            os.makedirs(output_dir)
+            log.info(f"Make directory: '{output_dir}'")
             return
+    decompiler = "jadx"
+    if is_decompiler_specified(args):
+        decompiler = args[args.index("--decompiler") + 1]
+        if decompiler not in DECOMPILER_LIST:
+            decompiler = "jadx"
+            log.error("Decompiler not supported, continuing with default decompiler.")
     if is_file_specified(args):
         file_path = args[args.index("--file") + 1]
         if not utils.is_path_exists(file_path):
@@ -89,4 +94,4 @@ def decompile(args):
         log.error("No apk can be found.\n")
         return
     log.debug("Running decompiler...")
-    run_decompiler(apks, output_dir)
+    run_decompiler(apks, decompiler, output_dir)

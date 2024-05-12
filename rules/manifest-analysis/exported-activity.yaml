@@ -1,19 +1,11 @@
 rules:
   - id: exported-activity-manifest
     patterns:
-      - pattern-not: <activity ... android:exported="false" .../>
-      - pattern-not: <activity-alias ... android:name="$ALIAS" ... android:exported="false" ... android:targetActivity="$ACTIVITY" .../>
       - pattern-either:
         - pattern: <activity ... android:name="$ACTIVITY" ... android:exported="true" .../>
         - pattern: <activity-alias ... android:name="$ALIAS" ... android:exported="true" ... android:targetActivity="$ACTIVITY" .../>
         - pattern: |
             <activity ... android:name="$ACTIVITY" ... >
-            <intent-filter ...>
-            ...
-            </intent-filter>
-            </activity>
-        - pattern: |
-            <activity-alias ... android:name="$ALIAS" ... android:targetActivity="$ACTIVITY" ...>
             <intent-filter ...>
             ...
             </intent-filter>
@@ -25,11 +17,17 @@ rules:
             </intent-filter>
             </activity>
         - pattern: |
+            <activity-alias ... android:name="$ALIAS" ... android:targetActivity="$ACTIVITY" ...>
+            <intent-filter ...>
+            ...
+            </intent-filter>
+            </activity-alias>
+        - pattern: |
             <activity-alias ... android:name="$ALIAS" ... android:exported="true" ... android:targetActivity="$ACTIVITY" ...>
             <intent-filter ...>
             ...
             </intent-filter>
-            </activity>
+            </activity-alias>
       - focus-metavariable: $ACTIVITY
     message: Exported activity detected.
     languages:

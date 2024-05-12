@@ -20,25 +20,25 @@
     "decompile": {
         "command": "decompile",
         "description": "Decompile target apk to workspace.",
-        "usage": "decompile <path_to_apk> <path_to_apk>.. (optional: --quiet)",
-        "demo": "• decompile /home/user/path/to/target.apk\n• decompile /home/user/path/to/target.apk --quiet"
+        "usage": "decompile <path_to_apk> <path_to_apk>.. (optional: --file <apk_list> --output <output_directory> --decompiler <decompiler (default: jadx, option: jadx, cfr)>)",
+        "demo": "• decompile /home/user/path/to/target.apk\n• decompile --file /home/User/targets.txt --output /home/User/workspace --decompiler cfr"
     },
     "analyze_target_manifest": {
         "command": "analyze target manifest",
         "description": "Analyze target manifest from workspace.",
-        "usage": "analyze target manifest (optional: --target <target_id>,<target_id>,.. --json --output <filename>)",
+        "usage": "analyze target manifest (optional: --target [<target_id>,<target_id>,..][start_idx-end_idx] --json --output <filename>)",
         "demo": "• analyze target manifest\n• analyze target manifest --target base\n• analyze target manifest --target injuredandroid --json\n• analyze target manifest --target insecureshop --json --output insecureshop.json"
     },
     "analyze_target_code": {
         "command": "analyze target code",
         "description": "Analyze target codebase from workspace.",
-        "usage": "analyze target code (optional: --target <target_id>,<target_id>,.. --json --output <filename>)",
-        "demo": "• analyze target code\n• analyze target code --target base\n• analyze target code --target injuredandroid --json\n• analyze target code --target insecureshop --json --output insecureshop.json"
+        "usage": "analyze target code (optional: --target [<target_id>,<target_id>,..][start_idx-end_idx] --json --output <output_file>)",
+        "demo": "• analyze target code\n• analyze target code --target base\n• analyze target code --target 1-10 --json\n• analyze target code --target insecureshop --json --output insecureshop.json"
     },
     "analyze_target_*": {
         "command": "analyze target *",
         "description": "Analyze target's both manifest and codebase from workspace.",
-        "usage": "analyze target * (optional: --target <target_id>,<target_id>,.. --json --output <filename>)",
+        "usage": "analyze target * (optional: --target [<target_id>,<target_id>,..][start_idx-end_idx] --json --output <filename>)",
         "demo": "• analyze target *\n• analyze target * --target base\n• analyze target * --target injuredandroid --json\n• analyze target * --target insecureshop --json --output insecureshop.json"
     },
     "use_device": {
@@ -50,14 +50,14 @@
     "use_module": {
         "command": "use module",
         "description": "Use an exploit module.",
-        "usage": "use module <module_name>",
+        "usage": "use module [<module_name>][<module_idx>]",
         "demo": "use module android/app/access-to-arbitrary/1"
     },
     "remove_target": {
         "command": "remove target",
         "description": "Remove target from workspace.",
-        "usage": "remove target (optional: --target <target_id>,<target_id>,..)",
-        "demo": "• remove target\n• remove target --target injuredandroid"
+        "usage": "remove target (optional: --target [<target_id>,<target_id>,..][start_idx-end_idx])",
+        "demo": "• remove target\n• remove target --target injuredandroid\n• remove target --target 1-5"
     },
     "search_module": {
         "command": "search module",
@@ -68,7 +68,7 @@
     "set": {
         "command": "set",
         "description": "Set option value for selected exploit module.",
-        "usage": "set <option>=<value> <option>=<value>",
+        "usage": "set <option>=<value> <option>=<value>...",
         "demo": "set TARGET_PACKAGE=com.test.test"
     },
     "execute": {
@@ -86,7 +86,7 @@
     "add_target": {
         "command": "add",
         "description": "Add new target to target DB.",
-        "usage": "add <target_path>",
+        "usage": "add <target_path> <target_path>...",
         "demo": "add /home/User/Labs/android/sherlock"
     }
 }

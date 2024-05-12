@@ -71,11 +71,11 @@ class SherlockModule(App):
         provider_type = opts['PROVIDER_TYPE']
 
         exploit_activity_name = self.activity_name(self._id, target_package)
-        leak_provider_activity = f'{self.activity_name(self._id, target_package)}LeakProvider'
+        leak_provider_activity_name = f'{self.activity_name(self._id, target_package)}LeakProvider'
 
         manifest = [
             self._template.build_manifest_component(exploit_activity_name),
-            self._template.build_manifest_component(leak_provider_activity, is_exported=True)
+            self._template.build_manifest_component(leak_provider_activity_name, is_exported=True)
         ]
 
         extras = list()
@@ -104,7 +104,7 @@ class SherlockModule(App):
                     intent_var="target",
                     set_data=f'"{provider_uri}"' if leak_provider else None,
                     put_extra=[[extra[0], f'"{extra[1]}"'] for extra in protected_component_extra] if protected_component_extra != "" else [],
-                    set_classname=[self._package, f"{self._package}.{leak_provider_activity}"] if leak_provider else [target_package, protected_component_class],
+                    set_classname=[self._package, f"{self._package}.{leak_provider_activity_name}"] if leak_provider else [target_package, protected_component_class],
                     set_flags=["Intent.FLAG_GRANT_READ_URI_PERMISSION", "Intent.FLAG_GRANT_WRITE_URI_PERMISSION"] if leak_provider else [],
                     start_activity=False
                 ),
@@ -119,7 +119,7 @@ class SherlockModule(App):
         )
 
         leak_provider_activity = self._template.build_activity(
-            name=leak_provider_activity,
+            name=leak_provider_activity_name,
             libs=[
                 "android.content.Context",
                 "android.content.Intent",
@@ -150,7 +150,7 @@ class SherlockModule(App):
                 "content": exploit_activity
             },
             {
-                "name": f"{leak_provider_activity}.java",
+                "name": f"{leak_provider_activity_name}.java",
                 "content": leak_provider_activity
             }
         ]

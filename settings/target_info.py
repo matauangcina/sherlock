@@ -54,10 +54,10 @@ def get_app_details(manifest_file):
         }
     manifest = dom.getElementsByTagName("manifest")
     sdk = dom.getElementsByTagName("uses-sdk")
-    package_name = manifest[0].getAttribute("package")
-    app_version = manifest[0].getAttribute(f"{ns}:versionName")
-    min_sdk_version = sdk[0].getAttribute(f"{ns}:minSdkVersion")
-    target_sdk_version = sdk[0].getAttribute(f"{ns}:targetSdkVersion")
+    package_name = manifest[0].getAttribute("package") if len(manifest) != 0 else "Not found"
+    app_version = manifest[0].getAttribute(f"{ns}:versionName") if len(manifest) != 0 else "Not found"
+    min_sdk_version = sdk[0].getAttribute(f"{ns}:minSdkVersion") if len(sdk) != 0 else "Not found"
+    target_sdk_version = sdk[0].getAttribute(f"{ns}:targetSdkVersion") if len(sdk) != 0 else "Not found"
     return {
         "package": package_name,
         "version": app_version,

@@ -2,17 +2,17 @@ from rich.progress import BarColumn
 from rich.progress import Progress
 from rich.progress import SpinnerColumn
 from rich.progress import TaskProgressColumn
-from rich.progress import TimeRemainingColumn
+from rich.progress import TimeElapsedColumn
 from time import sleep
 
 
-def progress_bar(message, time=0.002, advance=1):
+def progress_bar(message, time=0.005, advance=1):
     with Progress(
         "{task.description}", 
         SpinnerColumn(spinner_name="circleHalves"), 
         BarColumn(), 
         TaskProgressColumn(),
-        TimeRemainingColumn()
+        TimeElapsedColumn()
     ) as progress:
         task = progress.add_task(f"[green]{message}", total=100)
         while not progress.finished:
