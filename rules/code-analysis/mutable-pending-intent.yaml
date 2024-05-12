@@ -6,11 +6,11 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-base-intent.yaml'
+    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-base-intent.yaml'
       as: base-intent
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/mutable-pending-intent/mutable-pending-intent-basic.yaml'
+    - rule: '(( rules_path ))/taint-analysis/mutable-pending-intent/mutable-pending-intent-basic.yaml'
       as: mutable-pending-intent
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-intent.yaml'
+    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-intent.yaml'
       as: implicit-intent
     on:
     - mutable-pending-intent.$CLASSNAME == implicit-intent.$CLASSNAME
@@ -29,11 +29,11 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-base-intent.yaml'
+    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-base-intent.yaml'
       as: base-intent
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/mutable-pending-intent/mutable-pending-intent-notification.yaml'
+    - rule: '(( rules_path ))/taint-analysis/mutable-pending-intent/mutable-pending-intent-notification.yaml'
       as: mutable-pending-intent
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/notification/notification.yaml'
+    - rule: '(( rules_path ))/taint-analysis/notification/notification.yaml'
       as: notification
     on:
     - mutable-pending-intent.$CLASSNAME == notification.$CLASSNAME
