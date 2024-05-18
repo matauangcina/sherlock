@@ -62,9 +62,24 @@ def cfr(apk, output_path):
         return
     apk_java = os.path.join(TEMP_PATH, "java")
     for jar in jar_files:
-        cfr_command = [CFR_BIN, jar, "--outputdir", apk_java, "--caseinsensitivefs", "true", "--comments", "false", "--silent", "true", "--rename", "true", "--renameillegalidents", "--renameenumidents", "--sugarretrolambda", "true"]
+        cfr_cmd = [
+            CFR_BIN, jar, 
+            "--outputdir", 
+            apk_java, 
+            "--caseinsensitivefs", 
+            "true", 
+            "--comments", 
+            "false", "--silent", 
+            "true", 
+            "--rename", 
+            "true", 
+            "--renameillegalidents", 
+            "--renameenumidents", 
+            "--sugarretrolambda", 
+            "true"
+        ]
         try:
-            subprocess.call(cfr_command, text=True)
+            subprocess.call(cfr_cmd, text=True)
         except Exception as e:
             log.error(f"Decompilation failed: {e}, skipping: {os.path.basename(jar)}")
             return

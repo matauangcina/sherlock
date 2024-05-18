@@ -21,7 +21,7 @@ rules:
   message: |
     Access to arbitrary protected components on an exported activity via unvalidated intent URI scheme detected.
   metadata:
-    cwe: cwe-285, cwe-926, cwe-940
+    cwe: cwe-285, cwe-601, cwe-926, cwe-940
     score: 5.7 / Medium
     cvss: CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:A/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N
 - id: unsafe-intent-uri-component-basic
@@ -46,7 +46,7 @@ rules:
   message: |
     Access to arbitrary protected components on an exported activity via unvalidated intent URI scheme detected.
   metadata:
-    cwe: cwe-285, cwe-926, cwe-940
+    cwe: cwe-285, cwe-601, cwe-926, cwe-940
     score: 5.7 / Medium
     cvss: CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:A/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N
 - id: unsafe-intent-uri-component-implicit
@@ -71,7 +71,7 @@ rules:
   message: |
     Access to arbitrary protected components on an exported activity via unvalidated intent URI scheme detected.
   metadata:
-    cwe: cwe-285, cwe-926, cwe-940
+    cwe: cwe-285, cwe-601, cwe-926, cwe-940
     score: 5.7 / Medium
     cvss: CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:A/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N
 - id: unsafe-intent-uri-component-implicit
@@ -96,7 +96,7 @@ rules:
   message: |
     Access to arbitrary protected components on an exported activity via unvalidated intent URI scheme detected.
   metadata:
-    cwe: cwe-285, cwe-926, cwe-940
+    cwe: cwe-285, cwe-601, cwe-926, cwe-940
     score: 5.7 / Medium
     cvss: CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:A/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N
 - id: unsafe-intent-uri-webview-basic
@@ -121,7 +121,7 @@ rules:
   message: |
     Access to arbitrary protected components on an exported activity via unvalidated intent URI scheme loaded on a WebView detected.
   metadata:
-    cwe: cwe-285, cwe-926, cwe-940
+    cwe: cwe-285, cwe-601, cwe-926, cwe-940
     score: 5.7 / Medium
     cvss: CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:A/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N
 - id: unsafe-intent-uri-webview-basic
@@ -146,7 +146,7 @@ rules:
   message: |
     Access to arbitrary protected components on an exported activity via unvalidated intent URI scheme loaded on a WebView detected.
   metadata:
-    cwe: cwe-285, cwe-926, cwe-940
+    cwe: cwe-285, cwe-601, cwe-926, cwe-940
     score: 5.7 / Medium
     cvss: CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:A/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N
 - id: unsafe-intent-uri-webview-implicit
@@ -171,7 +171,7 @@ rules:
   message: |
     Access to arbitrary protected components via unvalidated intent URI scheme loaded on a WebView and implicit intent interception detected.
   metadata:
-    cwe: cwe-285, cwe-926, cwe-940
+    cwe: cwe-285, cwe-601, cwe-926, cwe-940
     score: 5.7 / Medium
     cvss: CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:A/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N
 - id: unsafe-intent-uri-webview-implicit
@@ -196,6 +196,6 @@ rules:
   message: |
     Access to arbitrary protected components via unvalidated intent URI scheme loaded on a WebView and implicit intent interception detected.
   metadata:
-    cwe: cwe-285, cwe-926, cwe-940
+    cwe: cwe-285, cwe-601, cwe-926, cwe-940
     score: 5.7 / Medium
     cvss: CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:A/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N

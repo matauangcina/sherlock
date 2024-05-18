@@ -18,7 +18,7 @@ rules:
   message: |
     Intent redirection on an exported activity detected.
   metadata:
-    cwe: cwe-285, cwe-926, cwe-940
+    cwe: cwe-285, cwe-601, cwe-926, cwe-940
     score: 7.1 / High
     cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
 - id: intent-redirection-implicit
@@ -40,6 +40,6 @@ rules:
   message: |
     Intent redirection via implicit intent interception detected.
   metadata:
-    cwe: cwe-285, cwe-926, cwe-940
+    cwe: cwe-285, cwe-601, cwe-926, cwe-940
     score: 7.1 / High
     cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
