@@ -6,13 +6,13 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/get-extra/get-uri-string.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/get-extra/get-uri-string.yaml'
       as: get-uri
-    - rule: '(( rules_path ))/taint-analysis/parse-intent-uri/parse-intent-uri.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/parse-intent-uri/parse-intent-uri.yaml'
       as: parse-uri
-    - rule: '(( rules_path ))/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-basic.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-basic.yaml'
       as: intent-uri
-    - rule: '(( rules_path ))/manifest-analysis/exported-activity.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/manifest-analysis/exported-activity.yaml'
       as: exported-activity
     on:
     - get-uri.$KEY == parse-uri.$KEY
@@ -31,13 +31,13 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/get-extra/get-uri-data.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/get-extra/get-uri-data.yaml'
       as: get-uri
-    - rule: '(( rules_path ))/taint-analysis/parse-intent-uri/parse-intent-uri.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/parse-intent-uri/parse-intent-uri.yaml'
       as: parse-uri
-    - rule: '(( rules_path ))/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-basic.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-basic.yaml'
       as: intent-uri
-    - rule: '(( rules_path ))/manifest-analysis/exported-activity.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/manifest-analysis/exported-activity.yaml'
       as: exported-activity
     on:
     - get-uri.$INTENT == parse-uri.$INTENT
@@ -56,13 +56,13 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/get-extra/get-uri-string.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/get-extra/get-uri-string.yaml'
       as: get-uri
-    - rule: '(( rules_path ))/taint-analysis/parse-intent-uri/parse-intent-uri.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/parse-intent-uri/parse-intent-uri.yaml'
       as: parse-uri
-    - rule: '(( rules_path ))/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-implicit.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-implicit.yaml'
       as: intent-uri
-    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-start-activity-for-result.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-start-activity-for-result.yaml'
       as: implicit-intent
     on:
     - get-uri.$KEY == parse-uri.$KEY
@@ -81,13 +81,13 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/get-extra/get-uri-data.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/get-extra/get-uri-data.yaml'
       as: get-uri
-    - rule: '(( rules_path ))/taint-analysis/parse-intent-uri/parse-intent-uri.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/parse-intent-uri/parse-intent-uri.yaml'
       as: parse-uri
-    - rule: '(( rules_path ))/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-implicit.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-implicit.yaml'
       as: intent-uri
-    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-start-activity-for-result.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-start-activity-for-result.yaml'
       as: implicit-intent
     on:
     - get-uri.$INTENT == parse-uri.$INTENT
@@ -106,13 +106,13 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/get-extra/get-uri-string.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/get-extra/get-uri-string.yaml'
       as: get-uri
-    - rule: '(( rules_path ))/taint-analysis/unprotected-webview/unprotected-webview-basic.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unprotected-webview/unprotected-webview-basic.yaml'
       as: unprotected-webview
-    - rule: '(( rules_path ))/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-webview.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-webview.yaml'
       as: intent-uri
-    - rule: '(( rules_path ))/manifest-analysis/exported-activity.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/manifest-analysis/exported-activity.yaml'
       as: exported-activity
     on:
     - get-uri.$KEY == unprotected-webview.$KEY
@@ -131,13 +131,13 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/get-extra/get-uri-data.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/get-extra/get-uri-data.yaml'
       as: get-uri
-    - rule: '(( rules_path ))/taint-analysis/unprotected-webview/unprotected-webview-basic.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unprotected-webview/unprotected-webview-basic.yaml'
       as: unprotected-webview
-    - rule: '(( rules_path ))/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-webview.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-webview.yaml'
       as: intent-uri
-    - rule: '(( rules_path ))/manifest-analysis/exported-activity.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/manifest-analysis/exported-activity.yaml'
       as: exported-activity
     on:
     - get-uri.$INTENT == unprotected-webview.$INTENT
@@ -156,13 +156,13 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/get-extra/get-uri-string.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/get-extra/get-uri-string.yaml'
       as: get-uri
-    - rule: '(( rules_path ))/taint-analysis/unprotected-webview/unprotected-webview-implicit.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unprotected-webview/unprotected-webview-implicit.yaml'
       as: unprotected-webview
-    - rule: '(( rules_path ))/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-webview.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-webview.yaml'
       as: intent-uri
-    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-start-activity-for-result.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-start-activity-for-result.yaml'
       as: implicit-intent
     on:
     - get-uri.$KEY == unprotected-webview.$KEY
@@ -181,13 +181,13 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/get-extra/get-uri-data.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/get-extra/get-uri-data.yaml'
       as: get-uri
-    - rule: '(( rules_path ))/taint-analysis/unprotected-webview/unprotected-webview-implicit.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unprotected-webview/unprotected-webview-implicit.yaml'
       as: unprotected-webview
-    - rule: '(( rules_path ))/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-webview.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/unsafe-intent-uri/unsafe-intent-uri-webview.yaml'
       as: intent-uri
-    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-start-activity-for-result.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-start-activity-for-result.yaml'
       as: implicit-intent
     on:
     - get-uri.$INTENT == unprotected-webview.$INTENT

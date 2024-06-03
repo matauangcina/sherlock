@@ -1,4 +1,5 @@
 import shutil
+import settings.utils as utils
 
 from settings.logger import get_logger
 from settings.target_info import get_target_db, update_target_db
@@ -9,6 +10,10 @@ log = get_logger(__name__)
 
 def is_target_specified(args):
     return len(args) > 0 and "--target" in args
+
+
+def is_remove_dir_specified(args):
+    return len(args) > 0 and "--remove-dir" in args
 
 
 def target(args=None):
@@ -38,7 +43,8 @@ def target(args=None):
     print("")
     for id in ids:
         log.debug(f"Removing target: {id}")
-        shutil.rmtree(targets[id]["path"])
+        if is_remove_dir_specified(args) and utils.is_path_exists(targets[id]["path"]):
+            shutil.rmtree(targets[id]["path"])
         del targets[id]
         log.info(f"Target removed")
     print("")

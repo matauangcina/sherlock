@@ -107,7 +107,7 @@ def get_scan_summary(target_paths, rules, target_ids):
             manifest = path
         package = get_app_details(manifest)["package"]
         id = target_ids[i].split("/")[-1]
-        log.debug(f"Scanning: {id} ({package})")
+        log.debug(f"Scanning: '{id} ({package})'")
         for rule in rules:
             result = run_engine([path], rule)
             if result is not None:

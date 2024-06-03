@@ -7,7 +7,6 @@ rules:
         - metavariable-regex:
             metavariable: $PERM
             regex: ^.+\..+\..+(\..+)*$
-        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sinks:
       - patterns:
         - pattern-either:

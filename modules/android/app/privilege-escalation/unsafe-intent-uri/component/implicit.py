@@ -37,6 +37,7 @@ class SherlockModule(App):
             OptList("IPUT_EXTRA", [False, "Intercept intent extra data"]),
             OptList("COMPONENT_EXTRA", [False, "Protected component intent extra data"]),
             OptEnum("PROVIDER_TYPE", [False, "Content provider type (1: Share content, 2: Access to files)", "", [1, 2]]),
+            OptEnum("FILTER_LEVEL", [True, "Intent URI filter level (0: No filter, 1: Filtered component) (Default: 0)", 0, [0, 1]]),
             OptEnum("RESULT_CODE", [True, "Result code returned to the caller (Default: -1)", -1, [-1, 0, 1, "RESULT_OK", "RESULT_FIRST_USER", "RESULT_CANCELED"]])
         ])
         self.update_option_status()

@@ -1,5 +1,4 @@
 import os
-import platform
 
 
 VERSION = "v1.0.0"
@@ -20,10 +19,10 @@ POC_PATH = {
 }
 
 
-JADX_BIN = os.path.join(TOOLS_PATH, "jadx", "bin", "jadx.bat" if platform.system() == "Windows" else "jadx")
-APKTOOL_BIN = os.path.join(TOOLS_PATH, "apktool", "apktool.bat" if platform.system() == "Windows" else "apktool")
-CFR_BIN = os.path.join(TOOLS_PATH, "cfr", "cfr.bat" if platform.system() == "Windows" else "cfr")
-DEX2JAR_BIN = os.path.join(TOOLS_PATH, "dextools", "d2j-dex2jar.bat" if platform.system() == "Windows" else "d2j-dex2jar.sh")
+JADX_BIN = os.path.join(TOOLS_PATH, "jadx", "bin", "jadx")
+APKTOOL_BIN = os.path.join(TOOLS_PATH, "apktool", "apktool")
+CFR_BIN = os.path.join(TOOLS_PATH, "cfr", "cfr")
+DEX2JAR_BIN = os.path.join(TOOLS_PATH, "dextools", "d2j-dex2jar.sh")
 ADB_BIN = None
 
 

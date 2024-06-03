@@ -1,15 +1,15 @@
 {
-    "show_device_info": {
-        "command": "show device info",
+    "show_device": {
+        "command": "show device",
         "description": "Show information from connected devices.",
-        "usage": "show device info",
-        "demo": "show device info"
+        "usage": "show device",
+        "demo": "show device"
     },
-    "show_target_info": {
-        "command": "show target info",
-        "description": "Show information from target app by target id in application's workspace.",
-        "usage": "show target info (optional: --target <target_id>,<target_id>,..)",
-        "demo": "• show target info\n• show target info --target injuredandroid\n• show target info --target test,base"
+    "show_target": {
+        "command": "show target",
+        "description": "Show information from target app in application's workspace.",
+        "usage": "show target (optional: --target <target_id|target_idx>,<target_id|target_idx>,..)",
+        "demo": "• show target\n• show target --target injuredandroid\n• show target --target test,base"
     },
     "show_module_options": {
         "command": "show module options",
@@ -23,41 +23,41 @@
         "usage": "decompile <path_to_apk> <path_to_apk>.. (optional: --file <apk_list> --output <output_directory> --decompiler <decompiler (default: jadx, option: jadx, cfr)>)",
         "demo": "• decompile /home/user/path/to/target.apk\n• decompile --file /home/User/targets.txt --output /home/User/workspace --decompiler cfr"
     },
-    "analyze_target_manifest": {
-        "command": "analyze target manifest",
+    "analyze_manifest": {
+        "command": "analyze manifest",
         "description": "Analyze target manifest from workspace.",
-        "usage": "analyze target manifest (optional: --target [<target_id>,<target_id>,..][start_idx-end_idx] --json --output <filename>)",
-        "demo": "• analyze target manifest\n• analyze target manifest --target base\n• analyze target manifest --target injuredandroid --json\n• analyze target manifest --target insecureshop --json --output insecureshop.json"
+        "usage": "analyze manifest (optional: --target [<target_id|target_idx>,<target_id|target_idx>,..][start_idx-end_idx] --json --output <output_file>)",
+        "demo": "• analyze manifest\n• analyze manifest --target base\n• analyze manifest --target injuredandroid --json\n• analyze manifest --target insecureshop --json --output insecureshop.json"
     },
-    "analyze_target_code": {
-        "command": "analyze target code",
+    "analyze_code": {
+        "command": "analyze code",
         "description": "Analyze target codebase from workspace.",
-        "usage": "analyze target code (optional: --target [<target_id>,<target_id>,..][start_idx-end_idx] --json --output <output_file>)",
-        "demo": "• analyze target code\n• analyze target code --target base\n• analyze target code --target 1-10 --json\n• analyze target code --target insecureshop --json --output insecureshop.json"
+        "usage": "analyze code (optional: --target [<target_id|target_idx>,<target_id|target_idx>,..][start_idx-end_idx] --json --output <output_file>)",
+        "demo": "• analyze code\n• analyze code --target base\n• analyze code --target 1-10 --json\n• analyze code --target insecureshop --json --output insecureshop.json"
     },
-    "analyze_target_*": {
-        "command": "analyze target *",
+    "analyze_*": {
+        "command": "analyze *",
         "description": "Analyze target's both manifest and codebase from workspace.",
-        "usage": "analyze target * (optional: --target [<target_id>,<target_id>,..][start_idx-end_idx] --json --output <filename>)",
-        "demo": "• analyze target *\n• analyze target * --target base\n• analyze target * --target injuredandroid --json\n• analyze target * --target insecureshop --json --output insecureshop.json"
+        "usage": "analyze * (optional: --target [<target_id|target_idx>,<target_id|target_idx>,..][start_idx-end_idx] --json --output <output_file>)",
+        "demo": "• analyze *\n• analyze * --target base\n• analyze * --target injuredandroid --json\n• analyze * --target insecureshop --json --output insecureshop.json"
     },
     "use_device": {
         "command": "use device",
         "description": "Use a device connected to host.",
-        "usage": "use device <device_id>",
+        "usage": "use device <device_id|device_idx>",
         "demo": "use device emulator-554"
     },
     "use_module": {
         "command": "use module",
         "description": "Use an exploit module.",
-        "usage": "use module [<module_name>][<module_idx>]",
-        "demo": "use module android/app/access-to-arbitrary/1"
+        "usage": "use module <module_name|module_idx>",
+        "demo": "use module android/app/privilege-escalation/insecure-set-result/basic"
     },
     "remove_target": {
         "command": "remove target",
         "description": "Remove target from workspace.",
-        "usage": "remove target (optional: --target [<target_id>,<target_id>,..][start_idx-end_idx])",
-        "demo": "• remove target\n• remove target --target injuredandroid\n• remove target --target 1-5"
+        "usage": "remove target (optional: --target <target_id|target_idx>,<target_id|target_idx>,..)",
+        "demo": "• remove target\n• remove target --target injuredandroid\n• remove target --target 1,5"
     },
     "search_module": {
         "command": "search module",
@@ -77,11 +77,11 @@
         "usage": "execute",
         "demo": "execute"
     },
-    "option": {
-        "command": "option",
+    "print_option": {
+        "command": "print option",
         "description": "Print option input template.",
-        "usage": "option",
-        "demo": "option"
+        "usage": "print option",
+        "demo": "print option"
     },
     "add_target": {
         "command": "add",

@@ -24,7 +24,7 @@ rules:
             - pattern: $INTENT.setFlags($FLAG)
             - metavariable-regex:
                 metavariable: $FLAG
-                regex: ^(?!(1|3|67|195)$|(Intent\.FLAG_GRANT_(READ|WRITE|PREFIX|PERSISTABLE)_URI_PERMISSION\S?\|?)$)$
+                regex: ^(?!(1|3|67|195)$|(Intent\.FLAG_GRANT_(READ|WRITE|PREFIX|PERSISTABLE)_URI_PERMISSION\S?\|?)$).*$
           - pattern-inside: $INTENT.putExtra(...)
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sinks:

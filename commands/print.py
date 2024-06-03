@@ -10,7 +10,7 @@ from state.options import option_state
 log = get_logger(__name__)
 
 
-def print(args=None):
+def options(args=None):
     options = option_state.get_all_options()
     if len(options) == 0:
         log.error("No module selected. Please select a module.")

@@ -12,14 +12,16 @@ rules:
     pattern-sanitizers:
       - patterns:
         - pattern-either:
-          - pattern: $INTENT.setClassName($COMP, $COMP)
-          - pattern: $INTENT.setPackage($COMP)
-          - pattern: $INTENT.setClass($COMP, $COMP)
-          - pattern: $INTENT.setComponent($COMP)
-          - pattern: $INTENT.setSelector($COMP)
-        - metavariable-regex:
-            metavariable: $COMP
-            regex: ^(?!null).*$
+          - pattern: $INTENT.setClassName(..., ...)
+          - pattern: $INTENT.setClass(..., ...)
+          - patterns:
+            - pattern-either:
+              - pattern: $INTENT.setPackage($COMP)
+              - pattern: $INTENT.setComponent($COMP)
+              - pattern: $INTENT.setSelector($COMP)
+            - metavariable-regex:
+                metavariable: $COMP
+                regex: ^(?!null).*$
         - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sinks:
       - patterns:

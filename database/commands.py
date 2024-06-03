@@ -3,7 +3,7 @@ from commands import analyze
 from commands import clear
 from commands import decompile
 from commands import execute
-from commands import option
+from commands import print
 from commands import set
 from commands import show
 from commands import remove
@@ -13,26 +13,26 @@ from commands import use
 
 COMMANDS = {
     "show": {
-        "desc": "Work with the 'get' command",
+        "desc": "Work with the 'show' command",
         "cmds": {
             "device": {
+                # "desc": "Show connected device(s)",
+                # "cmds": {
+                #     "info": {
                 "desc": "Show connected device(s)",
-                "cmds": {
-                    "info": {
-                        "desc": "Get connected device(s) info",
-                        "exec": show.device_info
-                    }
-                }
+                "exec": show.device_info
+                #     }
+                # }
             },
             "target": {
+                # "desc": "Show target app(s) from workspace",
+                # "cmds": {
+                #     "info": {
                 "desc": "Show target app(s) from workspace",
-                "cmds": {
-                    "info": {
-                        "desc": "Show information from target app(s) in workspace",
-                        "flags": ["--component", "--activity", "--provider", "--receiver", "--service"],
-                        "exec": show.target_info
-                    }
-                }
+                "flags": ["--component", "--activity", "--provider", "--receiver", "--service"],
+                "exec": show.target_info
+                #     }
+                # }
             },
             "module": {
                 "desc": "Show selected exploit module",
@@ -62,26 +62,26 @@ COMMANDS = {
     "analyze": {
         "desc": "Work with the 'analyze' command",
         "cmds": {
-            "target": {
-                "desc": "Get target app(s) from workspace",
-                "cmds": {
-                    "manifest": {
-                        "desc": "Analyze manifest",
-                        "flags": ["--target", "--output", "--json"],
-                        "exec": analyze.manifest
-                    },
-                    "code": {
-                        "desc": "Analyze codebase",
-                        "flags": ["--target", "--output", "--json"],
-                        "exec": analyze.codebase
-                    },
-                    "*": {
-                        "desc": "Analyze both manifest and codebase",
-                        "flags": ["--target", "--output", "--json"],
-                        "exec": analyze.all
-                    }
-                }
+            # "target": {
+            #     "desc": "Get target app(s) from workspace",
+            #     "cmds": {
+            "manifest": {
+                "desc": "Analyze manifest",
+                "flags": ["--target", "--output", "--json"],
+                "exec": analyze.manifest
+            },
+            "code": {
+                "desc": "Analyze codebase",
+                "flags": ["--target", "--output", "--json"],
+                "exec": analyze.codebase
+            },
+            "*": {
+                "desc": "Analyze both manifest and codebase",
+                "flags": ["--target", "--output", "--json"],
+                "exec": analyze.all
             }
+            #     }
+            # }
         }
     },
     "use": {
@@ -102,7 +102,7 @@ COMMANDS = {
         "cmds": {
             "target": {
                 "desc": "Remove target from workspace",
-                "flags": ["--target"],
+                "flags": ["--target", "--remove-dir"],
                 "exec": remove.target
             }
         }
@@ -124,9 +124,14 @@ COMMANDS = {
         "desc": "Execute an exploit module",
         "exec": execute.module
     },
-    "option": {
-        "desc": "Print option input template",
-        "exec": option.print
+    "print": {
+        "desc": "Work with the 'print' command",
+        "cmds": {
+            "option": {
+                "desc": "Print option input template",
+                "exec": print.options
+            }
+        }
     },
     "clear": {
         "desc": "Clear terminal",

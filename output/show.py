@@ -15,6 +15,7 @@ log = get_logger(__name__)
 
 def display_device_info(device_dict):
     progress_bar("Getting device info")
+    print("")
     table = Table(
         title="Connected Device Info", 
         caption="Use a device by device id or index.", 
@@ -48,6 +49,7 @@ def display_device_info(device_dict):
 
 def display_target_info(targets, ids):
     progress_bar("Getting target info")
+    print("")
     table = Table(
         title="Target Info",
         caption="Interact with a target by target id or index.",

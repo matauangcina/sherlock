@@ -31,7 +31,7 @@ def run_decompiler(apks, decompiler, output_dir):
         return
     ids = targets.keys()
     output = list()
-    for apk in apks:
+    for i,apk in enumerate(apks):
         id = os.path.basename(apk).split(".apk")[0]
         if id in ids:
             log.warning(f"Duplicated target, skipping: '{id}'")

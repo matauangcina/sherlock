@@ -26,4 +26,4 @@ def target(args):
     for path in valid_path:
         add_target_to_db(targets, path)
         post_process(targets, os.path.basename(path))
-    log.info(f"Targets added to workspace.\n")
+    log.info(f"Target(s) added to workspace.\n")

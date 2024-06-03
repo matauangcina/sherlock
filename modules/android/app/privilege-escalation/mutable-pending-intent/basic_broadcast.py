@@ -130,7 +130,7 @@ class SherlockModule(App):
                     on_receive=[
                         f'Bundle bundle = intent.getBundleExtra("{bundle_extra}");' if bundle_extra != "" else "",
                         f'PendingIntent pi = bundle.getParcelable("{bundle_parcel}");' if bundle_extra != "" else "",
-                        f'PendingIntent pi = intent.getParcelableExtra("{parcel_extra}");',
+                        f'PendingIntent pi = intent.getParcelableExtra("{parcel_extra}");' if bundle_extra == "" else "",
                         self._template.build_intent(
                             intent_var="hijack",
                             set_action="sherlock.poc.LEAK_PROVIDER" if base_action == "" else None,

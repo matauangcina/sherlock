@@ -197,7 +197,7 @@ class Prompt:
                 try:
                     self.run_command(cmd)
                 except Exception as e:
-                    log.warning(f"{e}")
+                    log.warning(f"Error executing command: {e}")
             except KeyboardInterrupt:
                 pass
             except EOFError:

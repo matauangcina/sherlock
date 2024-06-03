@@ -15,12 +15,11 @@ def option_value(args):
     if len(opts) == 0:
         log.error("No module selected. Please select a module.")
         return
-    print("")
     for arg in args:
         option = arg.split("=")[0]
         value = arg.split("=")[1]
         if option.upper() not in opts.keys():
-            log.error(f"Option invalid: {option}\n")
+            log.error(f"Option invalid: {option}")
             return
         for k,v in opts.items():
             if option.upper() == k:
@@ -31,7 +30,6 @@ def option_value(args):
                     break
                 log.error(f"Input: '{value}' is invalid for option: {k}")
                 return
-    print("")
     name = module_state.get("name")
     module_path = os.path.join(MODULE_PATH, module_state.get("path"))
     if utils.is_path_exists(module_path):

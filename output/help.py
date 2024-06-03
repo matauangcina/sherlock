@@ -12,7 +12,7 @@ def display_help_panel(help_dict):
     message = Table.grid(padding=1)
     message.add_column(style="bold white", justify="left", ratio=10)
     message.add_column(style="bold white", justify="center", ratio=1)
-    message.add_column(style="bright_white", ratio=10)
+    message.add_column(style="bright_white", ratio=10, overflow="fold")
     message.add_row(
         "Usage", ":", help_dict["usage"]
     )

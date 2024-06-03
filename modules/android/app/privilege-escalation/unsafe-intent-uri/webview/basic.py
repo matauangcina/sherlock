@@ -111,13 +111,13 @@ class SherlockModule(App):
                 ),
                 'String intentUri = target.toUri(Intent.URI_INTENT_SCHEME);',
                 'String url = "https://sherlock-93f40.web.app/?url=" + Uri.encode(intentUri);',
-                'Bundle bundle = new Bundle();',
+                'Bundle bundle = new Bundle();' if bundle_string != "" else "",
                 f'bundle.putString("{bundle_string}", url);' if bundle_string != "" else "",
                 self._template.build_intent(
                     set_action="android.intent.action.VIEW" if via_deeplink else None,
                     set_data="url" if not via_deeplink else f'"{deeplink_uri}?{url_extra}=" + Uri.encode(url)',
                     put_extra=extras,
-                    set_classname=[target_package, target_class] if not via_deeplink else []
+                    set_classname=[target_package, target_class] if target_package != "" and target_class != "" else []
                 )
             ]
         )

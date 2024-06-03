@@ -6,11 +6,11 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/get-extra/get-parcelable.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/get-extra/get-parcelable.yaml'
       as: get-parcelable
-    - rule: '(( rules_path ))/taint-analysis/intent-redirection/intent-redirection-basic.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/intent-redirection/intent-redirection-basic.yaml'
       as: intent-redirection
-    - rule: '(( rules_path ))/manifest-analysis/exported-activity.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/manifest-analysis/exported-activity.yaml'
       as: exported-activity
     on:
     - get-parcelable.$KEY == intent-redirection.$KEY
@@ -28,11 +28,11 @@ rules:
   mode: join
   join:
     refs:
-    - rule: '(( rules_path ))/taint-analysis/get-extra/get-parcelable.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/get-extra/get-parcelable.yaml'
       as: get-parcelable
-    - rule: '(( rules_path ))/taint-analysis/intent-redirection/intent-redirection-implicit.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/intent-redirection/intent-redirection-implicit.yaml'
       as: intent-redirection
-    - rule: '(( rules_path ))/taint-analysis/implicit-intent/implicit-start-activity-for-result.yaml'
+    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-start-activity-for-result.yaml'
       as: implicit-intent
     on:
     - get-parcelable.$KEY == intent-redirection.$KEY

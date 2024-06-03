@@ -33,6 +33,7 @@ class SherlockModule(App):
             OptStr("PROVIDER_URI", [False, "Content provider URI to access"]),
             OptList("COMPONENT_EXTRA", [False, "Protected component intent extra data"]),
             OptList("PUT_EXTRA", [False, "Intent extra data"]),
+            OptEnum("FILTER_LEVEL", [True, "Intent URI filter level (0: No filter, 1: Filtered component) (Default: 0)", 0, [0, 1]]),
             OptEnum("PROVIDER_TYPE", [False, "Content provider type (1: Share content, 2: Access to files)", "", [1, 2]]),
         ])
         self.update_option_status()

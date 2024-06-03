@@ -59,7 +59,7 @@ def target_info(args=None):
         log.error("No targets available.")
         return
     print("")
-    log.debug("Displaying target info..\n")
+    log.debug("Displaying target info..")
     if is_component_exist(args):
         components = format_component(targets, ids)
         display_component_summary(args, components, ids)
@@ -70,11 +70,11 @@ def target_info(args=None):
 def device_info(args=None):
     devices = get_connected_devices()
     if len(devices) == 0:
-        log.error("No connected devices are detected.")
+        log.error("No connected devices detected.")
         return
     print("")
     device_info = get_connected_device_info(devices)
-    log.debug("Displaying connected device info..\n")
+    log.debug("Displaying connected device info..")
     display_device_info(device_info)
 
 
