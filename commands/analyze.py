@@ -5,9 +5,12 @@ from output.analyze import display_scan_result
 from settings.logger import get_logger
 from settings.scan import run_engine
 from settings.target_info import get_target_db, get_app_details
+from rich.console import Console
 
 
 log = get_logger(__name__)
+
+console = Console()
 
 
 def is_target_specified(args):
@@ -107,17 +110,19 @@ def get_scan_summary(target_paths, rules, target_ids):
             manifest = path
         package = get_app_details(manifest)["package"]
         id = target_ids[i].split("/")[-1]
-        log.debug(f"Scanning: '{id} ({package})'")
-        for rule in rules:
-            result = run_engine([path], rule)
-            if result is not None:
-                if id not in target_summary:
-                    target_summary[id] = {
-                        "package": package,
-                        "path": path
-                    }
-                if rule not in target_summary[id]:
-                    target_summary[id][rule] = result
+        with console.status("[bold red] Scanning target", spinner="aesthetic", spinner_style="bright_yellow"):
+            log.debug(f"Target: '{id} ({package})'")
+            for rule in rules:
+                result = run_engine([path], rule)
+                if result is not None:
+                    if id not in target_summary:
+                        target_summary[id] = {
+                            "package": package,
+                            "path": path
+                        }
+                    if rule not in target_summary[id]:
+                        target_summary[id][rule] = result
+        log.info(f"Target scanned: '{id} ({package})'")
     return summary if len(list(target_summary)) != 0 else None
 
 
@@ -154,9 +159,9 @@ def codebase(args=None):
     if len(codebases) == 0:
         log.error("No target codebase can be found.")
         return
-    log.debug("Initiating engine..")
+    log.debug("Executing engine..")
     summary = get_scan_summary(codebases, ["code"], targets)
-    log.info("Scan completed.")
+    console.print("[bold green]Scan completed.")
     if summary is None:
         log.info("No vulnerabilities discovered for all targets!\n")
         return

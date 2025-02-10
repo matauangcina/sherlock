@@ -18,25 +18,25 @@ class Template(App):
             action=None,
             category=["android.intent.category.DEFAULT"]
         ):
-        component = f"<{type} android:name=\".{name}\" "
+        component = f'<{type} android:name=".{name}" '
         if is_exported:
-            component += f"android:exported=\"true\" "
+            component += f'android:exported="true" '
         else:
-            component += f"android:exported=\"false\" "
+            component += f'android:exported="false" '
         if permission is not None:
-            component += f"android:permission=\"{permission}\" "
+            component += f'android:permission="{permission}" '
         if not intercept:
-            component += "/>\n"
+            component += '/>\n'
         else:
-            component += ">\n"
-            component += f"<intent-filter android:priority=\"{priority}\">"
-            component += f"<action android:name=\"{action}\"/>"
+            component += '>\n'
+            component += f'<intent-filter android:priority="{priority}">\n'
+            component += f'<action android:name="{action}"/>\n'
             if len(category) != 0:
                 for c in category:
-                    component += f"<category android:name=\"{c}\"/>\n"
-            component += "</intent-filter>"
-            component += f"</{type}>\n"
-        component += "<!-- (( placeholder )) -->"
+                    component += f'<category android:name="{c}"/>\n'
+            component += '</intent-filter>\n'
+            component += f'</{type}>\n'
+        component += '<!-- (( placeholder )) -->'
         return component
 
 
@@ -68,7 +68,7 @@ class Template(App):
         if len(put_extra) != 0:
             for extra in put_extra:
                 intent += f'{intent_var}.putExtra("{extra[0]}", {extra[1]});\n'
-        if set_selector is None and len(set_classname) != 0:
+        if len(set_classname) != 0:
             intent += f'{intent_var}.setClassName("{set_classname[0]}", "{set_classname[1]}");\n'
         if len(set_flags) != 0:
             intent += f"{intent_var}.setFlags({''.join([flag + ('|' if i < len(set_flags) - 1 else '') for i,flag in enumerate(set_flags)])});\n"
@@ -214,9 +214,9 @@ class Template(App):
         return request
 
 
-    def bind_button(self, id, name):
+    def bind_button(self, id, name, activity):
         return f"""binding.{self.bind_button_id(id, name)}.setOnClickListener(v1 -> {{
-            Intent i = {self.activity_name(id, name)}.newIntent(this);
+            Intent i = {activity}.newIntent(this);
             startActivity(i);
         }});
         // (( placeholder ))"""

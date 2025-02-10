@@ -6,6 +6,7 @@ class OptList(Opt):
     def __init__(self, name, attr=[]):
         super().__init__(name, attr)
     
+
     def cast(self, value):
         arr = list()
         if value == "":
@@ -19,6 +20,7 @@ class OptList(Opt):
                 extra = [val[0]]
             arr.append(extra)
         return arr
+    
     
     def is_valid(self, value="", is_empty=True):
         if is_empty and self.empty_required_value(value):

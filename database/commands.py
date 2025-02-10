@@ -1,119 +1,93 @@
-from commands import add
-from commands import analyze
-from commands import clear
-from commands import decompile
-from commands import execute
-from commands import print
-from commands import set
-from commands import show
-from commands import remove
-from commands import search
-from commands import use
+from commands import (
+    add,
+    analyze,
+    clear,
+    decompile,
+    execute,
+    print,
+    set,
+    show,
+    remove,
+    search,
+    use
+)
 
 
 COMMANDS = {
     "show": {
         "desc": "Work with the 'show' command",
-        "cmds": {
-            "device": {
-                # "desc": "Show connected device(s)",
-                # "cmds": {
-                #     "info": {
-                "desc": "Show connected device(s)",
-                "exec": show.device_info
-                #     }
-                # }
-            },
-            "target": {
-                # "desc": "Show target app(s) from workspace",
-                # "cmds": {
-                #     "info": {
-                "desc": "Show target app(s) from workspace",
-                "flags": ["--component", "--activity", "--provider", "--receiver", "--service"],
-                "exec": show.target_info
-                #     }
-                # }
-            },
-            "module": {
-                "desc": "Show selected exploit module",
-                "cmds": {
-                    "options": {
-                        "desc": "Show options for selected exploit module",
-                        "exec": show.module_options
-                    }
-                }
+        "device": {
+            "desc": "Show connected device(s)",
+            "exec": show.device_info
+        },
+        "target": {
+            "desc": "Show target app(s) from workspace",
+            "opts": ["--component", "--activity", "--provider", "--receiver", "--service"],
+            "exec": show.target_info
+        },
+        "module": {
+            "desc": "Show selected exploit module",
+            "options": {
+                "desc": "Show options for selected exploit module",
+                "exec": show.module_options
+
             }
         }
     },
     "decompile": {
         "desc": "Work with the 'decompile' command",
-        "flags": ["--output", "--file", "--decompiler"],
+        "opts": ["--output", "--file", "--decompiler"],
         "exec": decompile.decompile
     },
     "add": {
         "desc": "Work with the 'add' command",
-        "cmds": {
-            "target": {
-                "desc": "Add target to workspace",
-                "exec": add.target
-            }
+        "target": {
+            "desc": "Add target to workspace",
+            "exec": add.target
         }
     },
     "analyze": {
         "desc": "Work with the 'analyze' command",
-        "cmds": {
-            # "target": {
-            #     "desc": "Get target app(s) from workspace",
-            #     "cmds": {
-            "manifest": {
-                "desc": "Analyze manifest",
-                "flags": ["--target", "--output", "--json"],
-                "exec": analyze.manifest
-            },
-            "code": {
-                "desc": "Analyze codebase",
-                "flags": ["--target", "--output", "--json"],
-                "exec": analyze.codebase
-            },
-            "*": {
-                "desc": "Analyze both manifest and codebase",
-                "flags": ["--target", "--output", "--json"],
-                "exec": analyze.all
-            }
-            #     }
-            # }
+        "manifest": {
+            "desc": "Analyze manifest",
+            "opts": ["--target", "--output", "--json"],
+            "exec": analyze.manifest
+        },
+        "code": {
+            "desc": "Analyze codebase",
+            "opts": ["--target", "--output", "--json"],
+            "exec": analyze.codebase
+        },
+        "*": {
+            "desc": "Analyze both manifest and codebase",
+            "opts": ["--target", "--output", "--json"],
+            "exec": analyze.all
         }
     },
     "use": {
         "desc": "Work with the 'use' command",
-        "cmds": {
-            "device": {
-                "desc": "Use a device connected to host",
-                "exec": use.device
-            },
-            "module": {
-                "desc": "Use an exploit module",
-                "exec": use.module
-            }
+        "device": {
+            "desc": "Use a device connected to host",
+            "exec": use.device
+        },
+        "module": {
+            "desc": "Use an exploit module",
+            "exec": use.module
         }
     },
     "remove": {
         "desc": "Work with the 'remove' command",
-        "cmds": {
-            "target": {
-                "desc": "Remove target from workspace",
-                "flags": ["--target", "--remove-dir"],
-                "exec": remove.target
-            }
+        "target": {
+            "desc": "Remove target from workspace",
+            "opts": ["--target", "--remove-dir"],
+            "exec": remove.target
         }
     },
     "search": {
         "desc": "Work with the 'search' command",
-        "cmds": {
-            "module": {
-                "desc": "Search exploit module",
-                "exec": search.module
-            }
+        "module": {
+            "desc": "Search exploit module",
+            "exec": search.module
         }
     },
     "set": {
@@ -126,11 +100,9 @@ COMMANDS = {
     },
     "print": {
         "desc": "Work with the 'print' command",
-        "cmds": {
-            "option": {
-                "desc": "Print option input template",
-                "exec": print.options
-            }
+        "option": {
+            "desc": "Print option input template",
+            "exec": print.options
         }
     },
     "clear": {

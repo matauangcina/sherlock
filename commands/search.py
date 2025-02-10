@@ -14,5 +14,4 @@ def module(args=None):
         return
     print("")
     module_state.filtered = modules
-    log.debug("Displaying modules..\n")
     display_modules(modules)

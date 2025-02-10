@@ -3,7 +3,9 @@ import sys
 import os
 import psutil
 import shlex
+import string
 import subprocess
+import random
 
 from globals import ADB_BIN, POC_PATH
 
@@ -24,7 +26,12 @@ def get_commands(text):
     try:
         return shlex.split(text)
     except ValueError:
-        return []
+        return list()
+
+
+def gen_random_string():
+    chars = ''.join(random.choice(string.ascii_lowercase) for _ in range(5))
+    return chars.capitalize()
 
 
 def get_manifest_file(target_path):

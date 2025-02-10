@@ -13,10 +13,11 @@ log = get_logger(__name__)
 
 def module(args=None):
     options = option_state.get_all_options()
-    for k,v in options.items():
-        if not v.is_valid(str(v.default)):
-            log.error(f"Option: '{k}' are not set.")
-            return
+    for opts in options.values():
+        for k,v in opts.items():
+            if not v.is_valid(str(v.default)):
+                log.error(f"Option: '{k}' is not set.")
+                return
     device = device_state.device_id
     if device is None:
         log.error("No device is currently used. Use a device with: 'use device <device_id>'")

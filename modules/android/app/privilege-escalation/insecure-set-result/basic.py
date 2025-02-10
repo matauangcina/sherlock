@@ -19,15 +19,27 @@ class SherlockModule(App):
 
 
     def register_options(self):
-        option_state.add_options([
-            OptEnum("PROVIDER_TYPE", [True, "(Default: 1) Content provider type (1: Share content, 2: Access to files)", 1, [1, 2]]),
-            OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
-            OptStr("TARGET_PACKAGE", [True, "Target package name"]),
-            OptStr("TARGET_CLASS", [True, "Target class name"]),
-            OptStr("ACTION_NAME", [False, "Intent action name"]),
-            OptList("PUT_EXTRA", [False, "Intent extra data"]),
-            OptEnum("RESULT_CODE", [True, "(Default: -1) Result code returned to the caller", -1, [-1, 0, 1, "RESULT_OK", "RESULT_FIRST_USER", "RESULT_CANCELED"]])
-        ])
+        # option_state.add_options([
+        #     OptEnum("PROVIDER_TYPE", [True, "(Default: 1) Content provider type (1: Share content, 2: Access to files)", 1, [1, 2]]),
+        #     OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
+        #     OptStr("TARGET_PACKAGE", [True, "Target package name"]),
+        #     OptStr("TARGET_CLASS", [True, "Target class name"]),
+        #     OptStr("ACTION_NAME", [False, "Intent action name"]),
+        #     OptList("PUT_EXTRA", [False, "Intent extra data"]),
+        #     OptEnum("RESULT_CODE", [True, "(Default: -1) Result code returned to the caller", -1, [-1, 0, 1, "RESULT_OK", "RESULT_FIRST_USER", "RESULT_CANCELED"]])
+        # ])
+
+        option_state.add_options({
+            "exploit": [
+                OptEnum("PROVIDER_TYPE", [True, "Content provider type [1: Share content, 2: Access to files] (Default: 1)", 1, [1, 2]]),
+                OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
+                OptStr("TARGET_PACKAGE", [True, "Target package name"]),
+                OptStr("TARGET_CLASS", [True, "Target class name"]),
+                OptStr("ACTION_NAME", [False, "Intent action name"]),
+                OptStr("RESULT_CODE", [True, "(Default: -1) Result code returned to the caller", -1]),
+                OptList("PUT_EXTRA", [False, "Intent extra data key-value pair (Usage: <key>,<value>;<key>,<value>;..)"]),
+            ]
+        })
 
 
     def update_option_status(self):
@@ -92,7 +104,7 @@ class SherlockModule(App):
                 self._template.build_manifest_component(exploit_activity_name)
             ],
             "layout": self._template.button_layout(self._id, target_package),
-            "bind_button": self._template.bind_button(self._id, target_package),
+            "bind_button": self._template.bind_button(self._id, target_package, exploit_activity_name),
             "component": [
                 {
                     "name": f"{exploit_activity_name}.java",

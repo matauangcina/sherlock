@@ -22,7 +22,7 @@ def target(args):
     if len(valid_path) == 0:
         log.error("No valid path found.\n")
         return
-    log.debug("Post adding..")
+    log.debug("Post processing..")
     for path in valid_path:
         add_target_to_db(targets, path)
         post_process(targets, os.path.basename(path))

@@ -1,3 +1,4 @@
+import re
 import subprocess
 import settings.utils as utils
 
@@ -5,13 +6,11 @@ import settings.utils as utils
 def get_connected_devices():
     output = subprocess.check_output([utils.get_adb_bin(), "devices"], stderr=subprocess.STDOUT, text=True).splitlines()
     devices = list()
-    if len(output) > 2:
-        for i in range(len(output) - 1):
-            if output[i] == "List of devices attached" and i != len(output) - 1:
-                for i in range(len(output) - 2):
-                    device = output[i+1].split("\t")[0]
-                    devices.append(device)
-                break
+    if len(output) != 0:
+        for line in output:
+            if re.match(r"^.+device$", line):
+                device = line.split("\t")[0]
+                devices.append(device)
     return devices
 
 

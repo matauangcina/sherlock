@@ -1,45 +1,70 @@
 rules:
-- id: intent-redirection-basic
-  severity: ERROR
-  languages:
-  - java
-  mode: join
-  join:
-    refs:
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/get-extra/get-parcelable.yaml'
-      as: get-parcelable
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/intent-redirection/intent-redirection-basic.yaml'
-      as: intent-redirection
-    - rule: '/home/finechina/Tools/sherlock/src/rules/manifest-analysis/exported-activity.yaml'
-      as: exported-activity
-    on:
-    - get-parcelable.$KEY == intent-redirection.$KEY
-    - exported-activity.$ACTIVITY > intent-redirection.$CLASSNAME
-  message: |
-    Intent redirection on an exported activity detected.
-  metadata:
-    cwe: cwe-285, cwe-601, cwe-926, cwe-940
-    score: 7.1 / High
-    cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
-- id: intent-redirection-implicit
-  severity: ERROR
-  languages:
-  - java
-  mode: join
-  join:
-    refs:
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/get-extra/get-parcelable.yaml'
-      as: get-parcelable
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/intent-redirection/intent-redirection-implicit.yaml'
-      as: intent-redirection
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-start-activity-for-result.yaml'
-      as: implicit-intent
-    on:
-    - get-parcelable.$KEY == intent-redirection.$KEY
-    - implicit-intent.$CLASSNAME == intent-redirection.$CLASSNAME
-  message: |
-    Intent redirection via implicit intent interception detected.
-  metadata:
-    cwe: cwe-285, cwe-601, cwe-926, cwe-940
-    score: 7.1 / High
-    cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
+  - id: intent-redirection-basic
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern-either:
+          - pattern: getIntent()
+    pattern-sinks:
+      - patterns:
+        - pattern-either:
+          - pattern: startActivity($INTENT)
+          - pattern: $CTX.startActivity($INTENT)
+        - focus-metavariable: $INTENT
+    languages:
+      - java
+    severity: ERROR
+    message: |
+      Intent redirection on an exported activity detected.
+    metadata:
+      cwe: cwe-285, cwe-601, cwe-926, cwe-940
+      score: 7.1 / High
+      cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
+  - id: intent-redirection-implicit
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern-either:
+          - pattern: $ACC onActivityResult(..., Intent $SRC) {...}
+          - pattern: ActivityResultLauncher<Intent> $LAUNCHER = registerForActivityResult(..., $SRC -> {...});
+          - pattern: $ACC $METHOD(ActivityResult $SRC) {...}
+        - focus-metavariable: $SRC
+    pattern-sinks:
+      - patterns:
+        - pattern-either:
+          - pattern: startActivity($INTENT)
+          - pattern: $CTX.startActivity($INTENT)
+        - focus-metavariable: $INTENT
+    message: |
+      Intent redirection via implicit intent interception detected.
+    languages:
+      - java
+    metadata:
+      cwe: cwe-285, cwe-601, cwe-926, cwe-940
+      score: 7.1 / High
+      cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
+    severity: ERROR
+  rules:
+  - id: intent-redirection-webview
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern: $SRC.getUrl();
+        - pattern-inside: $ACC shouldOverrideUrlLoading(...)) {...}
+    pattern-sinks:
+      - patterns:
+        - pattern-either:
+          - pattern: startActivity($INTENT)
+          - pattern: $CTX.startActivity($INTENT)
+        - pattern-inside: $ACC shouldOverrideUrlLoading(...) {...}
+        - pattern-inside: $WV.setWebViewClient(...)
+        - focus-metavariable: $INTENT
+    languages:
+      - java
+    severity: WARNING
+    message: |
+      Access to arbitrary protected components on an exported activity via unvalidated intent URI scheme loaded on a WebView detected.
+    metadata:
+      cwe: cwe-285, cwe-601, cwe-926, cwe-940
+      score: 5.7 / Medium
+      cvss: CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:A/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N

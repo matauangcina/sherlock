@@ -98,21 +98,21 @@
         "description": "Mutable Pending Intent with an Implicit Base Intent Wrapped on an App's Notification which Leads to Unrestricted Access to Arbitrary Protected Application Components.",
         "author": []
     },
-    "insecure_broadcast_basic": {
-        "name": "android/app/insecure-communication/insecure-broadcast/basic",
+    "insecure_broadcast_no_protection": {
+        "name": "android/app/insecure-communication/insecure-broadcast/no_protection",
         "platform": "android",
         "category": "app",
         "status": "partial",
-        "path": "android/app/insecure-communication/insecure-broadcast/basic.py",
+        "path": "android/app/insecure-communication/insecure-broadcast/no_protection.py",
         "description": "Broadcast Sent on an Implicit Intent with No Protection which Leads to Broadcast Interception.",
         "author": []
     },
     "insecure_broadcast_insufficient_protection": {
-        "name": "android/app/insecure-communication/insecure-broadcast/insufficient-protection",
+        "name": "android/app/insecure-communication/insecure-broadcast/insufficient_protection",
         "platform": "android",
         "category": "app",
         "status": "partial",
-        "path": "android/app/insecure-communication/insecure-broadcast/insufficient-protection.py",
+        "path": "android/app/insecure-communication/insecure-broadcast/insufficient_protection.py",
         "description": "Broadcast Sent on an Implicit Intent with Insufficient Protection which Leads to Broadcast Interception.",
         "author": []
     }

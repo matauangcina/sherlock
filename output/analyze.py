@@ -191,7 +191,7 @@ def get_rules(keys):
 
 
 def display_scan_result(summary, output_json=False, file=None):
-    console = Console(file=file, width=180, height=36)
+    console = Console(file=file, width=172, height=36)
     if output_json:
         console.print_json(json.dumps(summary))
         console.print("")

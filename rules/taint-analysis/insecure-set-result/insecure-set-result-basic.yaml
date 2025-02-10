@@ -6,28 +6,43 @@ rules:
         - pattern-either:
           - pattern: getIntent()
           - pattern: $CTX.getIntent()
-        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
-    pattern-sanitizers:
-      - patterns:
-        - pattern-either:
-          - patterns: 
-            - pattern: $INTENT.removeFlags($FLAG)
-            - metavariable-regex:
-                metavariable: $FLAG
-                regex: ^(1|3|67|195)|(Intent\.FLAG_GRANT_(READ|WRITE|PREFIX|PERSISTABLE)_URI_PERMISSION\S?\|?)$
-          - patterns:
-            - pattern: $INTENT.setFlags($FLAG)
-            - metavariable-regex:
-                metavariable: $FLAG
-                regex: ^(?!(1|3|67|195)$|(Intent\.FLAG_GRANT_(READ|WRITE|PREFIX|PERSISTABLE)_URI_PERMISSION\S?\|?)$).*$
-          - pattern-inside: $INTENT.putExtra(...)
-        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sinks:
       - patterns:
         - pattern: setResult(..., $INTENT);
-        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
         - focus-metavariable: $INTENT
-    message: $CLASSNAME
+    message: |
+      Insecure setResult method on an exported activity detected.
+    languages:
+      - java
+    metadata:
+      cwe: cwe-285, cwe-926
+      score: 7.1 / High
+      cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
+  - id: insecure-set-result-implicit
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern-either:
+          - patterns:
+            - pattern: $ACC onActivityResult(..., Intent $SRC) {...}
+          - patterns:
+            - pattern-either:
+              - pattern: ActivityResultLauncher<Intent> $LAUNCHER = registerForActivityResult(..., $SRC -> {...});
+              - pattern: $ACC $METHOD(ActivityResult $SRC) {...}
+        - focus-metavariable: $SRC
+    pattern-sinks:
+      - patterns:
+        - pattern: setResult(..., $INTENT);
+        - focus-metavariable: $INTENT
+    message: $SRC
     languages:
       - java
     severity: WARNING
+    message: |
+      Insecure setResult method on an exported activity via implicit intent interception detected.
+    languages:
+      - java
+    metadata:
+      cwe: cwe-285, cwe-926
+      score: 7.1 / High
+      cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
