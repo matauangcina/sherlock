@@ -14,22 +14,26 @@ def option_value(args):
     opts = option_state.get_all_options()
     if len(opts) == 0:
         log.error("No module selected. Please select a module.")
-        return
+        return    
+    avail_opts = list()
+    for opt in opts.values():
+        avail_opts.extend(opt.keys())
     for arg in args:
         option = arg.split("=")[0]
         value = arg.split("=")[1]
-        if option.upper() not in opts.keys():
-            log.error(f"Option invalid: {option}")
+        if option.upper() not in avail_opts:
+            log.error(f"Option invalid: {option.upper()}")
             return
-        for k,v in opts.items():
-            if option.upper() == k:
-                if v.is_valid(value, is_empty=False):
-                    v.default = v.cast(value)
-                    option_state.update(k, v)
-                    log.info(f"{option.upper()} = {v.cast(value)}")
-                    break
-                log.error(f"Input: '{value}' is invalid for option: {k}")
-                return
+        for component,options in opts.items():
+            for k,v in options.items():
+                if option.upper() == k:
+                    if v.is_valid(value, is_empty=False):
+                        v.default = v.cast(value)
+                        option_state.update(component, options)
+                        log.info(f"{option.upper()} = {value}")
+                        break
+                    log.error(f"Input: '{value}' is invalid for option: {k}")
+                    return
     name = module_state.get("name")
     module_path = os.path.join(MODULE_PATH, module_state.get("path"))
     if utils.is_path_exists(module_path):

@@ -1,47 +1,44 @@
 rules:
-- id: mutable-pending-intent-basic
-  severity: ERROR
-  languages:
-  - java
-  mode: join
-  join:
-    refs:
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-base-intent.yaml'
-      as: base-intent
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/mutable-pending-intent/mutable-pending-intent-basic.yaml'
-      as: mutable-pending-intent
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-intent.yaml'
-      as: implicit-intent
-    on:
-    - mutable-pending-intent.$CLASSNAME == implicit-intent.$CLASSNAME
-    - mutable-pending-intent.$INTENT == implicit-intent.$INTENT
-    - base-intent.$INTENT == mutable-pending-intent.$BASE
-  message: |
-    Mutable pending intent wrapped on an implicit intent with implicit base intent detected.
-  metadata:
-    cwe: cwe-285, cwe-926
-    score: 7.1 / High
-    cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
-- id: mutable-pending-intent-notification
-  severity: ERROR
-  languages:
-  - java
-  mode: join
-  join:
-    refs:
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-base-intent.yaml'
-      as: base-intent
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/mutable-pending-intent/mutable-pending-intent-notification.yaml'
-      as: mutable-pending-intent
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/notification/notification.yaml'
-      as: notification
-    on:
-    - mutable-pending-intent.$CLASSNAME == notification.$CLASSNAME
-    - mutable-pending-intent.$NOTIF == notification.$NOTIF
-    - base-intent.$INTENT == mutable-pending-intent.$BASE
-  message: |
-    Mutable pending intent with implicit base intent on app's notification detected.
-  metadata:
-    cwe: cwe-285, cwe-926
-    score: 7.1 / High
-    cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
+  - id: mutable-pending-intent-basic
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern: PendingIntent.$GET(..., $CODE, $BASE, $FLAG)
+        - metavariable-regex:
+            metavariable: $FLAG
+            regex: ^(?!.*AccessibilityEventCompat\.TYPE_VIEW_TARGETED_BY_SCROLL$|PendingIntent\.FLAG_IMMUTABLE$|67108864.*$).*$
+    pattern-sinks:
+      - patterns:
+        - pattern: $INTENT.putExtra(..., $PI)
+        - focus-metavariable: $PI
+    languages:
+      - java
+    severity: ERROR
+    message: |
+      Mutable pending intent wrapped on an implicit intent with implicit base intent detected.
+    metadata:
+      cwe: cwe-285, cwe-926
+      score: 7.1 / High
+      cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
+  - id: mutable-pending-intent-notification
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern: PendingIntent.$GET(..., $CODE, $BASE, $FLAG)
+        - metavariable-regex:
+            metavariable: $FLAG
+            regex: ^(?!.*AccessibilityEventCompat\.TYPE_VIEW_TARGETED_BY_SCROLL$|PendingIntent\.FLAG_IMMUTABLE$|67108864.*$).*$
+    pattern-sinks:
+      - patterns:
+        - pattern: $NOTIF.setContentIntent($PI)
+        - pattern-not: $NOTIF.setDeleteIntent($PI)
+        - focus-metavariable: $PI
+    languages:
+      - java
+    severity: ERROR
+    message: |
+      Mutable pending intent with implicit base intent on app's notification detected.
+    metadata:
+      cwe: cwe-285, cwe-926
+      score: 7.1 / High
+      cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N

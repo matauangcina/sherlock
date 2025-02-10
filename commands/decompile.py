@@ -2,14 +2,16 @@ import os
 import re
 import settings.utils as utils
 
-from globals import DECOMPILER_LIST
-from settings.decompiler import jadx, cfr
+from database.decompilers import DECOMPILERS
 from settings.config import post_process
 from settings.logger import get_logger
 from settings.target_info import get_target_db, add_target_to_db
+from rich.console import Console
 
 
 log = get_logger(__name__)
+
+console = Console()
 
 
 def should_output_dir(args):
@@ -31,27 +33,27 @@ def run_decompiler(apks, decompiler, output_dir):
         return
     ids = targets.keys()
     output = list()
-    for i,apk in enumerate(apks):
+    for apk in apks:
         id = os.path.basename(apk).split(".apk")[0]
         if id in ids:
             log.warning(f"Duplicated target, skipping: '{id}'")
             continue
         output_path = os.path.join(output_dir if output_dir is not None else os.path.dirname(apk), id)
-        log.debug(f"Decompiling: '{os.path.basename(apk)}'")
-        if decompiler == "cfr":
-            cfr(apk, output_path)
-        else:
-            jadx(apk, output_path)
+        with console.status("[bold blue] Decompiling targets", spinner="earth"):
+            log.debug(f"Decompiling: '{os.path.basename(apk)}'")
+            exec_method = decompiler["exec"]
+            exec_method(apk, output_path)
+            output.append(output_path)
         log.info(f"Target decompiled to: '{output_path}'")
-        output.append(output_path)
     if len(output) == 0:
         log.error("No target apk can be processed further.\n")
         return
-    log.debug("Post decompiling..")
-    for o in output:
-        add_target_to_db(targets, o)
-        post_process(targets, os.path.basename(o))
-    log.info("Decompilation completed.\n")
+    with console.status("[bold red] Post processing", spinner="bouncingBall", spinner_style="bright_yellow"):
+        log.debug("Post decompiling..")
+        for o in output:
+            add_target_to_db(targets, o)
+            # post_process(targets, os.path.basename(o))
+    console.print("[bold green]Decompilation completed.\n")
 
 
 def decompile(args):
@@ -64,12 +66,14 @@ def decompile(args):
             os.makedirs(output_dir)
             log.info(f"Make directory: '{output_dir}'")
             return
-    decompiler = "jadx"
+    decompiler = DECOMPILERS["jadx"]
     if is_decompiler_specified(args):
         decompiler = args[args.index("--decompiler") + 1]
-        if decompiler not in DECOMPILER_LIST:
-            decompiler = "jadx"
+        if decompiler not in DECOMPILERS.keys():
+            decompiler = DECOMPILERS["jadx"]
             log.error("Decompiler not supported, continuing with default decompiler.")
+        else:
+            decompiler = DECOMPILERS[decompiler]
     if is_file_specified(args):
         file_path = args[args.index("--file") + 1]
         if not utils.is_path_exists(file_path):
@@ -93,5 +97,4 @@ def decompile(args):
     if len(apks) == 0:
         log.error("No apk can be found.\n")
         return
-    log.debug("Running decompiler...")
     run_decompiler(apks, decompiler, output_dir)

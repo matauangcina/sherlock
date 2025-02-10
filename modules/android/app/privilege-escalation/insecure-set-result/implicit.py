@@ -20,18 +20,36 @@ class SherlockModule(App):
 
 
     def register_options(self):
-        option_state.add_options([
-            OptBool("VIA_DEEPLINK", [True, "Communicate to target via deeplink", False]),
-            OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
-            OptEnum("PROVIDER_TYPE", [True, "Content provider type (1: Share content, 2: Access to files)", 1, [1, 2]]),
-            OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
-            OptStr("TARGET_PACKAGE", [True, "Target package name"]),
-            OptStr("TARGET_CLASS", [True, "Target class name"]),
-            OptStr("INTENT_ACTION", [True, "Action name to intercept"]),
-            OptList("PUT_EXTRA", [False, "Intent extra data"]),
-            OptList("INTERCEPT_EXTRA", [False, "Intercept intent extra data"]),
-            OptEnum("RESULT_CODE", [True, "Result code returned to the caller", -1, [-1, 0, 1, "RESULT_OK", "RESULT_FIRST_USER", "RESULT_CANCELED"]])
-        ])
+        # option_state.add_options([
+        #     OptBool("VIA_DEEPLINK", [True, "Communicate to target via deeplink", False]),
+        #     OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
+        #     OptEnum("PROVIDER_TYPE", [True, "Content provider type (1: Share content, 2: Access to files)", 1, [1, 2]]),
+        #     OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
+        #     OptStr("TARGET_PACKAGE", [True, "Target package name"]),
+        #     OptStr("TARGET_CLASS", [True, "Target class name"]),
+        #     OptStr("INTENT_ACTION", [True, "Action name to intercept"]),
+        #     OptList("PUT_EXTRA", [False, "Intent extra data"]),
+        #     OptList("IPUT_EXTRA", [False, "Intercept intent extra data"]),
+        #     OptEnum("RESULT_CODE", [True, "Result code returned to the caller", -1, [-1, 0, 1, "RESULT_OK", "RESULT_FIRST_USER", "RESULT_CANCELED"]])
+        # ])
+
+        option_state.add_options({
+            "exploit": [
+                OptBool("VIA_DEEPLINK", [True, "Communicate to target via deeplink (Default: False)", False]),
+                OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
+                OptStr("TARGET_PACKAGE", [True, "Target package name"]),
+                OptStr("TARGET_CLASS", [True, "Target class name"]),
+                OptStr("ACTION_NAME", [False, "Intent action name"]),
+                OptList("PUT_EXTRA", [False, "Intent extra data key-value pair (Usage: <key>,<value>;<key>,<value>;..)"]),
+            ],
+            "interceptor": [
+                OptEnum("PROVIDER_TYPE", [True, "Content provider type [1: Share content, 2: Access to files] (Default: 1)", 1, [1, 2]]),
+                OptStr("INTERCEPT_ACTION", [True, "Action name to intercept"]),
+                OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
+                OptStr("RESULT_CODE", [True, "Result code returned to the caller (Default: -1)", -1]),
+                OptList("IPUT_EXTRA", [False, "Intercept intent extra data key-value pair (Usage: <key>,<value>;<key>,<value>;..)"]),
+            ]
+        })
         self.update_option_status()
 
 
@@ -40,7 +58,7 @@ class SherlockModule(App):
         stat_dict = {
             "via_deeplink": {
                 "pos": ["deeplink_uri"],
-                "neg": ["target_class"]
+                "neg": []
             }
         }
         super().update_option_status(stat_dict, opts)
@@ -55,9 +73,10 @@ class SherlockModule(App):
         provider_uri = opts['PROVIDER_URI']
         target_package = opts['TARGET_PACKAGE']
         target_class = opts['TARGET_CLASS']
-        intent_action = opts['INTENT_ACTION']
+        action_name = opts['ACTION_NAME']
+        intercept_action = opts['INTERCEPT_ACTION']
         put_extra = opts['PUT_EXTRA']
-        intercept_extra = opts['INTERCEPT_EXTRA']
+        intercept_extra = opts['IPUT_EXTRA']
         result_code = opts['RESULT_CODE']
 
         exploit_activity_name = self.activity_name(self._id, target_package)
@@ -71,7 +90,7 @@ class SherlockModule(App):
                 intercept_activity_name,
                 is_exported=True,
                 intercept=True, 
-                action=intent_action
+                action=intercept_action
             )
         ]
 
@@ -97,7 +116,7 @@ class SherlockModule(App):
             ],
             bind_button=True,
             on_create=[self._template.build_intent(
-                set_action="android.intent.action.VIEW" if via_deeplink else None,
+                set_action="android.intent.action.VIEW" if via_deeplink else action_name if action_name != "" else None,
                 set_data=f'"{deeplink_uri}"' if via_deeplink else None,
                 put_extra=[[extra[0], f'"{extra[1]}"'] for extra in put_extra] if put_extra != "" else [],
                 set_classname=[target_package, target_class] if not via_deeplink else [],
@@ -147,7 +166,7 @@ class SherlockModule(App):
         app = {
             "manifest": manifest,
             "layout": self._template.button_layout(self._id, target_package),
-            "bind_button": self._template.bind_button(self._id, target_package),
+            "bind_button": self._template.bind_button(self._id, target_package, exploit_activity_name),
             "component": component
         }
 

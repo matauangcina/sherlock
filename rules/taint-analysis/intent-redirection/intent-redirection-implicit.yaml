@@ -4,42 +4,22 @@ rules:
     pattern-sources:
       - patterns:
         - pattern-either:
-          - pattern: $INTENT.getParcelableExtra($KEY)
-          - pattern: $BUNDLE.getParcelable($KEY)
-          - pattern: $BUNDLE.get($KEY)
-        - pattern-either:
-          - pattern-inside: $ACC onActivityResult(..., Intent $SRC) {...}
-          - pattern-inside: ActivityResultLauncher<Intent> $LAUNCHER = registerForActivityResult(..., $SRC -> {...});
-          - pattern-inside: $ACC $METHOD(ActivityResult $SRC) {...}
-        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
-    pattern-sanitizers:
-      - patterns:
-        - pattern-either:
-          - pattern: $INTENT.setClassName(..., ...)
-          - pattern: $INTENT.setClass(..., ...)
-          - patterns:
-            - pattern-either:
-              - pattern: $INTENT.setPackage($COMP)
-              - pattern: $INTENT.setComponent($COMP)
-              - pattern: $INTENT.setSelector($COMP)
-            - metavariable-regex:
-                metavariable: $COMP
-                regex: ^(?!null).*$
-          - patterns:
-            - pattern: if ($COND) {...}
-            - metavariable-regex:
-                metavariable: $COND
-                regex: ^.*\w+\.(getPackageName|getClassName)\(\)\.equals\(.+\)\s*&&\s*\w+\.(getPackageName|getClassName)\(\)\.equals\(.+\).*$
-          - pattern-inside: $INTENT.putExtra(...)
-        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+          - pattern: $ACC onActivityResult(..., Intent $SRC) {...}
+          - pattern: ActivityResultLauncher<Intent> $LAUNCHER = registerForActivityResult(..., $SRC -> {...});
+          - pattern: $ACC $METHOD(ActivityResult $SRC) {...}
+        - focus-metavariable: $SRC
     pattern-sinks:
       - patterns:
         - pattern-either:
           - pattern: startActivity($INTENT)
           - pattern: $CTX.startActivity($INTENT)
-        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
         - focus-metavariable: $INTENT
-    message: $CLASSNAME
+    message: |
+      Intent redirection via implicit intent interception detected.
     languages:
       - java
-    severity: WARNING
+    metadata:
+      cwe: cwe-285, cwe-601, cwe-926, cwe-940
+      score: 7.1 / High
+      cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
+    severity: ERROR

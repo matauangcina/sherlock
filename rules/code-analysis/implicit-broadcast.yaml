@@ -1,47 +1,38 @@
 rules:
-- id: implicit-broadcast-no_protection
-  severity: ERROR
-  languages:
-  - java
-  mode: join
-  join:
-    refs:
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-broadcast-no-protection.yaml'
-      as: implicit-broadcast
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/broadcast/broadcast-with-sensitive-info.yaml'
-      as: broadcast-info
-    on:
-    - broadcast-info.$INTENT == implicit-broadcast.$INTENT
-    - broadcast-info.$CLASSNAME == implicit-broadcast.$CLASSNAME
-  message: |
-    Insecure broadcast transmitted over an implicit intent without protection detected.
-  metadata:
-    cwe: cwe-927
-    score: 5.7 / Medium
-    cvss: CVSS:4.0/AV:L/AC:H/AT:P/PR:N/UI:A/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N
-- id: implicit-broadcast-insufficient_protection
-  severity: ERROR
-  languages:
-  - java
-  mode: join
-  join:
-    refs:
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/implicit-intent/implicit-broadcast-permission.yaml'
-      as: implicit-broadcast
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/broadcast/broadcast-with-sensitive-info.yaml'
-      as: broadcast-info
-    - rule: '/home/finechina/Tools/sherlock/src/rules/taint-analysis/broadcast/broadcast-with-permission.yaml'
-      as: broadcast-permission
-    - rule: '/home/finechina/Tools/sherlock/src/rules/manifest-analysis/insufficient-permission-protection.yaml'
-      as: permission
-    on:
-    - permission.$PERM == broadcast-permission.$PERM
-    - broadcast-info.$INTENT == implicit-broadcast.$INTENT
-    - broadcast-permission.$INTENT == implicit-broadcast.$INTENT
-    - broadcast-info.$CLASSNAME == implicit-broadcast.$CLASSNAME
-  message: |
-    Insecure broadcast transmitted over an implicit intent with insufficient protection detected.
-  metadata:
-    cwe: cwe-927
-    score: 5.7 / Medium
-    cvss: CVSS:4.0/AV:L/AC:H/AT:P/PR:N/UI:A/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N
+  - id: implicit-broadcast-intent
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern-either:
+          - pattern: new Intent()
+          - pattern: new Intent("$ACTION")
+          - pattern: new Intent("$ACTION", $URI)
+    pattern-sinks:
+      - patterns:
+        - pattern-either:
+          - pattern: sendBroadcast($INTENT)
+          - patterns: 
+            - pattern: $CTX.sendBroadcast($INTENT)
+            - metavariable-regex:
+                metavariable: $CTX
+                regex: ^(?!.*(L|l)ocal(B|b)roadcast.*$|.*(L|l)(B|b)(M|m).*$).*$
+          - pattern-either: 
+            - pattern: sendOrderedBroadcast($INTENT, null)
+            - pattern: sendOrderedBroadcast($INTENT, null, ...)
+          - patterns: 
+            - pattern-either: 
+              - pattern: $CTX.sendOrderedBroadcast($INTENT, null)
+              - pattern: $CTX.sendOrderedBroadcast($INTENT, null, ...)
+            - metavariable-regex:
+                metavariable: $CTX
+                regex: ^(?!.*(L|l)ocal(B|b)roadcast.*$|.*(L|l)(B|b)(M|m).*$).*$
+        - focus-metavariable: $INTENT
+    languages:
+    - java
+    severity: ERROR
+    message: |
+      Insecure broadcast transmitted over an implicit intent without protection detected.
+    metadata:
+      cwe: cwe-927
+      score: 5.7 / Medium
+      cvss: CVSS:4.0/AV:L/AC:H/AT:P/PR:N/UI:A/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N

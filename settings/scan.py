@@ -3,8 +3,7 @@ import settings.utils as utils
 
 from globals import RULE_PATH
 from semgrep.constants import OutputFormat
-from semgrep.output import OutputHandler
-from semgrep.output import OutputSettings
+from semgrep.output import OutputSettings, OutputHandler
 from semgrep.run_scan import run_scan
 from settings.logger import get_logger
 
@@ -56,12 +55,12 @@ def init_engine(target_paths, rules, fix, **kwargs):
     ) = run_scan(
         output_handler=output_handler,
         target=[path for path in target_paths],
-        pattern=None,
-        lang=None,
+        pattern="",
+        lang="",
         configs=[rules],
         autofix=fix,
-        timeout=10,
-        max_target_bytes=104857600,
+        timeout=0,
+        max_target_bytes=1048576000,
         **kwargs
     )
     output_handler.rule_matches = [match for matches in rule_matches.values() for match in matches]
@@ -128,7 +127,6 @@ def format_scan(findings):
             }
         else:
             findings_summary[category]["rules"].append(rule)
-    errors = findings["errors"]
-    if errors:
-        summary["errors"] = errors
+    if findings["errors"]:
+        summary["errors"] = findings["errors"]
     return summary

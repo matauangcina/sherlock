@@ -22,13 +22,9 @@ POC_PATH = {
 JADX_BIN = os.path.join(TOOLS_PATH, "jadx", "bin", "jadx")
 APKTOOL_BIN = os.path.join(TOOLS_PATH, "apktool", "apktool")
 CFR_BIN = os.path.join(TOOLS_PATH, "cfr", "cfr")
+FERNFLOWER_BIN = os.path.join(TOOLS_PATH, "fernflower", "fernflower")
 DEX2JAR_BIN = os.path.join(TOOLS_PATH, "dextools", "d2j-dex2jar.sh")
 ADB_BIN = None
-
-
-DECOMPILER_LIST = [
-    "jadx", "cfr"
-]
 
 
 INVALID_CMD = "Invalid command. Use 'help' for assistance."

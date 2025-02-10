@@ -4,6 +4,7 @@ import settings.utils as utils
 import shutil
 import subprocess
 
+from defusedxml.minidom import parse
 from globals import ROOT_PATH, POC_PATH
 from settings.logger import get_logger
 from state.device import device_state
@@ -49,7 +50,7 @@ class App:
 
 
     def activity_name(self, id, package):
-        return self.format_activity_name(id) + self.format_package_name(package)
+        return self.format_activity_name(id) + self.format_package_name(package) + utils.gen_random_string()
 
 
     def button_id(self, id, package):
@@ -68,6 +69,16 @@ class App:
             elif c != "_":
                 formatted += c
         return formatted
+    
+
+    def get_component_name(self):
+        ns = "android"
+        dom = parse(self._manifest)
+        activities = dom.getElementsByTagName("activity")
+        names = list()
+        for activity in activities:
+            names.append(activity.getAttribute(f"{ns}:name"))
+        return names
 
 
     def placeholder(self, ext="java", is_permission=False):
@@ -80,32 +91,38 @@ class App:
 
     def get_options_value(self):
         options = option_state.get_all_options()
-        opts = dict()
-        for k,v in options.items():
-            opts[k] = v.default
-        return opts
+        opt_dict = dict()
+        for opts in options.values():
+            for k,v in opts.items():
+                opt_dict[k] = v.default
+        return opt_dict
 
 
     def update_option_status(self, stat, opts):
+        avail_opts = list()
+        for opt in opts.values():
+            avail_opts.extend(opt.keys())
         for key,val in stat.items():
-            if key.upper() in opts.keys():
-                is_required = opts[key.upper()].default
-                pos = val.get("pos")
-                neg = val.get("neg")
-                if len(pos) != 0:
-                    for p in pos:
-                        k = p.upper()
-                        v = opts.get(k)
-                        if v:
-                            v.required = is_required
-                        option_state.update(k, v)
-                if len(neg) != 0:
-                    for n in neg:
-                        k = n.upper()
-                        v = opts.get(k)
-                        if v:
-                            v.required = not is_required
-                        option_state.update(k, v)
+            if key.upper() in avail_opts:
+                for component,options in opts.items():
+                    if key.upper() in options.keys():
+                        is_required = options[key.upper()].default
+                        pos = val.get("pos")
+                        neg = val.get("neg")
+                        if len(pos) != 0:
+                            for p in pos:
+                                k = p.upper()
+                                v = options.get(k)
+                                if v:
+                                    v.required = is_required
+                                option_state.update(component, options)
+                        if len(neg) != 0:
+                            for n in neg:
+                                k = n.upper()
+                                v = options.get(k)
+                                if v:
+                                    v.required = not is_required
+                                option_state.update(component, options)
             else:
                 log.warning(f"Option not found, skipping: '{key.upper()}'")
 
@@ -113,8 +130,9 @@ class App:
     def print_option_template(self):
         opts = option_state.get_all_options()
         opt_str = "set"
-        for key in opts.keys():
-            opt_str += f' {key.lower()}='
+        for options in opts.values():
+            for key in options.keys():
+                opt_str += f' {key.lower()}='
         log.debug(f"Command template: '{opt_str}'")
 
 
@@ -179,7 +197,15 @@ class App:
         cmd = ["logcat", "--clear"]
         _ = utils.run_adb(device_state.device_id, cmd)
         cmd.pop()
-        ps_cmd = ["ps", "|", "grep", "sherlock.poc", "|", "awk", "'{print $2}'"]
+        ps_cmd = [
+            "ps", 
+            "|", 
+            "grep", 
+            "sherlock.poc", 
+            "|", 
+            "awk", 
+            "'{print $2}'"
+        ]
         sleep(2)
         ps = utils.run_adb(device_state.device_id, ps_cmd, shell=True).split('\n')[0]
         sleep(2)
@@ -246,14 +272,12 @@ class App:
 
     def check_component_log(self, opts):
         if opts.get('IS_EXPORTED') is not None:
-            if not opts['IS_EXPORTED']:
-                log.warning("Press the button displayed to execute the exploit module.")
+            if opts['IS_EXPORTED']:
+                log.warning("Press the button displayed to interact with target class and trigger the vulnerable code.")
             else:
-                log.warning(f'Navigate to target class: \"{opts["TARGET_CLASS"]}\" and trigger the implicit intent.')
+                log.warning(f'Navigate to target class: \"{opts["TARGET_CLASS"]}\" and trigger the vulnerable code.')
         if opts.get('LEAK_PROVIDER') is None:
             return
-        if not opts['LEAK_PROVIDER']:
-            log.info(f'Check whether the protected component: \"{opts["COMPONENT_CLASS"]}\" is successfully accessed.')
 
 
     def build(self, app):

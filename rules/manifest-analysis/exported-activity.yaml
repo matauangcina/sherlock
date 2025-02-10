@@ -8,7 +8,7 @@ rules:
           </intent-filter>
           </activity>
       - pattern-not: |
-          <activity-alias ... android:name="$ALIAS" ... android:exported="true" ... android:targetActivity="$ACTIVITY" ...>
+          <activity-alias ... android:name="$ALIAS" ... android:exported="false" ... android:targetActivity="$ACTIVITY" ...>
           <intent-filter ...>
           ...
           </intent-filter>

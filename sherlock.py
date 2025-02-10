@@ -3,9 +3,9 @@ from settings.prompt import prompt
 
 
 def main():
-    init_config()
+    # init_config()
     prompt.init()
-    reset()
+    # reset()
 
 
 if __name__ == '__main__':

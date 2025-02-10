@@ -203,24 +203,48 @@ def display_component_summary(args, components, ids):
 
 def display_module_options(options, name):
     console = Console(width=130)
-    table = Table(
-        title=f"Module name: [bright_magenta]{name}[/]",
-        caption="Set module option with 'set <option>=<value>'.",
-        box=box.SIMPLE, 
-        padding=(0,2), 
-        title_justify="left"
-    )
-    table.add_column("Name", style="bright_white")
-    table.add_column("Setting", style="bright_yellow", overflow="fold")
-    table.add_column("Required", style="bright_cyan")
-    table.add_column("Description", style="bright_white")
-    options = dict(sorted(options.items(), key=lambda x:x[1].required, reverse=True))
-    for k,v in options.items():
-        table.add_row(
-            k.upper(),
-            str(v.default),
-            str(v.required).upper(),
-            v.desc
+    console.print(f"Module name: [bright_magenta]{name}[/]\n")
+    for component,opts in options.items():
+        table = Table(
+            title=f"{component.capitalize().replace('_', ' ')} Component Options",
+            caption="Set module option with 'set <option>=<value>'." if component == list(options)[-1] else None,
+            box=box.HORIZONTALS, 
+            padding=(0,2)
         )
-    console.print(table)
-    print("")
+        table.add_column("Name", style="bright_white")
+        table.add_column("Setting", style="bright_yellow", overflow="fold")
+        table.add_column("Required", style="bright_cyan")
+        table.add_column("Description", style="bright_white")
+        opts = dict(sorted(opts.items(), key=lambda x:x[1].required, reverse=True))
+        for k,v in opts.items():
+            table.add_row(
+                k.upper(),
+                str(v.default) if not isinstance(v.default, list) else "\n".join(f"key → {extra[0]},\nvalue → {extra[1]}" if len(extra) == 2 else f"key: {extra[0]}" for extra in v.default),
+                str(v.required).upper(),
+                v.desc
+            )
+        console.print(table)
+        print("")
+
+
+    # table = Table(
+    #     title=f"Module name: [bright_magenta]{name}[/]",
+    #     caption="Set module option with 'set <option>=<value>'.",
+    #     box=box.SIMPLE, 
+    #     padding=(0,2), 
+    #     title_justify="left"
+    # )
+    # table.add_column("Name", style="bright_white")
+    # table.add_column("Setting", style="bright_yellow", overflow="fold")
+    # table.add_column("Required", style="bright_cyan")
+    # table.add_column("Description", style="bright_white")
+    # options = dict(sorted(options.items(), key=lambda x:x[1].required, reverse=True))
+    # for k,v in options.items():
+    #     table.add_row(
+    #         k.upper(),
+    #         str(v.default),
+    #         str(v.required).upper(),
+    #         v.desc
+    #     )
+    # console.print(table)
+    # print("")

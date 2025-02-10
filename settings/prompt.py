@@ -27,49 +27,49 @@ class PromptCompleter(Completer):
         super().__init__()
         self._commands = COMMANDS
 
-    def get_suggestions(self, document: Document):
+
+    def get_command_hints(self, document: Document):
         cmds = [cmd for cmd in get_commands(document.text) if not cmd.startswith('--')]
-        flags = [flag for flag in get_commands(document.text) if flag.startswith('--')]
-        current = self._commands
+        opts = [opt for opt in get_commands(document.text) if opt.startswith('--')]
+        curr = self._commands
+        hints = dict()
         for cmd in cmds:
-            candidate = cmd.lower()
-            if candidate in list(current.keys()):
-                if "cmds" in current[candidate]:
-                    current = current[candidate]["cmds"]
-                elif "flags" in current[candidate]:
-                    current = {
-                        flag: "" for flag in current[candidate]["flags"] if flag not in flags
+            cmd = cmd.lower()
+            if cmd in list(curr.keys()):
+                if "opts" in curr[cmd]:
+                    curr = {
+                        opt: "" for opt in curr[cmd]["opts"] if opt not in opts
                     }
+                elif "exec" in curr[cmd]:
+                    return hints
                 else:
-                    return dict()
-        suggestions = dict()
-        if current and len(current) > 0:
-            for key,_ in current.items():
-                if document.get_word_before_cursor().lower() in key.lower():
-                    suggestions[key] = current[key]
-        return suggestions
+                    curr = curr[cmd]
+        if len(curr) > 0:
+            for key in curr.keys():
+                if document.get_word_before_cursor().lower() in key.lower() and not key.lower() == "desc":
+                    hints[key] = curr[key]
+        return hints
+
 
     def get_completions(self, document: Document, complete_event: CompleteEvent):
         word = document.get_word_before_cursor()
-        commands = self.get_suggestions(document)
-        if len(commands) == 0:
+        hints = self.get_command_hints(document)
+        if len(hints) == 0:
             return
-        sort_cmds = dict(sorted(commands.items()))
-        for cmd,extra in sort_cmds.items():
-            if type(extra) is dict and "desc" in extra:
-                desc = extra["desc"]
-            else:
-                desc = None
-            yield Completion(cmd, -(len(word)), display_meta=desc)
+        sort_cmds = dict(sorted(hints.items()))
+        for key,val in sort_cmds.items():
+            desc = None
+            if type(val) is dict and "desc" in val:
+                desc = val["desc"]
+            yield Completion(key, -(len(word)), display_meta=desc)
 
 
 class Prompt:
 
     def __init__(self):
-        self._cli = None
-        self._completer = FuzzyCompleter(PromptCompleter())
         self._commands = COMMANDS
         self._session = self.prompt_session()
+
 
     def prompt_session(self):
         history = os.path.expanduser("~/.sherlock/sherlock_history")
@@ -79,22 +79,20 @@ class Prompt:
         if not os.path.exists(history):
             open(history, "a").close()
         return PromptSession(
-            history=FileHistory(history),
-            completer=self._completer,
-            style=self.prompt_style(),
+            completer=FuzzyCompleter(PromptCompleter()),
+            complete_in_thread=True,
             auto_suggest=AutoSuggestFromHistory(),
-            reserve_space_for_menu=4,
-            complete_in_thread=True
+            style=self.prompt_style(),
+            history=FileHistory(history),
         )
 
-    @staticmethod
-    def prompt_style():
+
+    def prompt_style(self):
         return Style.from_dict({
             "completion-menu.completion": "bg:#af8700 #ffffff",
             "completion-menu.completion.current": "bg:#d7af00 #000000",
             "scrollbar.background": "bg:#d7af87",
             "scrollbar.button": "bg:#222222",
-            "completion-menu.completion fuzzymatch.outside": "fg:#000000",
             "timestamp": "#e95420",
             "device_id": "#c061cb",
             "name_prompt_open": "#5e5c64",
@@ -103,8 +101,8 @@ class Prompt:
             "start_prompt": "#ffffff",
         })
 
-    @staticmethod
-    def prompt_message():
+
+    def prompt_message(self):
         timestamp = datetime.now().strftime("%a, %Y-%m-%d %H:%M:%S")
         device_id = device_state.device_id
         name = module_state.get("name")
@@ -122,18 +120,18 @@ class Prompt:
             ("class:name_prompt_close", name_prompt_close),
             ("class:start_prompt", start_prompt)
         ]
-    
+
+
     def get_help(self, args):
         cmds = self._commands
-        help_id = []
+        help_id = list()
         help_message = dict()
         for arg in args:
-            if arg in cmds:
-                help_id.append(arg)
-                if "cmds" in cmds[arg]:
-                    cmds = cmds[arg]["cmds"]
-            else:
+            if arg not in cmds:
                 break
+            help_id.append(arg)
+            if "exec" not in cmds[arg]:
+                cmds = cmds[arg]
         if len(help_id) > 0:
             id = "_".join(help_id)
             with open(os.path.join(DB_PATH, "help.json"), "r") as file:
@@ -145,57 +143,57 @@ class Prompt:
                 "demo": help[id]["demo"]
             }
         return help_message
-    
-    def get_execute_method(self, args):
+
+
+    def get_exec(self, args):
         cmds = self._commands
-        exec_method = None
-        step = 0
+        execute = None
+        count = 0
         for arg in args:
-            step += 1
-            if arg in cmds:
-                if "cmds" not in cmds[arg]:
-                    if "exec" in cmds[arg]:
-                        exec_method = cmds[arg]["exec"]
-                        break
-                else:
-                    cmds = cmds[arg]["cmds"]
-            else:
+            count += 1
+            if arg not in cmds:
                 break
+            if "exec" in cmds[arg]:
+                execute = cmds[arg]["exec"]
+                break
+            cmds = cmds[arg]
         return {
-            "step": step,
-            "exec": exec_method
+            "idx": count,
+            "exec": execute
         }
 
-    def run_command(self, command):
+
+    def execute(self, command):
         if command.strip() == "":
             return
         cmds = get_commands(command)
         if len(cmds) > 0 and cmds[0] == "help":
-            cmds.remove("help")
+            cmds.pop(0)
             help_summary = self.get_help(cmds)
             if len(help_summary) == 0:
                 log.error(f"{INVALID_CMD}\n")
                 return
             display_help_panel(help_summary)
             return
-        step = self.get_execute_method(cmds)["step"]
-        exec_method = self.get_execute_method(cmds)["exec"]
-        if exec_method is None:
+        idx = self.get_exec(cmds)["idx"]
+        exec_cmd = self.get_exec(cmds)["exec"]
+        if exec_cmd is None:
             log.error(INVALID_CMD)
             return
-        args = cmds[step:]
-        exec_method(args)
+        args = cmds[idx:]
+        exec_cmd(args)
+
 
     def init(self):
         display_banner()
         while True:
             try:
                 cmd = self._session.prompt(self.prompt_message())
-                if (cmd.strip() in ["exit"]):
+                if cmd.strip() == "exit":
                     log.info("Thankyou for using Sherlock.\n")
                     break
                 try:
-                    self.run_command(cmd)
+                    self.execute(cmd)
                 except Exception as e:
                     log.warning(f"Error executing command: {e}")
             except KeyboardInterrupt:

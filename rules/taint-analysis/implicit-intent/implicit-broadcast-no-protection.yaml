@@ -1,5 +1,5 @@
 rules:
-  - id: implicit-broadcast-no_protection
+  - id: implicit-broadcast-intent
     mode: taint
     pattern-sources:
       - patterns:
@@ -7,21 +7,6 @@ rules:
           - pattern: new Intent()
           - pattern: new Intent("$ACTION")
           - pattern: new Intent("$ACTION", $URI)
-        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
-    pattern-sanitizers:
-      - patterns:
-        - pattern-either:
-          - pattern: $INTENT.setClassName(..., ...)
-          - pattern: $INTENT.setClass(..., ...)
-          - patterns:
-            - pattern-either:
-              - pattern: $INTENT.setPackage($COMP)
-              - pattern: $INTENT.setComponent($COMP)
-              - pattern: $INTENT.setSelector($COMP)
-            - metavariable-regex:
-                metavariable: $COMP
-                regex: ^(?!null).*$
-        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
     pattern-sinks:
       - patterns:
         - pattern-either:
@@ -41,10 +26,13 @@ rules:
             - metavariable-regex:
                 metavariable: $CTX
                 regex: ^(?!.*(L|l)ocal(B|b)roadcast.*$|.*(L|l)(B|b)(M|m).*$).*$
-        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
         - focus-metavariable: $INTENT
-    message: |
-      $CLASSNAME
     languages:
     - java
-    severity: WARNING
+    severity: ERROR
+    message: |
+      Insecure broadcast transmitted over an implicit intent without protection detected.
+    metadata:
+      cwe: cwe-927
+      score: 5.7 / Medium
+      cvss: CVSS:4.0/AV:L/AC:H/AT:P/PR:N/UI:A/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N

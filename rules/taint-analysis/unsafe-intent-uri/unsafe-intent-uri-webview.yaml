@@ -4,42 +4,21 @@ rules:
     pattern-sources:
       - patterns:
         - pattern: $SRC.getUrl();
-        - pattern: $ACC shouldOverrideUrlLoading(..., WebResourceRequest $SRC) {...}
-        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
-    pattern-sanitizers:
-      - patterns:
-        - pattern-either:
-          - pattern: $INTENT.setClassName(..., ...)
-          - pattern: $INTENT.setClass(..., ...)
-          - patterns:
-            - pattern-either:
-              - pattern: $INTENT.setPackage($COMP)
-              - pattern: $INTENT.setComponent($COMP)
-              - pattern: $INTENT.setSelector($COMP)
-            - metavariable-regex:
-                metavariable: $COMP
-                regex: ^(?!null).*$
-          - patterns:
-            - pattern: if ($COND) {...}
-            - metavariable-regex:
-                metavariable: $COND
-                regex: ^.*\w+\.(getPackageName|getClassName)\(\)\.equals\(.+\)\s*\&\&\s*\w+\.(getPackageName|getClassName)\(\)\.equals\(.+\).*$
-          - pattern-inside: $INTENT.putExtra(...)
-        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
+        - pattern-inside: $ACC shouldOverrideUrlLoading(...)) {...}
     pattern-sinks:
       - patterns:
         - pattern-either:
           - pattern: startActivity($INTENT)
           - pattern: $CTX.startActivity($INTENT)
-        - pattern-inside: if ($COND) {...}
-        - metavariable-regex:
-            metavariable: $COND
-            regex: ^.*(("intent".equals\(\w+\.getScheme\(\)\))|(\w+.getScheme\(\)\s?==\s?"intent")).*$
         - pattern-inside: $ACC shouldOverrideUrlLoading(...) {...}
         - pattern-inside: $WV.setWebViewClient(...)
-        - pattern-inside: public class $CLASSNAME extends $COMPONENT {...}
         - focus-metavariable: $INTENT
-    message: $CLASSNAME
     languages:
       - java
     severity: WARNING
+    message: |
+      Access to arbitrary protected components on an exported activity via unvalidated intent URI scheme loaded on a WebView detected.
+    metadata:
+      cwe: cwe-285, cwe-601, cwe-926, cwe-940
+      score: 5.7 / Medium
+      cvss: CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:A/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N

@@ -21,18 +21,37 @@ class SherlockModule(App):
 
 
     def register_options(self):
-        option_state.add_options([
-            OptBool("IS_EXPORTED", [True, "Whether the target class is exported (Default: True)", False]),
-            OptBool("VIA_DEEPLINK", [False, "Communicate to target via deeplink (Default: False)", False]),
-            OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
-            OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
-            OptStr("TARGET_PACKAGE", [True, "Target package name"]),
-            OptStr("TARGET_CLASS", [False, "Target class name"]),
-            OptStr("BASE_ACTION", [False, "Base intent action to intercept"]),
-            OptInt("REQUEST_CODE", [True, "Pending intent request code"]),
-            OptEnum("PROVIDER_TYPE", [True, "Content provider type (1: Share content, 2: Access to files)", 1, [1, 2]]),
-            OptList("PUT_EXTRA", [False, "Intent extra data"]),
-        ])
+        # option_state.add_options([
+            # OptBool("IS_EXPORTED", [True, "Whether the target component is exported (Default: True)", False]),
+            # OptBool("VIA_DEEPLINK", [False, "Communicate to target via deeplink (Default: False)", False]),
+            # OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
+            # OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
+            # OptStr("TARGET_PACKAGE", [True, "Target package name"]),
+            # OptStr("TARGET_CLASS", [False, "Target class name"]),
+            # OptStr("BASE_ACTION", [False, "Base intent action to intercept"]),
+            # OptInt("REQUEST_CODE", [True, "Pending intent request code"]),
+            # OptEnum("PROVIDER_TYPE", [True, "Content provider type (1: Share content, 2: Access to files)", 1, [1, 2]]),
+            # OptList("PUT_EXTRA", [False, "Intent extra data"]),
+        # ])
+
+        option_state.add_options({
+            "exported": [
+                OptBool("IS_EXPORTED", [True, "Whether the target component is exported (Default: False)", False]),
+                OptBool("VIA_DEEPLINK", [False, "Communicate to target via deeplink (Default: False)", False]),
+                OptStr("DEEPLINK_URI", [False, "Deeplink URI to launch target activity"]),
+                OptStr("TARGET_PACKAGE", [True, "Target package name"]),
+                OptStr("TARGET_CLASS", [False, "Target class name"]),
+                OptStr("ACTION_NAME", [False, "Intent action name"]),
+                OptList("PUT_EXTRA", [False, "Intent extra data key-value pair (Usage: <key>,<value>;<key>,<value>;..)"]),
+            ],
+            "hijack_intent": [
+                OptEnum("PROVIDER_TYPE", [True, "Content provider type [1: Share content, 2: Access to files] (Default: 1)", 1, [1, 2]]),
+                OptStr("PROVIDER_URI", [True, "Content provider URI to access"]),
+                OptStr("BASE_ACTION", [False, "Base intent action to intercept"]),
+                OptInt("REQUEST_CODE", [True, "Pending intent request code"]),
+            ]
+        })
+
         self.update_option_status()
 
 
@@ -60,11 +79,13 @@ class SherlockModule(App):
         provider_uri = opts['PROVIDER_URI']
         target_package = opts['TARGET_PACKAGE']
         target_class = opts['TARGET_CLASS']
+        action_name = opts['ACTION_NAME']
         base_action = opts['BASE_ACTION']
         request_code = opts['REQUEST_CODE']
         provider_type = opts['PROVIDER_TYPE']
         put_extra = opts['PUT_EXTRA']
 
+        enable_notification_access_activity = self.activity_name(self._id, "enable.notification.access")
         exploit_activity_name = self.activity_name(self._id, target_package)
         leak_provider_activity_name = f'{self.activity_name(self._id, target_package)}LeakProvider'
 
@@ -85,7 +106,7 @@ class SherlockModule(App):
                 action="sherlock.poc.LEAK_PROVIDER" if base_action == "" else base_action
             ),
             self._template.build_manifest_component(
-                self.activity_name(self._id, "enable.notification.access")
+                enable_notification_access_activity
             ),
             self._template.build_manifest_component(
                 exploit_activity_name
@@ -93,7 +114,7 @@ class SherlockModule(App):
         ]
 
         notif_access_activity = self._template.build_activity(
-            name=self.activity_name(self._id, "enable.notification.access"),
+            name=enable_notification_access_activity,
             libs=[
                 "android.content.Context",
                 "android.content.Intent",
@@ -170,7 +191,7 @@ class SherlockModule(App):
             ],
             bind_button=True,
             on_create=[self._template.build_intent(
-                set_action="android.intent.action.VIEW" if via_deeplink else None,
+                set_action="android.intent.action.VIEW" if via_deeplink else action_name if action_name != "" else None,
                 set_data=f'"{deeplink_uri}"' if via_deeplink else None,
                 put_extra=[[extra[0], f'"{extra[1]}"'] for extra in put_extra] if put_extra != "" else [],
                 set_classname=[target_package, target_class] if not via_deeplink else []
@@ -179,7 +200,7 @@ class SherlockModule(App):
 
         component = [
             {
-                "name": f"{self.activity_name(self._id, 'enable.notification.access')}.java",
+                "name": f"{enable_notification_access_activity}.java",
                 "content": notif_access_activity 
             },
             {
@@ -198,12 +219,12 @@ class SherlockModule(App):
 
         button_layout = [
             self._template.button_layout(self._id, "enable.notification.access"),
-            self._template.button_layout(self._id, target_package)
+            self._template.button_layout(self._id, target_package) if is_exported else None
         ]
 
         bind_button = [
-            self._template.bind_button(self._id, "enable.notification.access"),
-            self._template.bind_button(self._id, target_package)
+            self._template.bind_button(self._id, "enable.notification.access", enable_notification_access_activity),
+            self._template.bind_button(self._id, target_package, exploit_activity_name) if is_exported else None
         ]
 
         if not is_exported:
