@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SherlockTest</string>
+    <string name="app_name">Sherlock Benchmark</string>
     <string name="api_key">API Key: abcdef-ghijklmn-opqrstuvwxyz</string>
 
     <string name="insecure_set_result">Insecure setResult</string>

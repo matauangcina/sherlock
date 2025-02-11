@@ -7,11 +7,11 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <permission
-        android:name="sherlock.test.SIGNATURE_PERMISSION"
+        android:name="sherlock.benchmark.SIGNATURE_PERMISSION"
         android:protectionLevel="signature"/>
-    <permission android:name="sherlock.test.NORMAL_PERMISSION"/>
+    <permission android:name="sherlock.benchmark.NORMAL_PERMISSION"/>
     <permission
-        android:name="sherlock.test.DANGEROUS_PERMISSION"
+        android:name="sherlock.benchmark.DANGEROUS_PERMISSION"
         android:protectionLevel="dangerous"/>
 
     <application
@@ -160,12 +160,12 @@
         </receiver>
         <provider
             android:name=".providers.UsersProvider"
-            android:authorities="sherlock.test.users_provider"
+            android:authorities="sherlock.benchmark.users_provider"
             android:exported="false"
             android:grantUriPermissions="true"/>
         <provider
             android:name=".providers.SherlockFileProvider"
-            android:authorities="sherlock.test.file_provider"
+            android:authorities="sherlock.benchmark.file_provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths"/>

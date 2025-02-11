@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SherlockInsecure"
+rootProject.name = "Sherlock Insecure"
 include(":app")
  

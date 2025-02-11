@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SherlockTest"
+rootProject.name = "Sherlock Benchmark"
 include(":app")
  

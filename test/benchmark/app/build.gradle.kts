@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "sherlock.test"
+    namespace = "sherlock.benchmark"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "sherlock.test"
+        applicationId = "sherlock.benchmark"
         minSdk = 28
         targetSdk = 33
         versionCode = 1

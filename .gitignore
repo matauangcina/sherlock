@@ -1,0 +1,10 @@
+.DS_Store
+__pycache__
+*.iml
+.gradle
+.idea
+test/*/local.properties
+test/*/captures
+test/*/.externalNativeBuild
+test/*/.cxx
+test/*/app/build
