@@ -3,8 +3,10 @@ __pycache__
 *.iml
 .gradle
 .idea
-test/*/local.properties
+readme
+build
+local.properties
+
 test/*/captures
 test/*/.externalNativeBuild
 test/*/.cxx
-test/*/app/build
