@@ -29,36 +29,8 @@ pip install -r requirements.txt
 python3 sherlock.py
 ```
 
-## Usage
-Decompile
-
-
-Show Target
-
-
-Exploit Target
-
-
-Show Devices
-
-
-Use Device
-
-
-Search Modules
-
-
-Use Module
-
-
-Show Module Options
-
-
-Set Module Options
-
-
 ## Demo
-
+[Demo](https://drive.google.com/file/d/1KQz2UOnxwmHHFsKZcxZQaQ67pAU5WHqx/view?usp=sharing)
 
 ## Acknowledgements
 * [SemGrep](https://semgrep.dev/)
