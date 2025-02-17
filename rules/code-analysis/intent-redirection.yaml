@@ -44,13 +44,12 @@ rules:
       score: 7.1 / High
       cvss: CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N
     severity: ERROR
-  rules:
   - id: intent-redirection-webview
     mode: taint
     pattern-sources:
       - patterns:
         - pattern: $SRC.getUrl();
-        - pattern-inside: $ACC shouldOverrideUrlLoading(...)) {...}
+        - pattern-inside: $ACC shouldOverrideUrlLoading(...) {...}
     pattern-sinks:
       - patterns:
         - pattern-either:

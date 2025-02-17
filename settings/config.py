@@ -1,5 +1,4 @@
 import os
-import ruamel.yaml
 import shutil
 import settings.utils as utils
 

@@ -1,1 +1,18 @@
-{}
+{
+    "sherlock-benchmark": {
+        "app_name": "Sherlock Benchmark",
+        "min_sdk": "28",
+        "package": "sherlock.benchmark",
+        "path": "/Users/finechina/Sample/benchmark/sherlock-benchmark",
+        "target_sdk": "33",
+        "version": "1.0"
+    },
+    "sherlock-insecure": {
+        "app_name": "Sherlock Insecure",
+        "min_sdk": "Not found",
+        "package": "sherlock.insecure",
+        "path": "/Users/finechina/Sample/insecure/sherlock-insecure",
+        "target_sdk": "Not found",
+        "version": ""
+    }
+}

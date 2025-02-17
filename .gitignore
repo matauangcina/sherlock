@@ -7,6 +7,8 @@ readme
 build
 local.properties
 
+rules/code-analysis-old
+
 test/*/captures
 test/*/.externalNativeBuild
 test/*/.cxx

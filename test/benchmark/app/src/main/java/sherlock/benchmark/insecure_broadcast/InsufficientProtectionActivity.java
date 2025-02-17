@@ -15,10 +15,10 @@ import sherlock.benchmark.utils.BroadcastUtils;
 public class InsufficientProtectionActivity extends AppCompatActivity {
 
     private static final String EXTRA_USER = "users";
-    private static final String EXTRA_TITLE = "sherlock.test.insecure_broadcast.title";
+    private static final String EXTRA_TITLE = "sherlock.benchmark.insecure_broadcast.title";
     private static final String PERM_NORMAL = "sherlock.test.NORMAL_PERMISSION";
-    private static final String PERM_DANGEROUS = "sherlock.test.DANGEROUS_PERMISSION";
-    private static final String PERM_SIGNATURE = "sherlock.test.SIGNATURE_PERMISSION";
+    private static final String PERM_DANGEROUS = "sherlock.benchmark.DANGEROUS_PERMISSION";
+    private static final String PERM_SIGNATURE = "sherlock.benchmark.SIGNATURE_PERMISSION";
     private ActivityBasicBinding binding;
 
     public static Intent newIntent(Context packageContext, String title) {

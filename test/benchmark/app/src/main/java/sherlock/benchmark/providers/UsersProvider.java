@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 import sherlock.benchmark.database.UserBaseHelper;
 
 public class UsersProvider extends ContentProvider {
-    private static final String AUTHORITY = "sherlock.test.users_provider";
+    private static final String AUTHORITY = "sherlock.benchmark.users_provider";
     private static final String TABLE_NAME = "users";
     private SQLiteDatabase mDatabase;
     private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
