@@ -65,7 +65,6 @@ def decompile(args):
         if not utils.is_path_exists(output_dir):
             os.makedirs(output_dir)
             log.info(f"Make directory: '{output_dir}'")
-            return
     decompiler = DECOMPILERS["jadx"]
     if is_decompiler_specified(args):
         decompiler = args[args.index("--decompiler") + 1]

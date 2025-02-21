@@ -1,8 +1,15 @@
 # Sherlock
-An Android application static analyzer framework powered by SemGrep OSS Engine. Sherlock provides the option to use multiple decompilers for decompiling and analyzing APKs in a black box environment. Sherlock currently focuses on identifying insecure ICC implementations in Android applications and provides exploitation modules for the identified vulnerabilities.
+An Android application static analyzer framework powered by SemGrep OSS Engine. Sherlock currently focuses on identifying insecure ICC implementations in Android applications and provides exploitation modules for the identified vulnerabilities.
+
+## Features
+* Taint analysis with Semgrep OSS Engine
+* Support multiple decompilers to obtain various decompiled code
+* Maintain and analyze multiple APKs in one go
+* Exploitation module for identified vulnerabilities
+* Do all of the above in a single workflow
 
 ## Requirements
-* OpenJDK < 22
+* OpenJDK < 22 (for Gradle dependencies)
 * Python3
 * ADB installed and set up on the path environment
 
@@ -11,6 +18,7 @@ An Android application static analyzer framework powered by SemGrep OSS Engine. 
 * Intent Redirection
 * Mutable PendingIntent
 * Insecure Broadcast
+* ...more to come
 
 ## Tested On
 * Ubuntu
@@ -24,10 +32,17 @@ cd sherlock
 pip install -r requirements.txt
 ```
 
-## Getting Started
+## Usage
 ```bash
 python3 sherlock.py
 ```
+
+## Future Improvement
+* Fix identified bugs and errors
+* Add more rules and exploitation module
+
+## Project Status
+* Completed - occasionally developed and maintained
 
 ## Demo
 [![Demo](https://img.youtube.com/vi/9X5R90VvhP8/maxresdefault.jpg)](https://youtu.be/9X5R90VvhP8)
