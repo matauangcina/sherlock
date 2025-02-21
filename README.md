@@ -30,7 +30,7 @@ python3 sherlock.py
 ```
 
 ## Demo
-[Demo](https://drive.google.com/file/d/1KQz2UOnxwmHHFsKZcxZQaQ67pAU5WHqx/view?usp=sharing)
+[![Demo](https://img.youtube.com/vi/9X5R90VvhP8/maxresdefault.jpg)](https://youtu.be/9X5R90VvhP8)
 
 ## Acknowledgements
 * [SemGrep](https://semgrep.dev/)

@@ -8,6 +8,8 @@ build
 local.properties
 
 rules/code-analysis-old
+rules/mods
+rules/taint-analysis
 
 test/*/captures
 test/*/.externalNativeBuild
