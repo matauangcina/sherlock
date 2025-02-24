@@ -1,5 +1,5 @@
 # Sherlock
-An Android application static analyzer framework powered by SemGrep OSS Engine. Sherlock currently focuses on identifying insecure ICC implementations in Android applications and provides exploitation modules for the identified vulnerabilities.
+An Android application static analyzer and exploitation framework powered by SemGrep OSS Engine.
 
 ## Features
 * Taint analysis with Semgrep OSS Engine
@@ -11,7 +11,8 @@ An Android application static analyzer framework powered by SemGrep OSS Engine. 
 ## Requirements
 * OpenJDK < 22 (for Gradle dependencies)
 * Python3
-* ADB installed and set up on the path environment
+* ADB binary set up on path environment
+* Supports only UNIX systems
 
 ## Vulnerabilities
 * Insecure setResult
@@ -37,15 +38,20 @@ pip install -r requirements.txt
 python3 sherlock.py
 ```
 
+## Demo
+[![Demo](https://img.youtube.com/vi/9X5R90VvhP8/maxresdefault.jpg)](https://youtu.be/9X5R90VvhP8)
+
 ## Future Improvement
 * Fix identified bugs and errors
-* Add more rules and exploitation module
+* Add more rules and exploitation module for the identified vulnerability (if possible)
+* Add ADB binary to the tools directory and use the added ADB instead of the host system's
 
 ## Project Status
 * Completed - occasionally developed and maintained
 
-## Demo
-[![Demo](https://img.youtube.com/vi/9X5R90VvhP8/maxresdefault.jpg)](https://youtu.be/9X5R90VvhP8)
+## Challenges & Lesson Learnt
+* Rules with minimum false positives and/or false negatives is a challenge due to Semgrep OSS Engine's taint analysis limitations and the various ways a code is developed to perform the same functionality
+* Robust exploitation module is a challenge due to the various unique cases to trigger the desired code snippet
 
 ## Acknowledgements
 * [SemGrep](https://semgrep.dev/)
